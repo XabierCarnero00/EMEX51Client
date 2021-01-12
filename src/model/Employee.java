@@ -93,7 +93,7 @@ public class Employee extends User implements Serializable {
 
     /**
      * Sets a list of {@link Sector} managed by the employee.
-     * @param sector The list {@link Sector} value.
+     * @param sectors
      */
     public void setSectors(Set<EmployeeSectorManagement> sectors) {
         this.sectorsManaged = sectors;
@@ -110,7 +110,7 @@ public class Employee extends User implements Serializable {
 
     /**
      * Sets a list of {@link Visitor} managed by the employee.
-     * @param visitante The list {@link Visitor} value.
+     * @param visitantes
      */
     public void setVisitors(Set<Visitor> visitantes) {
         this.visitors = visitantes;

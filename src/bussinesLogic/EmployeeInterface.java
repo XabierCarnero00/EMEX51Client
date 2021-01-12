@@ -15,4 +15,14 @@ import model.Employee;
 public interface EmployeeInterface {
     public List<Employee> getAllEmpoyees();
     
+    public List<Employee> getEmployeesByName(String name);
+    
+    public List<Employee> getEmployeesByEmail(String email);
+    
+    public Employee getSingleEmployeeByEmail(String email);
+    
+    public void createEmployee (Employee employee);
+    
+    public void updateEmployee (Employee employee);
+    
 }
