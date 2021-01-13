@@ -24,7 +24,10 @@ import javafx.stage.Stage;
  * @author xabig
  */
 public class MenuPrincipalController {
-
+    /**
+     * Logger object used to control activity from class FXMLDocumentSectorController.
+     */
+    private static final Logger LOGGER = Logger.getLogger("emex51.cliente.controlador.MenuPrincipalController");
     /**
      * Una ventana sobre la que se coloca una escena.
      */
@@ -76,6 +79,8 @@ public class MenuPrincipalController {
         menuEmpleado.setOnAction(this::openEmpleados);
         
         EmpleadoDos.setOnAction(this::openEmpleados);
+        
+        buttonSectores.setOnAction(this::openSectores);
 
     }
 
@@ -93,6 +98,24 @@ public class MenuPrincipalController {
             //Llamada al método initStage del controlador de la ventana LogOut. Pasa el documento fxml en un nodo.
             gestionarEmployeeController.initStage(root);
         } catch (IOException ex) {
+            Logger.getLogger(MenuPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    /**
+     * Action event handler for Sector button. Redirects to the sectors scene.
+     * @param event The ActionEvent object for the event.
+     */
+    private void openSectores(ActionEvent event) {
+        LOGGER.info("Iniciando SectorController::metodo openSectores");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().
+                    getResource("/view/FXMLDocumentSector.fxml"));
+            Parent root = (Parent) loader.load();
+            FXMLDocumentSectorController controladorSector = (FXMLDocumentSectorController) loader.getController();
+            controladorSector.setStage(stage);
+            controladorSector.initStage(root);
+        } catch (IOException ex) {
+            System.out.println("gjjiangjnjankjgnskjdn");
             Logger.getLogger(MenuPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

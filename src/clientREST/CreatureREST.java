@@ -8,6 +8,7 @@ package clientREST;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 
 /**
  * Jersey REST client generated for REST resource:CreatureFacadeREST
@@ -33,7 +34,7 @@ public class CreatureREST {
         webTarget = client.target(BASE_URI).path("creature");
     }
 
-    public <T> T findAllCreatures(Class<T> responseType) throws ClientErrorException {
+    public <T> T findAllCreatures(GenericType<T> responseType) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path("all");
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -45,6 +46,11 @@ public class CreatureREST {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
+    public <T> T findCreatureByEspecie(GenericType<T> responseType, String especie) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("especie/{0}", new Object[]{especie}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
     public void edit(Object requestEntity) throws ClientErrorException {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
@@ -60,6 +66,12 @@ public class CreatureREST {
     }
 
     public <T> T findCreatureBySector(Class<T> responseType, String sectorId) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("sector/{0}", new Object[]{sectorId}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+    
+    public <T> T findCreatureBySector(GenericType<T> responseType, String sectorId) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("sector/{0}", new Object[]{sectorId}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
