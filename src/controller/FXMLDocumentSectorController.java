@@ -6,7 +6,6 @@
 package controller;
 
 import bussinesLogic.BusinessLogicException;
-import bussinesLogic.CreaturaExistException;
 import bussinesLogic.SectorExistException;
 import bussinesLogic.SectorManager;
 import bussinesLogic.SectorManagerFactory;
@@ -101,11 +100,6 @@ public class FXMLDocumentSectorController{
     @FXML 
     private Button btnBorrar;
     /**
-     * Button updating a sector.
-     */
-    @FXML 
-    private Button btnModificar;
-    /**
      * Button creating a sector.
      */
     @FXML 
@@ -162,7 +156,6 @@ public class FXMLDocumentSectorController{
             btnIr.setDisable(true);
             btnAnadir.setDisable(true);
             btnBorrar.setDisable(true);
-            btnModificar.setDisable(true);
 
             //La tabla sera editable.
             tbSectores.setEditable(true);
@@ -173,14 +166,29 @@ public class FXMLDocumentSectorController{
 
             colNombre.setCellFactory(TextFieldTableCell.forTableColumn());
             colNombre.setOnEditCommit((CellEditEvent<Sector,String> t) -> {
-                t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getNewValue());
+                try {
+                    t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getNewValue());
+                    //guardar en la base de datos donde cojo el sector
+                    sector = t.getRowValue();
+                    sectorManager.updateSector(sector);
+                } catch (BusinessLogicException ex) {
+                    Logger.getLogger(FXMLDocumentSectorController.class.getName()).log(Level.SEVERE, null, ex);
+                    LOGGER.info("Error al updatear en la lambda del nombre edit");
+                }
             });
             colTipo.setCellValueFactory(new PropertyValueFactory<>("type"));
                 //Añadir las opciones de busqueda  a la combo
             ObservableList<SectorType> options = FXCollections.observableArrayList((SectorType.values()));
             colTipo.setCellFactory(ComboBoxTableCell.forTableColumn(options));
             colTipo.setOnEditCommit((CellEditEvent<Sector,SectorType> t) -> {
-                t.getTableView().getItems().get(t.getTablePosition().getRow()).setType(t.getNewValue());
+                try {
+                    t.getTableView().getItems().get(t.getTablePosition().getRow()).setType(t.getNewValue());
+                    sector = t.getRowValue();
+                    sectorManager.updateSector(sector);                
+                } catch (BusinessLogicException ex) {
+                    Logger.getLogger(FXMLDocumentSectorController.class.getName()).log(Level.SEVERE, null, ex);
+                    LOGGER.info("Error al updatear en la lambda del tipo edit");
+                }
             });
 
             cbTipo.setItems(options);
@@ -194,7 +202,6 @@ public class FXMLDocumentSectorController{
             btnAnadir.setOnAction(this::accionBotonAnadir);
             btnBorrar.setOnAction(this::accionBotonBorrar);
             btnVolver.setOnAction(this::accionBotonVolver);
-            btnModificar.setOnAction(this::accionBotonModificar);
             //Ejecutar método cambioTexto cuando el texto de el campo  cambie.
             txtFieldNombre.textProperty().addListener(this::cambioTexto);
             //Si se pulsa la x de la ventana para salir
@@ -287,21 +294,25 @@ public class FXMLDocumentSectorController{
         }
     }
     /**
-     * Action event handler for return button. Returns to the previews scene.
+     * Action event handler for delete button.
      * @param event The ActionEvent object for the event.
      */
     private void accionBotonBorrar(ActionEvent event){
         LOGGER.info("Iniciando SectorController::accionBotonBorrar");
-        mostrarVentanaAlertError("Estás seguro que quieres salir?.");
-            //Abrir ventana sector
+        Alert alert = null;              
         try{
             //Mirar si el sector tiene contenido si tiene avisar
-            //si no9 co9nfirmacio9n bo9rrado9
+            //si no confirmacion borrado
+            alert = new Alert(Alert.AlertType.CONFIRMATION,"Estas seguro de borrar el sector?.");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) 
+                sectorManager.deleteSector(sector);
+        }catch (BusinessLogicException ex) {             
+            Logger.getLogger(FXMLDocumentSectorController.class.getName()).log(Level.SEVERE, null, ex);
         }catch(Exception e){
             mostrarVentanaAlertError("Error al intentar borrar.");
-        } 
-    }             
-
+        }
+    }
     /**
      * Action event handler for return button. Returns to the previews scene.
      * @param event The ActionEvent object for the event.
@@ -321,7 +332,7 @@ public class FXMLDocumentSectorController{
               Optional<ButtonType> result = alert.showAndWait();
               if (result.get() == ButtonType.OK) {
                     //llamar al metodo de creatureimplementation
-                    sectorManager.createSector(sector);
+                    sectorManager.createSector(newSector);
                     //Añadir en la tabla el nuevo registro
                     tbSectores.getItems().add(newSector);
                     //creo que se puede hacer asi directamente y la tabla reconoce el cambio en la lista observable
@@ -355,50 +366,21 @@ public class FXMLDocumentSectorController{
                //Parent es una clase gráfica de nodos xml son nodos.
                Parent root = (Parent)loader.load();
                //Relacionamos el documento FXML con el controlador que le va a controlar.
-               FXMLDocumentCreatureController controladorCritauras = (FXMLDocumentCreatureController)loader.getController();
+               FXMLDocumentCreatureController controladorCriaturas = (FXMLDocumentCreatureController)loader.getController();
                //Pasar la ventana al controlador de la ventana signIn.
-               controladorCritauras.setStage(stage);
+               controladorCriaturas.setStage(stage);
+               //Le pasamos el sector
+               controladorCriaturas.setSector(sector);
                //Llamada al método initStage del controlador de la ventana signIn. Pasa el documento fxml en un nodo.
-               controladorCritauras.initStage(root);               
+               controladorCriaturas.initStage(root);               
             }else{
-  
+  //Redireccinado a la ventana army
             }
         //Error al cargar la nueva escenamostrar mensaje.
         }catch(IOException e){
             mostrarVentanaAlertError("Error al intentar salir, espera unos segundos.");
         } 
     } 
-    /**
-     * Action event handler for update button. Updates a sector.
-     * @param event The ActionEvent object for the event.
-     */
-    private void accionBotonModificar(ActionEvent event){
- /*       LOGGER.info("Iniciando CreatureController::accionBotonVolver");
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"Estás seguro que quieres salir?.");
-        alert.setHeaderText(null);
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {       
-            //Abrir ventana sector
-        try{
-            //New FXMLLoader Añadir el fxml de sector que es la ventana a la que se redirige si todo va bien
-            FXMLLoader loader = new FXMLLoader(getClass().
-                getResource("/view/FXMLDocumentSector.fxml"));
-            //Parent es una clase gráfica de nodos xml son nodos.
-            Parent root = (Parent)loader.load();
-            //Relacionamos el documento FXML con el controlador que le va a controlar.
-            FXMLDocumentSectorController controladorSector = (FXMLDocumentSectorController)loader.getController();
-            //Pasar la ventana al controlador de la ventana signIn.
-            controladorSector.setStage(stage);
-            //Llamada al método initStage del controlador de la ventana signIn. Pasa el documento fxml en un nodo.
-            controladorSector.initStage(root);
-        //Error al cargar la nueva escenamostrar mensaje.
-        }catch(IOException e){
-            alert = new Alert(Alert.AlertType.ERROR,"Error al intentar salir, espera unos segundos."
-                    ,ButtonType.OK);
-            alert.showAndWait();
-        } 
-      }             
- */     }
     /**
      * Action event handler for return button. Returns to the previews scene.
      * @param event The ActionEvent object for the event.

@@ -60,11 +60,13 @@ public class CreatureManagerImplementation implements CreatureManager{
      * @throws BusinessLogicException
      */
     @Override
-    public Creature getCreatureByName(String name) throws BusinessLogicException {
-        Creature creature = null;
+    public List <Creature> getCreatureByName(String name,Sector sector) throws BusinessLogicException {
+        List <Creature> creature = null;
         try{
             LOGGER.info("Metodo getCreatureByName de la clase CreatureManagerImplementation.");
-            creature = webClient.findCreatureByName(Creature.class, name);
+            creature = webClient.findCreatureByName(new GenericType<List<Creature>>(){}, name);
+            if(creature.isEmpty())
+                throw new BusinessLogicException("No hay criaturas con el nombre "+name+" en el sector "+sector.getName());
         }catch(Exception e){
             throw new BusinessLogicException(e.getMessage());
         }
@@ -77,11 +79,17 @@ public class CreatureManagerImplementation implements CreatureManager{
      * @throws BusinessLogicException
      */
     @Override
-    public List<Creature> getCreatureByEspecie(String especie) throws BusinessLogicException {
-        List<Creature> creatures = null;
+    public List<Creature> getCreatureByEspecie(String especie,Sector sector) throws BusinessLogicException {
+        List<Creature> creatures,creaturesSector = null;
         try{
             LOGGER.info("Metodo getCreatureByEspecie de la clase CreatureManagerImplementation.");
             creatures = webClient.findCreatureByEspecie(new GenericType<List<Creature>>(){}, especie);
+            for(Creature c:creatures){
+                if(c.getSector().getName().equals(sector.getName()))
+                    creaturesSector.add(c);
+            }
+            if(creaturesSector.isEmpty())
+                throw new BusinessLogicException("No hay criaturas de la "+especie+" en el sector "+sector.getName());
         }catch(Exception e){
             throw new BusinessLogicException(e.getMessage());
         }
@@ -139,13 +147,12 @@ public class CreatureManagerImplementation implements CreatureManager{
 
     @Override
     public void creatureNameIsRegistered(String name) throws BusinessLogicException, CreaturaExistException {
+        List <Creature> creature = null;
         try{
-            if(this.webClient.findCreatureByName(Creature.class, name)!=null)
+            creature = this.webClient.findCreatureByName(new GenericType<List<Creature>>(){}, name);
+            if(!creature.isEmpty())
                 throw new CreaturaExistException("Ya existe una criatura con nombre "+name);
         }catch(ClientErrorException ex){
-            LOGGER.log(Level.SEVERE,
-                    "Exception creature name is registered, {0}",
-                    ex.getMessage());
             throw new BusinessLogicException("Error finding creature:\n"+ex.getMessage());
         }
     }

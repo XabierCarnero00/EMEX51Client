@@ -8,6 +8,7 @@ package bussinesLogic;
 import java.util.List;
 import javax.security.auth.login.LoginException;
 import model.Creature;
+import model.Sector;
 
 /**
  * Interface encapsulating methods for <code>Creature</code> Management for Emex51 project. 
@@ -26,14 +27,14 @@ public interface CreatureManager {
      * @return A creature object.
      * @throws BusinessLogicException
      */
-    public Creature getCreatureByName(String name) throws BusinessLogicException;
+    public List <Creature> getCreatureByName(String name,Sector sector) throws BusinessLogicException;
     /**
      * This method returns a <code>Creature</code> with the same especie as the one passed by parameter.
      * @param especie The especie of a {@link Creature}.
      * @return A creature object.
      * @throws BusinessLogicException
      */
-    public List<Creature> getCreatureByEspecie(String especie) throws BusinessLogicException;
+    public List<Creature> getCreatureByEspecie(String especie, Sector sector) throws BusinessLogicException;
     /**
      * This method updates data for an existing {@link Creature}.
      * @param creature The {@link Creature} object to be updated.

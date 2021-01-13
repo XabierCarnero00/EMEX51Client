@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.GenericType;
-import model.Creature;
 import model.Sector;
 
 /**
@@ -60,10 +59,12 @@ public class SectorManagerImplementation implements SectorManager{
      */
     @Override
     public List <Sector> getSectorsByName(String name) throws BusinessLogicException {
-        List<Sector> sector = null;
+        List <Sector> sector = null;
         try{
             LOGGER.info("Metodo getSectorsByName de la clase SectorManagerImplementation.");
             sector = webClient.findSectorsByName(new GenericType<List<Sector>>(){}, name);
+            if(sector.isEmpty())
+                throw new BusinessLogicException("No hay sectores con el nombre "+name);
         }catch(Exception e){
             throw new BusinessLogicException(e.getMessage());
         }
@@ -134,13 +135,12 @@ public class SectorManagerImplementation implements SectorManager{
 
     @Override
     public void sectorNameIsRegistered(String name) throws BusinessLogicException, SectorExistException {
+        List <Sector> sectores = null;
         try{
-            if(this.webClient.findSectorsByName(new GenericType<List<Sector>>(){}, name)!=null)
+            sectores = this.webClient.findSectorsByName(new GenericType<List<Sector>>(){}, name);
+            if(!sectores.isEmpty())
                 throw new SectorExistException("Ya existe una sector con nombre "+name);
         }catch(ClientErrorException ex){
-            LOGGER.log(Level.SEVERE,
-                    "Exception sector name is registered, {0}",
-                    ex.getMessage());
             throw new BusinessLogicException("Error finding sector:\n"+ex.getMessage());
         }
     }

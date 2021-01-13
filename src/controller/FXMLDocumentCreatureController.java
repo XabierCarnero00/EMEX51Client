@@ -12,11 +12,10 @@ import bussinesLogic.CreatureManagerFactory;
 import bussinesLogic.SectorManager;
 import bussinesLogic.SectorManagerFactory;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,6 +34,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -225,6 +225,26 @@ public class FXMLDocumentCreatureController {
             btnAnadir.setDisable(true);
             //Añadir listener a la seleccion de la tabla 
             tbCreature.getSelectionModel().selectedItemProperty().addListener(this::manejarSeleccionTabla);
+            
+            colFecha.setCellFactory(column -> {
+                TableCell<Creature, Date> cell = new TableCell<Creature, Date>() {
+            private SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+
+            @Override
+            protected void updateItem(Date item, boolean empty) {
+                super.updateItem(item, empty);
+                if(empty) {
+                    setText(null);
+                }
+                else {
+                    this.setText(format.format(item));
+
+                }
+            }
+        };
+
+        return cell;
+    });
             //Set factorias a las celdas de las columnas de la tabla.
             colNombre.setCellValueFactory(new PropertyValueFactory<>("name"));
             colEspecie.setCellValueFactory(new PropertyValueFactory<>("species"));
@@ -248,7 +268,7 @@ public class FXMLDocumentCreatureController {
             //Si se pulsa la x de la ventana para salir
             stage.setOnCloseRequest(this::manejarCierreVentana);
             
-            creaturesData = FXCollections.observableArrayList(creatureManager.getAllCreatures());
+            creaturesData = FXCollections.observableArrayList(creatureManager.getCreatureBySector(sector.getIdSector().toString()));
             tbCreature.setItems(creaturesData);
             //Este evento se lanza cuando la ventana esta a punto de aparecer. Este evento no se lanza al volver de otra escena porque no abrimos una stage cambiamos de scene
             stage.setOnShowing(this::manejarInicioVentana);
@@ -305,6 +325,7 @@ public class FXMLDocumentCreatureController {
         LOGGER.info("Iniciando CreatureController::manejarSeleccionTabla");
         //If there is a row selected, move row data to corresponding fields in the
         //window and enable create, modify and delete buttons
+        txtFieldNombre.setStyle("-fx-text-inner-color: black;");
         if(newValue!=null){
             Creature creature = (Creature) newValue;
             txtFieldNombre.setText(creature.getName());
@@ -363,15 +384,15 @@ public class FXMLDocumentCreatureController {
     private void accionBotonBuscar(ActionEvent event){
         LOGGER.info("Iniciando CreatureController::handleWindowShowing.Metodo_accionBotonBuscar");
         try{
-            Alert alert = null;
             if(cmbBuscar.getSelectionModel().getSelectedItem()==null){
                 mostrarVentanaAlertError("Elige una opcion de busqueda");
             }else if(cmbBuscar.getSelectionModel().getSelectedIndex()==0){
-               creaturesData = FXCollections.observableArrayList(creatureManager.getAllCreatures());                
+               creaturesData = FXCollections.observableArrayList(creatureManager.       
+                       getCreatureBySector(sector.getIdSector().toString()));;         
             }else if(cmbBuscar.getSelectionModel().getSelectedIndex()==1){
-               creaturesData = FXCollections.observableArrayList(creatureManager.getCreatureByName(txtFieldBuscar.getText()));
+               creaturesData = FXCollections.observableArrayList(creatureManager.getCreatureByName(txtFieldBuscar.getText().trim(),sector));
             }else{
-               creaturesData = FXCollections.observableArrayList(creatureManager.getCreatureByEspecie(txtFieldBuscar.getText()));
+               creaturesData = FXCollections.observableArrayList(creatureManager.getCreatureByEspecie(txtFieldBuscar.getText().trim(),sector));
             }
             if(creaturesData.isEmpty())
                 tbCreature.setPlaceholder(new Label("No hay contenido que mostrar"));
@@ -392,6 +413,7 @@ public class FXMLDocumentCreatureController {
         try{
             //Crear nueva criatura y añadir los datos de los textfiel y datepicker
             Creature creature = new Creature();
+            creature.setSector(sector);
             creature.setName(txtFieldNombre.getText().trim());
             creature.setSpecies(txtFieldEspecie.getText().trim());
             if(datePickerFechaLlegada.getValue()!= null){
@@ -413,7 +435,6 @@ public class FXMLDocumentCreatureController {
                     txtFieldNombre.setText("");
                     txtFieldEspecie.setText("");
                     datePickerFechaLlegada.getEditor().clear();
-                    datePickerFechaLlegada.setValue(null);
                 }
             }else{
                 mostrarVentanaAlertError("Tienes que elegir una fecha");
@@ -439,13 +460,14 @@ public class FXMLDocumentCreatureController {
             //Se guarda en criatura la seleccionada en la tabla
             Creature creature = ((Creature)tbCreature.getSelectionModel()
                                                     .getSelectedItem());
+            
             if(!creature.getName().equals(txtFieldNombre.getText().trim())){
                 //Mirar si el nombre existe. Si se ha cambiado
                 creature.setName(txtFieldNombre.getText().trim());
                 creatureManager.creatureNameIsRegistered(txtFieldNombre.getText().trim());
             }
-            creature.setName(txtFieldNombre.getText());
-            creature.setSpecies(txtFieldEspecie.getText());
+            creature.setName(txtFieldNombre.getText().trim());
+            creature.setSpecies(txtFieldEspecie.getText().trim());
             if(datePickerFechaLlegada.getValue()!= null){
                 //De localdate a date. Datepicker devuelve un localdate
                 creature.setArrivalDate(Date.from(datePickerFechaLlegada.getValue()
@@ -462,7 +484,6 @@ public class FXMLDocumentCreatureController {
                     txtFieldNombre.setText("");
                     txtFieldEspecie.setText("");
                     datePickerFechaLlegada.getEditor().clear();
-                    datePickerFechaLlegada.setValue(null);
                 }
             }else{
                 mostrarVentanaAlertError("Tienes que elegir una fecha");
@@ -505,24 +526,6 @@ public class FXMLDocumentCreatureController {
             mostrarVentanaAlertError("Error al intentar salir, espera unos segundos.");
         } 
         }             
-    }
-    /**
-     * This method loads all the creatures in the table.
-     */
-    private void cargarTabla(String cadena) {
-        LOGGER.info("Metodo que añade todas las criaturas en la tabla");
-        List <Creature> creatures = new ArrayList<>();
-        try {
-            creatures = creatureManager.getAllCreatures();
-            for(Creature c:creatures){
-                  if(c.getName().contains(cadena))
-                      creaturesData.add(c);
-            }
-            tbCreature.setItems(creaturesData);
-        } catch (BusinessLogicException ex) {
-            Logger.getLogger(FXMLDocumentCreatureController.class.getName()).log(Level.SEVERE, null, ex);
-            tbCreature.setPlaceholder(new Label("No hay contenido que mostrar"));
-        }
     }
     /**
      * Action event handler for comboBox changes.

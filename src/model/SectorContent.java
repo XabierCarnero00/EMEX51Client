@@ -6,6 +6,7 @@
 package model;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -111,6 +112,7 @@ public class SectorContent implements Serializable {
      * @param arrivalDate The date value.
      */
     public void setArrivalDate(Date arrivalDate) {
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
         this.arrivalDate = arrivalDate;
     }
 
