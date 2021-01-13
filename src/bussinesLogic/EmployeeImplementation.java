@@ -11,6 +11,7 @@ import java.util.List;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.GenericType;
 import model.Employee;
+import securityClient.ClavePublicaCliente;
 
 /**
  *
@@ -65,6 +66,7 @@ public class EmployeeImplementation implements EmployeeInterface {
     public void createEmployee(Employee employee) {
         EmployeeREST employeeRest = new EmployeeREST();
         try {
+            employee.setPassword(ClavePublicaCliente.cifrarTexto(employee.getPassword()));
             employeeRest.create(employee);
         } catch (ClientErrorException e) {
             System.err.println("hola");
@@ -73,7 +75,6 @@ public class EmployeeImplementation implements EmployeeInterface {
 
     @Override
     public Employee getSingleEmployeeByEmail(String email) {
-        Employee employee = new Employee();
         List<Employee> employees = new ArrayList();
 
         EmployeeREST employeeRest = new EmployeeREST();
@@ -83,11 +84,11 @@ public class EmployeeImplementation implements EmployeeInterface {
 
         for (int i = 0; i < employees.size(); i++) {
             if (employees.get(i).getEmail().compareToIgnoreCase(email) == 0) {
-                employee = employees.get(i);
+                return employees.get(i);
             }
         }
 
-        return employee;
+        return null;
     }
 
     @Override

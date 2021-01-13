@@ -13,6 +13,7 @@ import model.Employee;
  * @author xabig
  */
 public interface EmployeeInterface {
+    
     public List<Employee> getAllEmpoyees();
     
     public List<Employee> getEmployeesByName(String name);

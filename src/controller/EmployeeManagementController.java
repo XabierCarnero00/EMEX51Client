@@ -41,7 +41,7 @@ import securityClient.ClavePublicaCliente;
  *
  * @author xabig
  */
-public class GestionarEmployeeController {
+public class EmployeeManagementController {
 
     /**
      * Atributo Logger para rastrear los pasos de ejecución del programa.
@@ -231,7 +231,7 @@ public class GestionarEmployeeController {
         employee.setFullName(textfieldNombApell.getText().trim());
         employee.setWage(Float.parseFloat(textfieldSalario.getText().trim()));
         employee.setLogin(textfieldLogin.getText().trim());
-        employee.setPassword(ClavePublicaCliente.cifrarTexto(textfieldPassword.getText().trim()));
+        employee.setPassword(textfieldPassword.getText().trim());
         employee.setLastAccess(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)));
         employee.setLastPasswordChange(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)));
         employee.setBoss(boss);
@@ -310,7 +310,7 @@ public class GestionarEmployeeController {
             menuPrincipalController.initStage(root);
             //Llamada al método inicializarComponenentesVentana del controlador de la ventana signIn.
         } catch (IOException ex) {
-            Logger.getLogger(GestionarEmployeeController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(EmployeeManagementController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

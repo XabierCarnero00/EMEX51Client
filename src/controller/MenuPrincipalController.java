@@ -83,11 +83,11 @@ public class MenuPrincipalController {
         try {
             //New FXMLLoader Añadir el fxml de logout que es la escena a la que se redirige si todo va bien
             FXMLLoader loader = new FXMLLoader(getClass().
-                    getResource("/view/GestionarEmployee.fxml"));
+                    getResource("/view/FXMLEmployeeManagement.fxml"));
             //Parent es una clase gráfica de nodos. xml son nodos.
             Parent root = (Parent) loader.load();
             //Relacionamos el documento FXML con el controlador que le va a controlar.
-            GestionarEmployeeController gestionarEmployeeController = (GestionarEmployeeController) loader.getController();
+            EmployeeManagementController gestionarEmployeeController = (EmployeeManagementController) loader.getController();
             //Llamada al método setStage del controlador de la ventana signIn. Pasa la ventana.
             gestionarEmployeeController.setStage(stage);
             //Llamada al método initStage del controlador de la ventana LogOut. Pasa el documento fxml en un nodo.
