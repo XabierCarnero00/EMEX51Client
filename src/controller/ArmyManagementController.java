@@ -5,11 +5,12 @@
  */
 package controller;
 
-import bussinesLogic.ArmyFactory;
-import bussinesLogic.ArmyInterface;
+import businessLogic.ArmyFactory;
+import businessLogic.ArmyInterface;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -22,6 +23,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import model.Army;
+import model.Sector;
 import model.User;
 
 /**
@@ -45,6 +47,8 @@ public class ArmyManagementController {
     ArmyInterface armyInt = ArmyFactory.getArmyImp();
 
     ObservableList armys;
+
+    Sector sector;
 
     @FXML
     private TextField textfieldBuscar;
@@ -90,6 +94,14 @@ public class ArmyManagementController {
         this.stage = stage;
     }
 
+    public Sector getSector() {
+        return sector;
+    }
+
+    public void setSector(Sector sector) {
+        this.sector = sector;
+    }
+
     public void initStage(Parent root) {
         Scene scene = new Scene(root);
 
@@ -102,18 +114,47 @@ public class ArmyManagementController {
         buttonBorrar.setDisable(true);
         buttonBuscar.setDisable(true);
 
+        ObservableList<String> cbOptions = FXCollections.observableArrayList();
+        cbOptions.addAll("Nombre", "Municion", "Todos");
+        comboBox.setItems(cbOptions);
+
         armys = FXCollections.observableArrayList(armyInt.getAllArmys());
         loadArmysTable(armys);
 
         stage.show();
+
+        //sector.setIdSector(1);
+
+        buttonBuscar.setOnAction(this::clickBuscar);
     }
 
     private void loadArmysTable(ObservableList<Army> armys) {
         tableColumnNombre.setCellValueFactory(new PropertyValueFactory<>("name"));
         tableColumnMunicion.setCellValueFactory(new PropertyValueFactory<>("ammunition"));
         tableColumnFechaLlegada.setCellValueFactory(new PropertyValueFactory<>("arrivalDate"));
-        
+
         tableView.setItems(armys);
+    }
+
+    private void clickBuscar(ActionEvent event) {
+        if(comboBox.getValue().equals("Todos")){
+            armys = FXCollections.observableArrayList(armyInt.getAllArmys());
+        } else if(comboBox.getValue().equals("Nombre"))
+            armys = FXCollections.observableArrayList(armyInt.getArmysByName(textfieldBuscar.getText().trim()));
+        else
+            armys = FXCollections.observableArrayList(armyInt.getArmysByAmmunition(Integer.parseInt(textfieldBuscar.getText().trim())));
+        tableView.setItems(armys);
+    }
+
+    @FXML
+    private void cbListener(ActionEvent event) {
+        buttonBuscar.setDisable(false);
+        if (comboBox.getValue().equals("Todos")) {
+            textfieldBuscar.setText("");
+            textfieldBuscar.setDisable(true);
+        } else {
+            textfieldBuscar.setDisable(false);
+        }
     }
 
 }

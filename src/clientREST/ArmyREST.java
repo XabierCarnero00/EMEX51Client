@@ -57,7 +57,7 @@ public class ArmyREST {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
     }
 
-    public <T> T findArmyByName(GenericType<T> responseType, String name) throws ClientErrorException {
+    public <T> T findArmyByName(Class<T> responseType, String name) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("name/{0}", new Object[]{name}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -66,6 +66,12 @@ public class ArmyREST {
     public <T> T findAllArmys(GenericType<T> responseType) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path("all");
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
+    public <T> T findArmyByMuniton(GenericType<T> responseType, String ammunition) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("ammunition/{0}", new Object[]{ammunition}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 

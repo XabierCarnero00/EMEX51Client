@@ -5,8 +5,8 @@
  */
 package controller;
 
-import bussinesLogic.UserFactory;
-import bussinesLogic.UserInterface;
+import businessLogic.UserFactory;
+import businessLogic.UserInterface;
 import exceptions.ExcepcionContraseñaNoCoincide;
 import java.io.IOException;
 import java.util.logging.Level;

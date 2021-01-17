@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bussinesLogic;
+package businessLogic;
 
 /**
  *
- * @author xabig
+ * @author endika
  */
-public interface BossInterface {
-    
+public class BusinessLogicException extends Exception{
+    public BusinessLogicException(String msg){
+        super(msg);
+    }
 }

@@ -3,16 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package bussinesLogic;
+package businessLogic;
 
 /**
  *
  * @author xabig
  */
-public class UserFactory {
-        
-    public static UserInterface getUserImp(){
-        return new UserImplementation();
-    }
+public interface BossInterface {
     
 }

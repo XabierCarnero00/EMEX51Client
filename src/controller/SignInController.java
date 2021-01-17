@@ -1,8 +1,8 @@
 package controller;
 
 import utilMethods.MetodosUtiles;
-import bussinesLogic.UserFactory;
-import bussinesLogic.UserInterface;
+import businessLogic.UserFactory;
+import businessLogic.UserInterface;
 import exceptions.ExcepcionUserNoExiste;
 import java.io.IOException;
 import java.util.logging.Level;

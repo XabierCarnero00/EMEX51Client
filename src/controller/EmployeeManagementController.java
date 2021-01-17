@@ -5,8 +5,8 @@
  */
 package controller;
 
-import bussinesLogic.EmployeeFactory;
-import bussinesLogic.EmployeeInterface;
+import businessLogic.EmployeeFactory;
+import businessLogic.EmployeeInterface;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Date;
