@@ -23,9 +23,7 @@ public class ClavePublicaCliente {
         byte[] encodedMessage = null;
         String encodedMessageHex = null;
         try {
-            // Clave p�blica
             byte fileKey[] = fileReader("Public.key");
-            System.out.println("Tama�o -> " + fileKey.length + " bytes");
 
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(fileKey);

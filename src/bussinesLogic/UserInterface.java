@@ -5,6 +5,9 @@
  */
 package bussinesLogic;
 
+import exceptions.ExcepcionContraseñaNoCoincide;
+import exceptions.ExcepcionEmailNoExiste;
+import exceptions.ExcepcionUserNoExiste;
 import model.User;
 
 /**
@@ -13,8 +16,10 @@ import model.User;
  */
 public interface UserInterface {
     
-    public User login(String login, String password);
+    public User login(String login, String password) throws ExcepcionUserNoExiste;
     
+    public void temporalPass(String email) throws ExcepcionEmailNoExiste;
     
+    public void changePassword(String newPass, String email, String TempPassw) throws ExcepcionContraseñaNoCoincide;
     
 }

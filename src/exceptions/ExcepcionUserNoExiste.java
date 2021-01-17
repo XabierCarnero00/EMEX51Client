@@ -1,5 +1,5 @@
 
-package excepciones;
+package exceptions;
 
 /**
  * Excepción que señala que el usuario no existe.
@@ -10,7 +10,5 @@ package excepciones;
 public class ExcepcionUserNoExiste extends Exception{
     public ExcepcionUserNoExiste (){
         super("El usuario no existe.");
-    }
-    
-    
+    }    
 }

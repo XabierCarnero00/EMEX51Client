@@ -7,19 +7,16 @@ package controller;
 
 import bussinesLogic.EmployeeFactory;
 import bussinesLogic.EmployeeInterface;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -33,8 +30,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import model.Boss;
 import model.Employee;
+import model.User;
 import model.UserStatus;
-import securityClient.ClavePublicaCliente;
 
 /**
  * FXML Controller class
@@ -57,6 +54,10 @@ public class EmployeeManagementController {
      * The email of the Employee to be changed.
      */
     private String savedEmail;
+    /**
+     * The User that operates on the window.
+     */
+    User user;
 
     @FXML
     private TableView table;
@@ -77,8 +78,6 @@ public class EmployeeManagementController {
     @FXML
     private Button buttonAniadir;
     @FXML
-    private Button buttonVolver;
-    @FXML
     private TextField textfieldTrabajo;
     @FXML
     private TextField textfieldSalario;
@@ -88,8 +87,6 @@ public class EmployeeManagementController {
     private Button buttonBuscar;
     @FXML
     private Button buttonModificar;
-    @FXML
-    private Button buttonOk;
     @FXML
     private TableColumn tableLogin;
     @FXML
@@ -113,6 +110,14 @@ public class EmployeeManagementController {
         this.stage = stage;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     /**
      * Initializes the controller class.
      *
@@ -130,10 +135,10 @@ public class EmployeeManagementController {
         buttonAniadir.setDisable(true);
         buttonBorrar.setDisable(true);
         buttonBuscar.setDisable(true);
-        buttonOk.setDisable(true);
+        buttonModificar.setDisable(true);
 
         employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
-        loadEmployees(employees);
+        loadEmployeesTable(employees);
 
         ObservableList<String> cbOptions = FXCollections.observableArrayList();
         cbOptions.addAll("Nombre", "Email", "Todos");
@@ -142,31 +147,29 @@ public class EmployeeManagementController {
         stage.show();
 
         buttonBuscar.setOnAction(this::clickBuscar);
-        textfieldEmail.textProperty().addListener(this::emailListener);
-        textfieldNombApell.textProperty().addListener(this::fullNameListener);
-        textfieldSalario.textProperty().addListener(this::salarioListener);
-        textfieldTrabajo.textProperty().addListener(this::trabajoListener);
-        textfieldPassword.textProperty().addListener(this::passwordListener);
-        textfieldLogin.textProperty().addListener(this::loginListener);
+        textfieldEmail.textProperty().addListener(this::textfieldListener);
+        textfieldNombApell.textProperty().addListener(this::textfieldListener);
+        textfieldSalario.textProperty().addListener(this::textfieldListener);
+        textfieldTrabajo.textProperty().addListener(this::textfieldListener);
+        textfieldPassword.textProperty().addListener(this::textfieldListener);
+        textfieldLogin.textProperty().addListener(this::textfieldListener);
         buttonAniadir.setOnAction(this::clickAniadir);
         buttonModificar.setOnAction(this::clickModificar);
-        buttonOk.setOnAction(this::clickOk);
-        buttonVolver.setOnAction(this::clickVolver);
         buttonLimpiar.setOnAction(this::limpiarListener);
-        //comboBox.valueProperty().addListener(this::listenerCb);
+        table.getSelectionModel().selectedItemProperty().addListener(this::clickTabla);
     }
 
-    public void loadEmployees(ObservableList<Employee> employees) {
+    private void loadEmployeesTable(ObservableList<Employee> employees) {
         tableEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
         tableNombApell.setCellValueFactory(new PropertyValueFactory<>("fullName"));
         tableSalario.setCellValueFactory(new PropertyValueFactory<>("wage"));
         tableTrabajo.setCellValueFactory(new PropertyValueFactory<>("job"));
         tableLogin.setCellValueFactory(new PropertyValueFactory<>("login"));
-
+        
         table.setItems(employees);
     }
 
-    public void clickBuscar(ActionEvent event) {
+    private void clickBuscar(ActionEvent event) {
         if (comboBox.getValue().equals("Nombre")) {
             String name = textfieldBuscar.getText();
             employees = FXCollections.observableArrayList(employeeInt.getEmployeesByName(name));
@@ -179,85 +182,8 @@ public class EmployeeManagementController {
         table.setItems(employees);
     }
 
-    public void emailListener(ObservableValue observable, String oldValue, String newValue) {
-        comprobarAniadir();
-    }
-
-    public void fullNameListener(ObservableValue observable, String oldValue, String newValue) {
-        comprobarAniadir();
-    }
-
-    public void salarioListener(ObservableValue observable, String oldValue, String newValue) {
-        comprobarAniadir();
-    }
-
-    public void trabajoListener(ObservableValue observable, String oldValue, String newValue) {
-        comprobarAniadir();
-    }
-
-    public void loginListener(ObservableValue observable, String oldValue, String newValue) {
-        comprobarAniadir();
-    }
-
-    public void passwordListener(ObservableValue observable, String oldValue, String newValue) {
-        comprobarAniadir();
-    }
-
-    public void limpiarListener(ActionEvent event) {
-        limpiarCampos();
-    }
-
-    public void comprobarAniadir() {
-        if (textfieldEmail.getText().compareToIgnoreCase("") != 0
-                && textfieldNombApell.getText().compareToIgnoreCase("") != 0
-                && textfieldSalario.getText().compareToIgnoreCase("") != 0
-                && textfieldTrabajo.getText().compareToIgnoreCase("") != 0
-                && textfieldPassword.getText().compareToIgnoreCase("") != 0
-                && textfieldLogin.getText().compareToIgnoreCase("") != 0) {
-            buttonAniadir.setDisable(false);
-        } else {
-            buttonAniadir.setDisable(true);
-        }
-    }
-
-    public void clickAniadir(ActionEvent event) {
-
-        Boss boss = new Boss();
-        boss.setId(1);
-
-        Employee employee = new Employee();
-        employee.setJob(textfieldTrabajo.getText().trim());
-        employee.setEmail(textfieldEmail.getText().trim());
-        employee.setFullName(textfieldNombApell.getText().trim());
-        employee.setWage(Float.parseFloat(textfieldSalario.getText().trim()));
-        employee.setLogin(textfieldLogin.getText().trim());
-        employee.setPassword(textfieldPassword.getText().trim());
-        employee.setLastAccess(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)));
-        employee.setLastPasswordChange(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)));
-        employee.setBoss(boss);
-        employee.setStatus(UserStatus.ENABLED);
-
-        employeeInt.createEmployee(employee);
-
-        employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
-        table.setItems(employees);
-
-        limpiarCampos();
-    }
-
-    @FXML
-    private void cbListener(ActionEvent event) {
-        buttonBuscar.setDisable(false);
-        if (comboBox.getValue().equals("Todos")) {
-            textfieldBuscar.setText("");
-            textfieldBuscar.setDisable(true);
-        } else {
-            textfieldBuscar.setDisable(false);
-        }
-    }
-
-    public void clickModificar(ActionEvent event) {
-        buttonOk.setDisable(false);
+    private void clickTabla(ObservableValue observable, Object oldValue, Object newValue) {
+        buttonModificar.setDisable(false);
         Employee selectedEmp = ((Employee) table.getSelectionModel()
                 .getSelectedItem());
 
@@ -270,7 +196,7 @@ public class EmployeeManagementController {
         savedEmail = selectedEmp.getEmail();
     }
 
-    public void clickOk(ActionEvent event) {
+    private void clickModificar(ActionEvent event) {
 
         Boolean confirmar = mostrarAlertConfirmation("Modify", "Are you sure you want to modify?");
 
@@ -293,24 +219,64 @@ public class EmployeeManagementController {
         }
     }
 
-    public void clickVolver(ActionEvent event) {
-        try {
-            //Mensaje Logger al acceder al método
-            LOGGER.log(Level.INFO, "Método start de la aplicación");
-            //New FXMLLoader Añadir el fxml de MenuPrincipal que es la ventana principal
-            FXMLLoader loader = new FXMLLoader(getClass().
-                    getResource("/view/MenuPrincipal.fxml"));
-            //Parent es una clase gráfica de nodos xml son nodos.
-            Parent root = (Parent) loader.load();
-            //Relacionamos el documento FXML con el controlador que le va a controlar.
-            MenuPrincipalController menuPrincipalController = (MenuPrincipalController) loader.getController();
-            //Llamada al método setStage del controlador de la ventana Menu principal. Pasa la ventana.
-            menuPrincipalController.setStage(stage);
-            //Llamada al método initStage del controlador de la ventana Menu principal. Pasa el documento fxml en un nodo.
-            menuPrincipalController.initStage(root);
-            //Llamada al método inicializarComponenentesVentana del controlador de la ventana signIn.
-        } catch (IOException ex) {
-            Logger.getLogger(EmployeeManagementController.class.getName()).log(Level.SEVERE, null, ex);
+    private void textfieldListener(ObservableValue observable, String oldValue, String newValue) {
+        comprobarAniadir();
+    }
+
+    private void limpiarListener(ActionEvent event) {
+        limpiarCampos();
+    }
+
+    private void comprobarAniadir() {
+        if (textfieldEmail.getText().compareToIgnoreCase("") != 0
+                && textfieldNombApell.getText().compareToIgnoreCase("") != 0
+                && textfieldSalario.getText().compareToIgnoreCase("") != 0
+                && textfieldTrabajo.getText().compareToIgnoreCase("") != 0
+                && textfieldPassword.getText().compareToIgnoreCase("") != 0
+                && textfieldLogin.getText().compareToIgnoreCase("") != 0) {
+            buttonAniadir.setDisable(false);
+        } else {
+            buttonAniadir.setDisable(true);
+        }
+    }
+
+    private void clickAniadir(ActionEvent event) {
+
+        Boolean confirmar = mostrarAlertConfirmation("Create", "Are you sure you want to create?");
+
+        if (confirmar) {
+            Boss boss = new Boss();
+            boss.setId(1);
+
+            Employee employee = new Employee();
+            employee.setJob(textfieldTrabajo.getText().trim());
+            employee.setEmail(textfieldEmail.getText().trim());
+            employee.setFullName(textfieldNombApell.getText().trim());
+            employee.setWage(Float.parseFloat(textfieldSalario.getText().trim()));
+            employee.setLogin(textfieldLogin.getText().trim());
+            employee.setPassword(textfieldPassword.getText().trim());
+            employee.setLastAccess(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)));
+            employee.setLastPasswordChange(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)));
+            employee.setBoss(boss);
+            employee.setStatus(UserStatus.ENABLED);
+
+            employeeInt.createEmployee(employee);
+
+            employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
+            table.setItems(employees);
+
+            limpiarCampos();
+        }
+    }
+
+    @FXML
+    private void cbListener(ActionEvent event) {
+        buttonBuscar.setDisable(false);
+        if (comboBox.getValue().equals("Todos")) {
+            textfieldBuscar.setText("");
+            textfieldBuscar.setDisable(true);
+        } else {
+            textfieldBuscar.setDisable(false);
         }
     }
 
@@ -336,7 +302,7 @@ public class EmployeeManagementController {
         return confirm;
     }
 
-    public void limpiarCampos() {
+    private void limpiarCampos() {
         textfieldEmail.setText("");
         textfieldNombApell.setText("");
         textfieldSalario.setText("");
@@ -345,4 +311,5 @@ public class EmployeeManagementController {
         textfieldPassword.setText("");
 
     }
+
 }

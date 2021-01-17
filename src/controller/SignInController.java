@@ -3,12 +3,14 @@ package controller;
 import utilMethods.MetodosUtiles;
 import bussinesLogic.UserFactory;
 import bussinesLogic.UserInterface;
-import static com.google.common.base.Predicates.instanceOf;
+import exceptions.ExcepcionUserNoExiste;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -42,7 +44,7 @@ public class SignInController {
      * Una ventana sobre la que se coloca una escena.
      */
     private Stage stage;
-    
+
     UserInterface userImp = UserFactory.getUserImp();
     /**
      * Longitud máxima de los campos de texto permitida.
@@ -168,7 +170,7 @@ public class SignInController {
         LOGGER.log(Level.INFO, "Evento del Hyperlink clickado. ");
         try {
             //Llamada a método abrirVentanaSignUp
-            //abrirVentanaSignUp(); 
+            openChangePasswordWindow();
         } catch (Exception e) {
             //Escribir en el label.
             lblErrorExcepcion.setText("Intentalo mas tarde. Fallo la conexión");
@@ -249,90 +251,88 @@ public class SignInController {
      * como atributo esta clase y que implementa la Interfaz.
      */
     private void enviarDatosServidorBBDD() {
-        //Cuando entra a este método sabemos que los campos usuario y contraseña cumplen todas las condiciones preestablecidas.
-        LOGGER.info("Iniciando ControllerSignIn.EnviarDatosServidorBBDD");
-        //Almacenar en el objeto de la clase User los datos recogidos de los campos de la ventana.
-        //try {
-        User user = userImp.login(txtFieldUsuario.getText().trim(), ClavePublicaCliente.cifrarTexto(pswFieldContrasena.getText().trim()));
-        if (user != null) {
-            if (user instanceof Boss) {
-                lblErrorExcepcion.setText("Soy Jefe");
-            } else if (user instanceof Employee) {
-                lblErrorExcepcion.setText("Soy Empleado");
+        try {
+            //Cuando entra a este método sabemos que los campos usuario y contraseña cumplen todas las condiciones preestablecidas.
+            LOGGER.info("Iniciando ControllerSignIn.EnviarDatosServidorBBDD");
+            //Almacenar en el objeto de la clase User los datos recogidos de los campos de la ventana.
+            User user = userImp.login(txtFieldUsuario.getText().trim(), ClavePublicaCliente.cifrarTexto(pswFieldContrasena.getText().trim()));
+            if (user != null) {
+                if(user instanceof Boss)
+                    openMenuWindowBoss(user);
+                else if(user instanceof Employee)
+                    openMenuWindowEmployee(user);
+                
+            } else {
+                //Vaciar campos de texto
+                txtFieldUsuario.setText("");
+                pswFieldContrasena.setText("");
+                //Colocar el texto de la excepción en el label
+                lblErrorExcepcion.setText("Se ha producido un error. Lo sentimos. Inténtalo mas tarde");
+                //Cambia de color el texto del label, en este caso a rojo
+                lblErrorExcepcion.setTextFill(Color.web("#ff0000"));
             }
-        } else {
+        } catch (ExcepcionUserNoExiste ex) {
+            Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
             //Vaciar campos de texto
             txtFieldUsuario.setText("");
             pswFieldContrasena.setText("");
             //Colocar el texto de la excepción en el label
-            lblErrorExcepcion.setText("Se ha producido un error. Lo sentimos. Inténtalo mas tarde");
-            //Cambia de color el texto del label, en este caso a rojo
-            lblErrorExcepcion.setTextFill(Color.web("#ff0000"));
-        }
-
-        //} catch (Exception ex3) {
-        //}
-    }
-
-    /**
-     * Cargar la escena de LogOut en la ventana. Se le pasa el usuario para que
-     * pueda cerrar la sesión.
-     */
-    /*
-    private void abrirVentanaLogOut(User usuario) throws Exception{
-        //Se ha pulsado el botón y los datos han sido validados en la BBDD.
-        LOGGER.log(Level.INFO,"Abriendo ventana LogOut. ");
-        try{
-            //New FXMLLoader Añadir el fxml de logout que es la escena a la que se redirige si todo va bien
-            FXMLLoader loader = new FXMLLoader(getClass().
-                    getResource("/vista/FXMLDocumentLogOut.fxml"));
-            //Parent es una clase gráfica de nodos. xml son nodos.
-            Parent root = (Parent)loader.load();
-            //Relacionamos el documento FXML con el controlador que le va a controlar.
-            FXMLDocumentLogOutController controladorLogOut = (FXMLDocumentLogOutController)loader.getController();
-            //Pasar el usuario al controlador de la ventana logOut.
-            controladorLogOut.setUsuario(usuario);
-            //Llamada al método setStage del controlador de la ventana signIn. Pasa la ventana.
-            controladorLogOut.setStage(stage);
-            //Llamada al método setSignable del controlador de la escena logOut. Pasa instancia SignImplementation.
-            controladorLogOut.setSignable(signable);
-            //Llamada al método initStage del controlador de la ventana LogOut. Pasa el documento fxml en un nodo.
-            controladorLogOut.initStage(root);
-        //Error al cargar la nueva escena, mostrar mensaje.
-        }catch(IOException e){
-            lblErrorExcepcion.setText("Se ha producido un error. Lo sentimos. Inténtalo mas tarde");
+            lblErrorExcepcion.setText("El usuario no existe");
             //Cambia de color el texto del label, en este caso a rojo
             lblErrorExcepcion.setTextFill(Color.web("#ff0000"));
         }
     }
-     */
-    /**
-     * Carga la ventana signUup para que el usuario se registre.
-     */
-    /*
-    private void abrirVentanaSignUp() {
-        //A este método llegamos cuando se clicka en el Hyperlink.
-        LOGGER.log(Level.INFO,"Abriendo ventana SignUp. ");
-        try{
-            //New FXMLLoader Añadir el fxml de signUp que es la escena a la que se redirige si todo va bien
+
+    private void openMenuWindowEmployee(User user) {
+        try {
+            //Mensaje Logger al acceder al método
+            LOGGER.log(Level.INFO, "Método para abrir el menu principal de la aplicación");
+            //New FXMLLoader Añadir el fxml de MenuPrincipal que es la ventana principal
             FXMLLoader loader = new FXMLLoader(getClass().
-                getResource("/vista/FXMLDocumentSignUp.fxml"));
+                    getResource("/view/FXMLEmployeeManagement.fxml"));
             //Parent es una clase gráfica de nodos xml son nodos.
-            Parent root = (Parent)loader.load();
+            Parent root = (Parent) loader.load();
             //Relacionamos el documento FXML con el controlador que le va a controlar.
-            FXMLDocumentSignUpController controladorSignUp = (FXMLDocumentSignUpController)loader.getController();   
-            //Llamada al método setSignable del controlador de la ventana signUp. Pasa instancia SignImplementation.
-            controladorSignUp.setSignable(signable);
-            //Pasa la ventana al controlador de la ventana signUp
-            controladorSignUp.setStage(stage);
-            //Llamada al método initStage del controlador de la ventana signUp. Pasa el documento fxml en un nodo.
-            controladorSignUp.initStage(root);
-        //Error al cargar la nueva escenamostrar mensaje.
-        }catch(IOException e){
-            lblErrorExcepcion.setText("Se ha producido un error. Lo sentimos. Inténtalo mas tarde");
-            //Cambia de color el texto del label, en este caso a rojo
-            lblErrorExcepcion.setTextFill(Color.web("#ff0000"));
+            EmployeeManagementController employeeManagementController = (EmployeeManagementController) loader.getController();
+            //Introducir el user a la ventana
+            employeeManagementController.setUser(user);
+            //Llamada al método setStage del controlador de la ventana SignIn. Pasa la ventana.
+            employeeManagementController.setStage(stage);
+            //Llamada al método initStage del controlador de la ventana SignIn. Pasa el documento fxml en un nodo.
+            employeeManagementController.initStage(root);
+            //Llamada al método inicializarComponenentesVentana del controlador de la ventana signIn.
+        } catch (IOException ex) {
+            Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    /**
+     * Carga la ventana ChangePassword para que el usuario se pueda recuperar y
+     * cambiar su contraseña.
      */
+    private void openChangePasswordWindow() {
+        try {
+            //Mensaje Logger al acceder al método
+            LOGGER.log(Level.INFO, "Método para abrir el menu principal de la aplicación");
+            //New FXMLLoader Añadir el fxml de MenuPrincipal que es la ventana principal
+            FXMLLoader loader = new FXMLLoader(getClass().
+                    getResource("/view/FXMLCPSendMail.fxml"));
+            //Parent es una clase gráfica de nodos xml son nodos.
+            Parent root = (Parent) loader.load();
+            //Relacionamos el documento FXML con el controlador que le va a controlar.
+            CPSendMailController cpSendMailController = (CPSendMailController) loader.getController();
+            //Llamada al método setStage del controlador de la ventana SignIn. Pasa la ventana.
+            cpSendMailController.setStage(stage);
+            //Llamada al método initStage del controlador de la ventana SignIn. Pasa el documento fxml en un nodo.
+            cpSendMailController.initStage(root);
+            //Llamada al método inicializarComponenentesVentana del controlador de la ventana signIn.
+        } catch (IOException ex) {
+            Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void openMenuWindowBoss(User user) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

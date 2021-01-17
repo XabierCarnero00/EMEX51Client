@@ -5,6 +5,7 @@
  */
 package clientREST;
 
+import exceptions.ExcepcionContraseñaNoCoincide;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
@@ -50,6 +51,12 @@ public class EmployeeREST {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
+    public <T> T findEmployeeByEmail(Class<T> responseType, String email) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("email/{0}", new Object[]{email}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
     public void create(Object requestEntity) throws ClientErrorException {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
@@ -64,8 +71,12 @@ public class EmployeeREST {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
     }
 
+    public void changePassword(Object requestEntity, String tempPassword) throws ClientErrorException {
+        webTarget.path(java.text.MessageFormat.format("newPasswordEmp/{0}", new Object[]{tempPassword})).request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
+    }
+
     public void close() {
         client.close();
     }
-    
+
 }

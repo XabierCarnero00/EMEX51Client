@@ -1,5 +1,5 @@
 
-package excepciones;
+package exceptions;
 
 /**
  * Excepción que señala que el usuario ya existe.

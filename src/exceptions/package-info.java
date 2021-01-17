@@ -5,5 +5,5 @@
  * @since 02/11/2020
  * @author Eneko, Endika, Markel
  */
-package excepciones;
+package exceptions;
 

@@ -1,5 +1,5 @@
 
-package excepciones;
+package exceptions;
 
 /**
  * Excepción que señala que la contraseña es incorrecta.
@@ -8,9 +8,7 @@ package excepciones;
  * @author Eneko, Endika, Markel
  */
 public class ExcepcionPasswdIncorrecta extends Exception {
-    
     public ExcepcionPasswdIncorrecta (){
         super("Password incorrecto.");
-    }
-    
+    }    
 }
