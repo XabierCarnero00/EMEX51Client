@@ -7,7 +7,9 @@ package businessLogic;
 
 import clientREST.ArmyREST;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.GenericType;
 import model.Army;
 
@@ -46,10 +48,44 @@ public class ArmyImplementation implements ArmyInterface {
 
         return armyReturn;
     }
-    
+
     @Override
-    public List<Army> getArmysByAmmunition(Integer ammunition){
-        return armyRest.findArmyByMuniton(new GenericType<List<Army>>(){}, Integer.toString(ammunition));
+    public List<Army> getArmysByAmmunition(Integer ammunition) {
+        return armyRest.findArmyByMuniton(new GenericType<List<Army>>() {
+        }, Integer.toString(ammunition));
+    }
+
+    public List<Army> getArmysByDate(Date date) throws BusinessLogicException {
+        try {
+            List<Army> armys = getAllArmys();
+            List<Army> armyReturn = new ArrayList();
+            for (Army a : armys) {
+                if (a.getArrivalDate().compareTo(date) == 0) {
+                    armyReturn.add(a);
+                }
+            }
+            return armyReturn;
+        } catch (WebApplicationException ex) {
+            throw new BusinessLogicException("Error getting armys by date");
+        }
+    }
+
+    @Override
+    public void editArmy(Army army) throws BusinessLogicException {
+        try {
+            armyRest.edit(army);
+        } catch (WebApplicationException ex) {
+            throw new BusinessLogicException("Error editing army");
+        }
+    }
+
+    @Override
+    public void createArmy(Army army) throws BusinessLogicException {
+        try {
+            armyRest.create(army);
+        } catch (WebApplicationException ex) {
+            throw new BusinessLogicException("Error creating army");
+        }
     }
 
 }

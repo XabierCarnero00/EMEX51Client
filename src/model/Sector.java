@@ -192,6 +192,6 @@ public class Sector implements Serializable {
      */
     @Override
     public String toString() {
-        return "Sector{" + "idSector=" + id + '}';
+        return name;
     }
 }

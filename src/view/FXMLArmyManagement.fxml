@@ -30,17 +30,19 @@
                                 <TextField fx:id="textfieldBuscar" layoutX="320.0" layoutY="60.0" prefHeight="25.0" prefWidth="183.0" promptText="Buscar" />
                                 <Button fx:id="buttonBuscar" layoutX="510.0" layoutY="60.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="97.0" text="Buscar" />
                         <ComboBox fx:id="comboBox" layoutX="320.0" layoutY="92.0" onAction="#cbListener" prefHeight="25.0" prefWidth="287.0" />
-                                <DatePicker fx:id="datePicker" layoutX="376.0" layoutY="131.0" />
-                                <TableView fx:id="tableView" layoutX="307.0" layoutY="167.0" prefHeight="295.0" prefWidth="300.0">
+                                <DatePicker fx:id="datePicker" layoutX="376.0" layoutY="131.0" onAction="#changeDatePicker" />
+                                <TableView fx:id="tableView" layoutX="148.0" layoutY="168.0" prefHeight="295.0" prefWidth="602.0">
                                     <columns>
-                                        <TableColumn fx:id="tableColumnNombre" prefWidth="96.0" text="Nombre" />
-                                        <TableColumn fx:id="tableColumnMunicion" prefWidth="96.0" text="Munición" />
-                                        <TableColumn fx:id="tableColumnFechaLlegada" prefWidth="107.0" text="Fecha llegada" />
+                                        <TableColumn fx:id="tableColumnNombre" prefWidth="168.5" text="Nombre" />
+                                        <TableColumn fx:id="tableColumnMunicion" minWidth="0.0" prefWidth="120.5" text="Munición" />
+                                        <TableColumn fx:id="tableColumnFechaLlegada" minWidth="0.0" prefWidth="164.0" text="Fecha llegada" />
+                              <TableColumn fx:id="tableColumnSector" prefWidth="148.0" text="Sector" />
                                     </columns>
                                 </TableView>
-                                <TextField fx:id="textfieldNombre" layoutX="307.0" layoutY="475.0" prefHeight="25.0" prefWidth="149.0" promptText="Nombre" />
-                                <TextField fx:id="textfieldMunicion" layoutX="468.0" layoutY="475.0" prefHeight="25.0" prefWidth="139.0" promptText="Municion" />
-                                <Button fx:id="buttonAniadir" layoutX="625.0" layoutY="475.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="81.0" text="Añadir" />
+                                <TextField fx:id="textfieldNombre" layoutX="164.0" layoutY="475.0" prefHeight="25.0" prefWidth="149.0" promptText="Nombre" />
+                                <TextField fx:id="textfieldMunicion" layoutX="325.0" layoutY="475.0" prefHeight="25.0" prefWidth="139.0" promptText="Municion" />
+                        <DatePicker fx:id="datePickerAniadir" layoutX="475.0" layoutY="475.0" promptText="EnterDate" />
+                                <Button fx:id="buttonAniadir" layoutX="662.0" layoutY="475.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="81.0" text="Añadir" />
                                 <Button fx:id="buttonBorrar" layoutX="415.0" layoutY="507.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="67.0" text="Borrar" />
                             </children>
                             <opaqueInsets>

@@ -1,8 +1,10 @@
 package controller;
 
+import businessLogic.BusinessLogicException;
 import utilMethods.MetodosUtiles;
 import businessLogic.UserFactory;
 import businessLogic.UserInterface;
+import exceptions.ExcepcionPasswdIncorrecta;
 import exceptions.ExcepcionUserNoExiste;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -257,11 +259,12 @@ public class SignInController {
             //Almacenar en el objeto de la clase User los datos recogidos de los campos de la ventana.
             User user = userImp.login(txtFieldUsuario.getText().trim(), ClavePublicaCliente.cifrarTexto(pswFieldContrasena.getText().trim()));
             if (user != null) {
-                if(user instanceof Boss)
+                if (user instanceof Boss) {
                     openMenuWindowBoss(user);
-                else if(user instanceof Employee)
+                } else if (user instanceof Employee) {
                     openMenuWindowEmployee(user);
-                
+                }
+
             } else {
                 //Vaciar campos de texto
                 txtFieldUsuario.setText("");
@@ -278,6 +281,20 @@ public class SignInController {
             pswFieldContrasena.setText("");
             //Colocar el texto de la excepción en el label
             lblErrorExcepcion.setText("El usuario no existe");
+            //Cambia de color el texto del label, en este caso a rojo
+            lblErrorExcepcion.setTextFill(Color.web("#ff0000"));
+        } catch (ExcepcionPasswdIncorrecta ex) {
+            Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
+            //Vaciar campos de texto
+            txtFieldUsuario.setText("");
+            pswFieldContrasena.setText("");
+            //Colocar el texto de la excepción en el label
+            lblErrorExcepcion.setText("Incorrect password");
+            //Cambia de color el texto del label, en este caso a rojo
+            lblErrorExcepcion.setTextFill(Color.web("#ff0000"));
+        } catch (BusinessLogicException ex) {
+            Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);            //Colocar el texto de la excepción en el label
+            lblErrorExcepcion.setText("Error en el servidor. Intentelo de nuevo mas tarde");
             //Cambia de color el texto del label, en este caso a rojo
             lblErrorExcepcion.setTextFill(Color.web("#ff0000"));
         }

@@ -33,9 +33,9 @@ public class UserREST {
         webTarget = client.target(BASE_URI).path("user");
     }
 
-    public <T> T findUsersByLogin(Class<T> responseType, String login) throws ClientErrorException {
+    public <T> T comprobateUserType(Class<T> responseType, String login) throws ClientErrorException {
         WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("login/{0}", new Object[]{login}));
+        resource = resource.path(java.text.MessageFormat.format("compUserType/{0}", new Object[]{login}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 

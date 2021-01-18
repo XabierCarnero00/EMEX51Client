@@ -8,7 +8,11 @@ package businessLogic;
 import clientREST.UserREST;
 import exceptions.ExcepcionContraseñaNoCoincide;
 import exceptions.ExcepcionEmailNoExiste;
+import exceptions.ExcepcionPasswdIncorrecta;
 import exceptions.ExcepcionUserNoExiste;
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import model.Boss;
 import model.Employee;
@@ -24,31 +28,26 @@ public class UserImplementation implements UserInterface {
     UserREST userRest = new UserREST();
 
     @Override
-    public User login(String login, String password) throws ExcepcionUserNoExiste {
+    public User login(String login, String password) throws ExcepcionUserNoExiste, ExcepcionPasswdIncorrecta, BusinessLogicException {
         Employee employee = new Employee();
         Boss boss = new Boss();
+        User user = new User();
 
         try {
-            return loginBoss(boss, login, password);
-        } catch (Exception ex) {
-            try {
-                return loginEmpleado(employee, login, password);
-            } catch (Exception ex2) {
-                throw new ExcepcionUserNoExiste();
+            user = userRest.comprobateUserType(User.class, login);
+            if (user.getLogin().equals("Boss")) {
+                return boss = userRest.comprobateLogin(Boss.class, login, password);
+            } else if(user.getLogin().equals("Employee")) {
+                return employee = userRest.comprobateLogin(Employee.class, login, password);
             }
+        } catch (NotFoundException ex) {
+            throw new ExcepcionUserNoExiste();
+        } catch (NotAuthorizedException ex){
+            throw new ExcepcionPasswdIncorrecta();
+        } catch (InternalServerErrorException ex){
+            throw new BusinessLogicException(ex.getMessage());
         }
-    }
-
-    public Employee loginEmpleado(Employee employee, String login, String password) {
-
-        employee = userRest.comprobateLogin(Employee.class, login, password);
-        return employee;
-    }
-
-    public Boss loginBoss(Boss boss, String login, String password) {
-
-        boss = userRest.comprobateLogin(Boss.class, login, password);
-        return boss;
+        return null;
     }
 
     @Override
