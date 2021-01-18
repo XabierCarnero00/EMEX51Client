@@ -5,8 +5,6 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -16,26 +14,18 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLDocumentCreatureController">
+<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CreatureManagementController">
    <children>
-      <MenuBar prefWidth="894.0" VBox.vgrow="NEVER">
-         <menus>
-            <Menu fx:id="menuMenu" mnemonicParsing="false" text="Menu" />
-            <Menu fx:id="menuSector" mnemonicParsing="false" text="Sector" />
-            <Menu fx:id="menuEmpleado" mnemonicParsing="false" text="Empleado" />
-            <Menu fx:id="menuVisitante" mnemonicParsing="false" text="Visitante" />
-         </menus>
-      </MenuBar>
       <SplitPane focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
          <items>
             <ScrollPane prefHeight="-1.0" prefWidth="-1.0">
                <content>
-                  <AnchorPane id="Content" fx:id="arrivalDate" minHeight="-1.0" minWidth="-1.0" prefHeight="570.0" prefWidth="893.0">
+                  <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="570.0" prefWidth="893.0">
                      <children>
                         <TextField fx:id="txtFieldBuscar" layoutX="336.0" layoutY="61.0" prefHeight="16.0" prefWidth="220.0" promptText="Buscar" />
-                        <ComboBox fx:id="cmbBuscar" layoutX="336.0" layoutY="96.0" onAction="#accionComboPulsado" prefWidth="150.0" promptText="Seleccionar" />
+                        <ComboBox fx:id="cmbBuscar" layoutX="336.0" layoutY="96.0" prefWidth="150.0" promptText="Seleccionar" />
                         <Button fx:id="btnBuscar" layoutX="505.0" layoutY="96.0" mnemonicParsing="false" text="Buscar" />
-                        <TableView fx:id="tbCreature" layoutX="249.0" layoutY="136.0" prefHeight="316.0" prefWidth="425.0">
+                        <TableView fx:id="tbCreature" layoutX="250.0" layoutY="136.0" prefHeight="316.0" prefWidth="425.0">
                            <columns>
                               <TableColumn fx:id="colNombre" prefWidth="148.0" text="Nombre" />
                               <TableColumn fx:id="colEspecie" prefWidth="133.0" text="Especie" />
@@ -45,15 +35,16 @@
                         <TextField fx:id="txtFieldNombre" layoutX="249.0" layoutY="463.0" prefHeight="25.0" prefWidth="132.0" promptText="Nombre" />
                         <TextField fx:id="txtFieldEspecie" layoutX="393.0" layoutY="463.0" prefHeight="25.0" prefWidth="139.0" promptText="Especie" />
                         <DatePicker fx:id="datePickerFechaLlegada" layoutX="544.0" layoutY="463.0" prefHeight="25.0" prefWidth="130.0" />
-                        <Button fx:id="btnModificar" layoutX="377.0" layoutY="507.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="67.0" text="Modificar" />
-                        <Button fx:id="btnAnadir" layoutX="491.0" layoutY="507.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="67.0" text="Añadir" />
+                        <Button fx:id="btnModificar" layoutX="303.0" layoutY="507.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="67.0" text="Modificar" />
+                        <Button fx:id="btnAnadir" layoutX="414.0" layoutY="507.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="67.0" text="Añadir" />
                         <Button fx:id="btnVolver" layoutX="729.0" layoutY="507.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="67.0" text="Volver" />
-                        <Label fx:id="lblUsuario" layoutX="817.0" layoutY="15.0" text="tipoUsuario" />
+                        <Label fx:id="lblUsuario" layoutX="817.0" layoutY="15.0" />
                         <Label layoutX="370.0" layoutY="10.0" text="CRIATURAS">
                            <font>
                               <Font size="30.0" />
                            </font>
                         </Label>
+                        <Button fx:id="btnLimpiar" layoutX="531.0" layoutY="507.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="67.0" text="Limpiar" />
                      </children>
                      <opaqueInsets>
                         <Insets />

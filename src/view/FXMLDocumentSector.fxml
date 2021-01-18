@@ -4,8 +4,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -15,16 +13,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLDocumentSectorController">
+<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SectorManagementController">
    <children>
-      <MenuBar fx:id="menuSector" VBox.vgrow="NEVER">
-         <menus>
-            <Menu mnemonicParsing="false" text="Menu" />
-            <Menu mnemonicParsing="false" text="Sector" />
-            <Menu mnemonicParsing="false" text="Empleado" />
-            <Menu mnemonicParsing="false" text="Visitante" />
-         </menus>
-      </MenuBar>
       <SplitPane focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
          <items>
             <ScrollPane prefHeight="-1.0" prefWidth="-1.0">
@@ -42,8 +32,7 @@
                         <Button fx:id="btnAnadir" layoutX="603.0" layoutY="437.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="81.0" text="Añadir" />
                         <Button fx:id="btnBorrar" layoutX="659.0" layoutY="268.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="100.0" text="Borrar" />
                         <Button fx:id="btnIr" layoutX="659.0" layoutY="209.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="100.0" text="Ver Contenido" />
-                        <Button fx:id="btnVolver" layoutX="762.0" layoutY="507.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="82.0" text="Volver" />
-                        <Label fx:id="lblUsuario" layoutX="816.0" layoutY="14.0" prefHeight="17.0" prefWidth="66.0" text="tipoUsuario" />
+                        <Label fx:id="lblUsuario" layoutX="721.0" layoutY="14.0" prefHeight="17.0" prefWidth="161.0" text="tipoUsuario" />
                         <Label layoutX="383.0" layoutY="14.0" text="SECTORES">
                            <font>
                               <Font size="30.0" />

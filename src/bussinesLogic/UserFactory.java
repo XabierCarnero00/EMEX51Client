@@ -7,12 +7,12 @@ package bussinesLogic;
 
 /**
  *
- * @author xabig
+ * @author Endika Ubierna Lopez
  */
-public class EmployeeFactory {
-    
-    public static EmployeeInterface getEmployeeImp(){
-        return new EmployeeImplementation();
+public class UserFactory {
+        
+    public static UserManager getUserImp(){
+        return new UserManagerImplementation();
     }
     
 }

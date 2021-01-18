@@ -11,10 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="borderPaneIniciarSesion" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="407.0" prefWidth="617.0" 
-            xmlns="http://javafx.com/javafx/11.0.1"
-            xmlns:fx="http://javafx.com/fxml/1" 
-            fx:controller="controlador.FXMLDocumentSignInController">
+<BorderPane fx:id="borderPaneIniciarSesion" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="407.0" prefWidth="617.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SignInController">
    <top>
       <Label fx:id="lblTituloIniciarSesion" text="INICIAR SESIÓN" BorderPane.alignment="CENTER">
          <font>
@@ -68,6 +65,8 @@
             </HBox>
             <VBox prefHeight="200.0" prefWidth="100.0">
                <children>
+                  <Label text="¿Has olvidado la contraseña?" />
+                  <Hyperlink fx:id="hplContrasenia" text="Recuperar contraseña" />
                   <Label fx:id="lblErrorExcepcion">
                      <VBox.margin>
                         <Insets top="15.0" />
@@ -79,7 +78,7 @@
       </VBox>
    </center>
    <left>
-      <VBox prefHeight="277.0" prefWidth="155.0" BorderPane.alignment="CENTER" />
+      <VBox prefHeight="305.0" prefWidth="155.0" BorderPane.alignment="CENTER" />
    </left>
    <bottom>
       <Button fx:id="btnEntrar" mnemonicParsing="false" text="ENTRAR" BorderPane.alignment="CENTER">

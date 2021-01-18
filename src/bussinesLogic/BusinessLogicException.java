@@ -6,8 +6,8 @@
 package bussinesLogic;
 
 /**
- *
- * @author endika
+ * General error thrown in the Emex51 client application business tier.
+ * @author Endika Ubierna Lopez, Xabier Carnero, Markel Lopez de Uralde.
  */
 public class BusinessLogicException extends Exception{
     public BusinessLogicException(String msg){

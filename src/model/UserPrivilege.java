@@ -1,7 +1,6 @@
 
 package model;
 
-
 /**
  * This enumeration is for users profiles. Includes the values USER and ADMIN. 
  * @since 23/11/2020
@@ -10,11 +9,15 @@ package model;
  */
 public enum UserPrivilege{
     /**
-     * The user is a regular user.
+     * The user is a {@link Boss}.
      */
-    USER,
+    BOSS,
     /**
-     * The user is a privileged user.
+     * The user is an {@link Employee}.
      */
-    ADMIN
+    EMPLOYEE,
+    /**
+     * The user is a {@link Visitor}.
+     */
+    VISITOR;
 }

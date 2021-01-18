@@ -6,7 +6,6 @@
 package bussinesLogic;
 
 import java.util.List;
-import javax.security.auth.login.LoginException;
 import model.Creature;
 import model.Sector;
 

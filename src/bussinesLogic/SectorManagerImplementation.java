@@ -135,6 +135,7 @@ public class SectorManagerImplementation implements SectorManager{
 
     @Override
     public void sectorNameIsRegistered(String name) throws BusinessLogicException, SectorExistException {
+        LOGGER.info("Metodo sectorNameIsRegistered de la clase SectorManagerImplementation.");
         List <Sector> sectores = null;
         try{
             sectores = this.webClient.findSectorsByName(new GenericType<List<Sector>>(){}, name);

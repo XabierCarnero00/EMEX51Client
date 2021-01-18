@@ -5,9 +5,6 @@
  */
 package bussinesLogic;
 
-import bussinesLogic.SectorManager;
-import bussinesLogic.SectorManagerImplementation;
-
 /**
  * This class is a factory for {@link SectorManager} interface.
  * @author Endika Ubierna Lopez.

@@ -21,6 +21,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class Boss extends User implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    public Boss(String login, String email, String fullName, String password) {
+        super(login, email, fullName, password);
+        this.wage = 3500;
+        super.setPrivilege(UserPrivilege.BOSS);
+    }
+
+    public Boss() {
+    }
+    
     /**
      * The Boss of the boss.
      */
@@ -29,13 +39,6 @@ public class Boss extends User implements Serializable {
      * The list of {@link Employee} of the boss.
      */
     private Set<Employee> employees;
-
-    /**
-     * Class constructor.
-     */
-    public Boss() {
-    }
-
     /**
      * Gets the wages of the boss.
      * @return The Boss value.

@@ -6,8 +6,8 @@
 package bussinesLogic;
 
 /**
- *
- * @author endika
+ * Exception thrown when a new <code>Creature</code> is created and the name is already registered. 
+ * @author Endika Ubierna Lopez
  */
 public class CreaturaExistException extends Exception{
     public CreaturaExistException(String msg){
