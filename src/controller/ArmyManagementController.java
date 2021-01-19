@@ -8,6 +8,8 @@ package controller;
 import businessLogic.ArmyFactory;
 import businessLogic.ArmyInterface;
 import businessLogic.BusinessLogicException;
+import businessLogic.SectorFactory;
+import businessLogic.SectorInterface;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
@@ -31,6 +33,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import static javafx.scene.input.KeyCode.T;
@@ -59,6 +62,8 @@ public class ArmyManagementController {
     User user;
 
     ArmyInterface armyInt = ArmyFactory.getArmyImp();
+    
+    SectorInterface sectorInt = SectorFactory.getSector();
 
     ObservableList armys;
 
@@ -87,9 +92,9 @@ public class ArmyManagementController {
 
     @FXML
     private TableColumn<Army, Date> tableColumnFechaLlegada;
-    
+
     @FXML
-    private TableColumn<Sector, Integer> tableColumnSector;
+    private TableColumn<Sector, String> tableColumnSector;
 
     @FXML
     private TextField textfieldNombre;
@@ -102,7 +107,7 @@ public class ArmyManagementController {
 
     @FXML
     private Button buttonBorrar;
-    
+
     @FXML
     private DatePicker datePickerAniadir;
 
@@ -125,26 +130,26 @@ public class ArmyManagementController {
     public void initStage(Parent root) {
         try {
             Scene scene = new Scene(root);
-            
+
             stage.setScene(scene);
-            
+
             stage.setTitle("Army Management");
             stage.setResizable(false);
-            
+
             buttonAniadir.setDisable(true);
             buttonBorrar.setDisable(true);
             buttonBuscar.setDisable(true);
-            
+
             ObservableList<String> cbOptions = FXCollections.observableArrayList();
             cbOptions.addAll("Nombre", "Municion", "Todos");
             comboBox.setItems(cbOptions);
-            
+
             armys = FXCollections.observableArrayList(armyInt.getAllArmys());
             loadArmysTable(armys);
             makeTableEditable();
-            
+
             stage.show();
-            
+
             textfieldMunicion.textProperty().addListener(this::municionListener);
             textfieldNombre.textProperty().addListener(this::nombreListener);
             buttonBuscar.setOnAction(this::clickBuscar);
@@ -152,7 +157,7 @@ public class ArmyManagementController {
         } catch (BusinessLogicException ex) {
             Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 
     private void makeTableEditable() {
@@ -167,7 +172,6 @@ public class ArmyManagementController {
                 LOGGER.info("Error al updatear en la lambda del nombre edit");
             }
         });
-
         tableColumnMunicion.setCellFactory(TextFieldTableCell.<Army, Integer>forTableColumn(new IntegerStringConverter()));
         tableColumnMunicion.setOnEditCommit((CellEditEvent<Army, Integer> t) -> {
             try {
@@ -179,7 +183,23 @@ public class ArmyManagementController {
                 LOGGER.info("Error al updatear en la lambda del nombre edit");
             }
         });
-
+        
+        /*
+        ObservableList<Sector> options = FXCollections.observableArrayList(sectorInt.getAllSectors());
+        tableColumnSector.setCellFactory(ComboBoxTableCell.forTableColumn(options));
+        tableColumnSector.setOnEditCommit((CellEditEvent<Sector, String> t) -> {
+        try {
+        t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getNewValue());
+        Sector sector = t.getRowValue();
+        Army army = new Army();
+        armyInt.editArmy(army);
+        } catch (BusinessLogicException ex) {
+        Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
+        LOGGER.info("Error al updatear en la lambda del nombre edit");
+        }
+        });
+        */
+        
         tableView.setEditable(true);
     }
 
@@ -227,9 +247,8 @@ public class ArmyManagementController {
                     army.setArrivalDate(Date.from(datePickerAniadir.getValue().atStartOfDay().toInstant(ZoneOffset.UTC)));
 
                     armyInt.createArmy(army);
-                    
+
                     //Actualizar lista
-                    
                     textfieldNombre.setText("");
                     textfieldMunicion.setText("");
                     datePickerAniadir.setValue(LocalDate.parse(""));
@@ -252,7 +271,7 @@ public class ArmyManagementController {
             textfieldBuscar.setDisable(false);
         }
     }
-    
+
     @FXML
     private void changeDatePicker(ActionEvent event) {
         try {

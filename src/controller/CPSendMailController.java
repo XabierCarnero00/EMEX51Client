@@ -22,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import utilMethods.MetodosUtiles;
 
 /**
  *
@@ -81,13 +82,19 @@ public class CPSendMailController {
     }
 
     public void clickEnviar(ActionEvent event) {
-        try {
-            userInt.temporalPass(textfieldEmail.getText().trim());
-            openNewPasswordWindow(textfieldEmail.getText().trim());
-        } catch (ExcepcionEmailNoExiste ex) {
-            Logger.getLogger(CPSendMailController.class.getName()).log(Level.SEVERE, null, ex);
+        if (MetodosUtiles.validateEmail(textfieldEmail.getText().trim())) {
+            try {
+                userInt.temporalPass(textfieldEmail.getText().trim());
+                openNewPasswordWindow(textfieldEmail.getText().trim());
+            } catch (ExcepcionEmailNoExiste ex) {
+                Logger.getLogger(CPSendMailController.class.getName()).log(Level.SEVERE, null, ex);
+                textfieldEmail.setText("");
+                labelError.setText("No existen usuarios con ese email");
+                labelError.setTextFill(Color.web("#ff0000"));
+            }
+        } else {
             textfieldEmail.setText("");
-            labelError.setText("No existen usuarios con ese email");
+            labelError.setText("Introduce un email valido");
             labelError.setTextFill(Color.web("#ff0000"));
         }
     }

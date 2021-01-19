@@ -8,7 +8,6 @@ package businessLogic;
 import clientREST.EmployeeREST;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.core.GenericType;
 import model.Employee;
 import securityClient.ClavePublicaCliente;
@@ -19,11 +18,11 @@ import securityClient.ClavePublicaCliente;
  */
 public class EmployeeImplementation implements EmployeeInterface {
 
+    EmployeeREST employeeRest = new EmployeeREST();
+
     @Override
     public List<Employee> getAllEmpoyees() {
         List<Employee> employees = new ArrayList();
-
-        EmployeeREST employeeRest = new EmployeeREST();
 
         employees = employeeRest.findAllEmployees(new GenericType<List<Employee>>() {
         });
@@ -35,8 +34,6 @@ public class EmployeeImplementation implements EmployeeInterface {
     public List<Employee> getEmployeesByName(String name) {
         List<Employee> employees = new ArrayList();
 
-        EmployeeREST employeeRest = new EmployeeREST();
-
         employees = employeeRest.findEmployeesByName(new GenericType<List<Employee>>() {
         }, name);
 
@@ -47,8 +44,6 @@ public class EmployeeImplementation implements EmployeeInterface {
     public List<Employee> getEmployeesByEmail(String email) {
         List<Employee> employeesAux = new ArrayList();
         List<Employee> employees = new ArrayList();
-
-        EmployeeREST employeeRest = new EmployeeREST();
 
         employeesAux = employeeRest.findAllEmployees(new GenericType<List<Employee>>() {
         });
@@ -64,20 +59,13 @@ public class EmployeeImplementation implements EmployeeInterface {
 
     @Override
     public void createEmployee(Employee employee) {
-        EmployeeREST employeeRest = new EmployeeREST();
-        try {
-            employee.setPassword(ClavePublicaCliente.cifrarTexto(employee.getPassword()));
-            employeeRest.create(employee);
-        } catch (ClientErrorException e) {
-            System.err.println("hola");
-        }
+        employee.setPassword(ClavePublicaCliente.cifrarTexto(employee.getPassword()));
+        employeeRest.create(employee);
     }
 
     @Override
     public Employee getSingleEmployeeByEmail(String email) {
         List<Employee> employees = new ArrayList();
-
-        EmployeeREST employeeRest = new EmployeeREST();
 
         employees = employeeRest.findAllEmployees(new GenericType<List<Employee>>() {
         });
@@ -93,9 +81,12 @@ public class EmployeeImplementation implements EmployeeInterface {
 
     @Override
     public void updateEmployee(Employee employee) {
-        EmployeeREST employeeRest = new EmployeeREST();
-
         employeeRest.edit(employee);
+    }
+
+    @Override
+    public void deleteEmployee(String id) {
+        employeeRest.remove(id);
     }
 
 }

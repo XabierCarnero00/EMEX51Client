@@ -23,15 +23,18 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import model.Boss;
 import model.Employee;
 import model.User;
 import model.UserStatus;
+import utilMethods.MetodosUtiles;
 
 /**
  * FXML Controller class
@@ -102,6 +105,9 @@ public class EmployeeManagementController {
 
     EmployeeInterface employeeInt = EmployeeFactory.getEmployeeImp();
 
+    @FXML
+    private Label labelError;
+
     public Stage getStage() {
         return stage;
     }
@@ -153,6 +159,7 @@ public class EmployeeManagementController {
         textfieldTrabajo.textProperty().addListener(this::textfieldListener);
         textfieldPassword.textProperty().addListener(this::textfieldListener);
         textfieldLogin.textProperty().addListener(this::textfieldListener);
+        textfieldBuscar.textProperty().addListener(this::listenerBuscar);
         buttonAniadir.setOnAction(this::clickAniadir);
         buttonModificar.setOnAction(this::clickModificar);
         buttonLimpiar.setOnAction(this::limpiarListener);
@@ -165,20 +172,7 @@ public class EmployeeManagementController {
         tableSalario.setCellValueFactory(new PropertyValueFactory<>("wage"));
         tableTrabajo.setCellValueFactory(new PropertyValueFactory<>("job"));
         tableLogin.setCellValueFactory(new PropertyValueFactory<>("login"));
-        
-        table.setItems(employees);
-    }
 
-    private void clickBuscar(ActionEvent event) {
-        if (comboBox.getValue().equals("Nombre")) {
-            String name = textfieldBuscar.getText();
-            employees = FXCollections.observableArrayList(employeeInt.getEmployeesByName(name));
-        } else if (comboBox.getValue().equals("Email")) {
-            String email = textfieldBuscar.getText();
-            employees = FXCollections.observableArrayList(employeeInt.getEmployeesByEmail(email));
-        } else {
-            employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
-        }
         table.setItems(employees);
     }
 
@@ -196,31 +190,14 @@ public class EmployeeManagementController {
         savedEmail = selectedEmp.getEmail();
     }
 
-    private void clickModificar(ActionEvent event) {
-
-        Boolean confirmar = mostrarAlertConfirmation("Modify", "Are you sure you want to modify?");
-
-        if (confirmar) {
-            Employee employee = new Employee();
-            employee = employeeInt.getSingleEmployeeByEmail(savedEmail);
-
-            employee.setEmail(textfieldEmail.getText());
-            employee.setFullName(textfieldNombApell.getText());
-            employee.setJob(textfieldTrabajo.getText());
-            employee.setWage(Float.parseFloat(textfieldSalario.getText()));
-            employee.setLogin(textfieldLogin.getText());
-
-            employeeInt.updateEmployee(employee);
-
-            employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
-            table.setItems(employees);
-
-            limpiarCampos();
-        }
+    private void textfieldListener(ObservableValue observable, String oldValue, String newValue) {
+        labelError.setText("");
+        comprobarAniadir();
+        comprobarModificar();
     }
 
-    private void textfieldListener(ObservableValue observable, String oldValue, String newValue) {
-        comprobarAniadir();
+    private void listenerBuscar(ObservableValue observable, String oldValue, String newValue) {
+        labelError.setText("");
     }
 
     private void limpiarListener(ActionEvent event) {
@@ -240,32 +217,99 @@ public class EmployeeManagementController {
         }
     }
 
-    private void clickAniadir(ActionEvent event) {
+    private void comprobarModificar() {
+        if (!textfieldEmail.getText().equals("")
+                && !textfieldNombApell.getText().equals("")
+                && !textfieldSalario.getText().equals("")
+                && !textfieldTrabajo.getText().equals("")
+                && !textfieldLogin.getText().equals("")
+                && textfieldPassword.getText().equals("")) {
+            buttonModificar.setDisable(false);
+        } else {
+            buttonModificar.setDisable(true);
+        }
+    }
 
-        Boolean confirmar = mostrarAlertConfirmation("Create", "Are you sure you want to create?");
-
-        if (confirmar) {
-            Boss boss = new Boss();
-            boss.setId(1);
-
-            Employee employee = new Employee();
-            employee.setJob(textfieldTrabajo.getText().trim());
-            employee.setEmail(textfieldEmail.getText().trim());
-            employee.setFullName(textfieldNombApell.getText().trim());
-            employee.setWage(Float.parseFloat(textfieldSalario.getText().trim()));
-            employee.setLogin(textfieldLogin.getText().trim());
-            employee.setPassword(textfieldPassword.getText().trim());
-            employee.setLastAccess(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)));
-            employee.setLastPasswordChange(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)));
-            employee.setBoss(boss);
-            employee.setStatus(UserStatus.ENABLED);
-
-            employeeInt.createEmployee(employee);
-
-            employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
+    private void clickBuscar(ActionEvent event) {
+        labelError.setText("");
+        if (MetodosUtiles.maximoCaracteres(textfieldBuscar, 50)) {
+            if (comboBox.getValue().equals("Nombre")) {
+                String name = textfieldBuscar.getText().trim();
+                employees = FXCollections.observableArrayList(employeeInt.getEmployeesByName(name));
+            } else if (comboBox.getValue().equals("Email")) {
+                String email = textfieldBuscar.getText().trim();
+                employees = FXCollections.observableArrayList(employeeInt.getEmployeesByEmail(email));
+            } else {
+                employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
+            }
             table.setItems(employees);
+        } else {
+            textfieldBuscar.setText("");
+            labelError.setText("Demasiados caracteres en el campo Buscar");
+            labelError.setTextFill(Color.web("#ff0000"));
+        }
+    }
 
-            limpiarCampos();
+    private void clickAniadir(ActionEvent event) {
+        if (verifyEmail(textfieldEmail.getText().trim())
+                && verifyFullName(textfieldNombApell.getText().trim())
+                && verifyLogin(textfieldLogin.getText().trim())
+                && verifySalario(textfieldSalario.getText().trim())
+                && verifyTrabajo(textfieldTrabajo.getText().trim())
+                && verifyPassword(textfieldPassword.getText().trim())) {
+            Boolean confirmar = mostrarAlertConfirmation("Create", "Are you sure you want to create?");
+
+            if (confirmar) {
+                Boss boss = new Boss();
+                boss.setId(1);
+
+                Employee employee = new Employee();
+                employee.setJob(textfieldTrabajo.getText().trim());
+                employee.setEmail(textfieldEmail.getText().trim());
+                employee.setFullName(textfieldNombApell.getText().trim());
+                employee.setWage(Float.parseFloat(textfieldSalario.getText().trim()));
+                employee.setLogin(textfieldLogin.getText().trim());
+                employee.setPassword(textfieldPassword.getText().trim());
+                employee.setLastAccess(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)));
+                employee.setLastPasswordChange(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)));
+                employee.setBoss(boss);
+                employee.setStatus(UserStatus.ENABLED);
+
+                employeeInt.createEmployee(employee);
+
+                employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
+                table.setItems(employees);
+
+                limpiarCampos();
+            }
+        }
+    }
+
+    private void clickModificar(ActionEvent event) {
+        if (verifyEmail(textfieldEmail.getText().trim())
+                && verifyFullName(textfieldNombApell.getText().trim())
+                && verifyLogin(textfieldLogin.getText().trim())
+                && verifySalario(textfieldSalario.getText().trim())
+                && verifyTrabajo(textfieldTrabajo.getText().trim())) {
+            Boolean confirmar = mostrarAlertConfirmation("Modify", "Are you sure you want to modify?");
+
+            if (confirmar) {
+                Employee employee = new Employee();
+                employee = employeeInt.getSingleEmployeeByEmail(savedEmail);
+
+                employee.setEmail(textfieldEmail.getText());
+                employee.setFullName(textfieldNombApell.getText());
+                employee.setJob(textfieldTrabajo.getText());
+                employee.setWage(Float.parseFloat(textfieldSalario.getText()));
+                employee.setLogin(textfieldLogin.getText());
+
+                employeeInt.updateEmployee(employee);
+
+                employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
+                table.setItems(employees);
+
+                limpiarCampos();
+            }
         }
     }
 
@@ -300,6 +344,96 @@ public class EmployeeManagementController {
         }
 
         return confirm;
+    }
+
+    private Boolean verifyEmail(String comp) {
+        if (MetodosUtiles.validateEmail(comp)) {
+            return true;
+        } else {
+            labelError.setText("Introduzca un email en el campo Email");
+            labelError.setTextFill(Color.web("#ff0000"));
+            return false;
+        }
+    }
+
+    private Boolean verifyFullName(String comp) {
+        if (MetodosUtiles.contieneSoloLetras(comp)) {
+            if (MetodosUtiles.maximoCaracteres(textfieldNombApell, 50)) {
+                if (!MetodosUtiles.comprobarEspaciosBlancos(textfieldNombApell)) {
+                    return true;
+                } else {
+                    labelError.setText("El campo Nombre y Apellidos debe de tener al menos un apellido");
+                    labelError.setTextFill(Color.web("#ff0000"));
+                    return false;
+                }
+            } else {
+                labelError.setText("Demasiados caracteres en el campo Nombre y Apellidos");
+                labelError.setTextFill(Color.web("#ff0000"));
+                return false;
+            }
+        } else {
+            labelError.setText("El campo Nombre y Apellidos solo debe de contener letras");
+            labelError.setTextFill(Color.web("#ff0000"));
+            return false;
+        }
+    }
+
+    private Boolean verifyLogin(String comp) {
+        if (MetodosUtiles.maximoCaracteres(textfieldLogin, 50)) {
+            if (MetodosUtiles.minimoCaracteres(textfieldLogin, 4)) {
+                return true;
+            } else {
+                labelError.setText("Debe haber mas caracteres en el campo Login");
+                labelError.setTextFill(Color.web("#ff0000"));
+                return false;
+            }
+        } else {
+            labelError.setText("Demasiados caracteres en el campo Login");
+            labelError.setTextFill(Color.web("#ff0000"));
+            return false;
+        }
+    }
+
+    private Boolean verifySalario(String comp) {
+        if (MetodosUtiles.verifyFloat(comp)) {
+            return true;
+        } else {
+            labelError.setText("El campo Salario debe ser un numero");
+            labelError.setTextFill(Color.web("#ff0000"));
+            return false;
+        }
+    }
+
+    private Boolean verifyTrabajo(String comp) {
+        if (MetodosUtiles.maximoCaracteres(textfieldTrabajo, 50)) {
+            if (MetodosUtiles.contieneSoloLetras(comp)) {
+                return true;
+            } else {
+                labelError.setText("El campo Trabajo solo debe de contener letras");
+                labelError.setTextFill(Color.web("#ff0000"));
+                return false;
+            }
+        } else {
+            labelError.setText("Demasiados caracteres en el campo Trabajo");
+            labelError.setTextFill(Color.web("#ff0000"));
+            return false;
+        }
+    }
+
+    private Boolean verifyPassword(String comp) {
+        if (MetodosUtiles.maximoCaracteres(textfieldPassword, 50)) {
+            if (MetodosUtiles.minimoCaracteres(textfieldPassword, 4)) {
+                return true;
+            } else {
+                labelError.setText("Debe haber mas caracteres en el campo Password");
+                labelError.setTextFill(Color.web("#ff0000"));
+                return false;
+            }
+        } else {
+            labelError.setText("Demasiados caracteres en el campo Password");
+            labelError.setTextFill(Color.web("#ff0000"));
+            return false;
+        }
     }
 
     private void limpiarCampos() {

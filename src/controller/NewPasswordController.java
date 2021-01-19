@@ -22,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import utilMethods.MetodosUtiles;
 
 /**
  *
@@ -54,6 +55,9 @@ public class NewPasswordController {
 
     @FXML
     private TextField textfieldContraseñaNueva;
+
+    @FXML
+    private TextField textfieldRepetirContraseña;
 
     @FXML
     private Button buttonEnviar;
@@ -102,33 +106,37 @@ public class NewPasswordController {
         buttonEnviar.setOnAction(this::clickEnviar);
         textfieldContraseñaNueva.textProperty().addListener(this::passwordListener);
         textfieldContraseñaDePaso.textProperty().addListener(this::passwordListener);
+        textfieldRepetirContraseña.textProperty().addListener(this::passwordListener);
 
     }
 
     public void clickEnviar(ActionEvent event) {
-        try {
-            userInt.changePassword(email, textfieldContraseñaDePaso.getText().trim(), textfieldContraseñaNueva.getText().trim());
-            abrirSingIn();
-        } catch (ExcepcionContraseñaNoCoincide ex) {
-            Logger.getLogger(NewPasswordController.class.getName()).log(Level.SEVERE, null, ex);
+        if (MetodosUtiles.maximoCaracteres(textfieldContraseñaDePaso, 50)
+                && MetodosUtiles.maximoCaracteres(textfieldContraseñaNueva, 50)
+                && MetodosUtiles.maximoCaracteres(textfieldRepetirContraseña, 50)) {
+            if (textfieldContraseñaNueva.getText().trim().equals(textfieldRepetirContraseña.getText().trim())) {
+                try {
+                    userInt.changePassword(email, textfieldContraseñaDePaso.getText().trim(), textfieldContraseñaNueva.getText().trim());
+                    abrirSingIn();
+                } catch (ExcepcionContraseñaNoCoincide ex) {
+                    Logger.getLogger(NewPasswordController.class.getName()).log(Level.SEVERE, null, ex);
+                    textfieldContraseñaDePaso.setText("");
+                    textfieldContraseñaNueva.setText("");
+                    textfieldRepetirContraseña.setText("");
+                    labelError.setText("Contraseña temporal incorrecta");
+                    labelError.setTextFill(Color.web("#ff0000"));
+                }
+            } else {
+                textfieldRepetirContraseña.setText("");
+                labelError.setText("Las contraseñas no coinciden");
+                labelError.setTextFill(Color.web("#ff0000"));
+            }
+        } else {
             textfieldContraseñaDePaso.setText("");
             textfieldContraseñaNueva.setText("");
-            labelError.setText("Las contraseñas no coinciden");
+            textfieldRepetirContraseña.setText("");
+            labelError.setText("Texto demasiado largo");
             labelError.setTextFill(Color.web("#ff0000"));
-        }
-    }
-
-    private void passwordListener(ObservableValue observable, String oldValue, String newValue) {
-        comprobarEnviar();
-        labelError.setText("");
-    }
-
-    private void comprobarEnviar() {
-        if (textfieldContraseñaDePaso.getText().compareToIgnoreCase("") != 0
-                && textfieldContraseñaNueva.getText().compareToIgnoreCase("") != 0) {
-            buttonEnviar.setDisable(false);
-        } else {
-            buttonEnviar.setDisable(true);
         }
     }
 
@@ -153,6 +161,20 @@ public class NewPasswordController {
             //Llamada al método inicializarComponenentesVentana del controlador de la ventana signIn.
         } catch (IOException ex) {
             Logger.getLogger(NewPasswordController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void passwordListener(ObservableValue observable, String oldValue, String newValue) {
+        comprobarEnviar();
+        labelError.setText("");
+    }
+
+    private void comprobarEnviar() {
+        if (textfieldContraseñaDePaso.getText().compareToIgnoreCase("") != 0
+                && textfieldContraseñaNueva.getText().compareToIgnoreCase("") != 0) {
+            buttonEnviar.setDisable(false);
+        } else {
+            buttonEnviar.setDisable(true);
         }
     }
 }

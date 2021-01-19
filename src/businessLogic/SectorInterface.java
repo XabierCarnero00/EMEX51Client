@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package businessLogic;
 
+import exceptions.SectorExistException;
 import java.util.List;
 import model.Sector;
 
@@ -35,19 +31,19 @@ public interface SectorInterface {
     public List <Sector> getSectorsByType(String type) throws BusinessLogicException;
     /**
      * This method adds a new created <code>Sector</code>.
-     * @param creature The {@link Sector} object to be added.
+     * @param sector
      * @throws BusinessLogicException 
      */
     public void createSector(Sector sector) throws BusinessLogicException;
     /**
      * This method updates data for an existing {@link Sector}.
-     * @param creature The {@link Sector} object to be updated.
+     * @param sector
      * @throws BusinessLogicException 
      */
     public void updateSector(Sector sector) throws BusinessLogicException;
     /**
      * This method deletes data for an existing {@link Sector}.
-     * @param creature The {@link Sector} object to be deleted.
+     * @param sector
      * @throws BusinessLogicException 
      */
     public void deleteSector(Sector sector) throws BusinessLogicException;
@@ -57,5 +53,5 @@ public interface SectorInterface {
      * @throws BusinessLogicException Business logic tier exception.
      * @throws SectorExistException There is a sector registered with the same name.
      */
-   // public void sectorNameIsRegistered(String name) throws BusinessLogicException,SectorExistException;
+    public void sectorNameIsRegistered(String name) throws BusinessLogicException,SectorExistException;
 }
