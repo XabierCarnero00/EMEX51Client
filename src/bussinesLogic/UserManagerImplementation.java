@@ -6,7 +6,6 @@
 package bussinesLogic;
 
 import clientREST.UserREST;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.WebApplicationException;
 import model.Boss;
