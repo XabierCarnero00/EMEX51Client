@@ -106,7 +106,7 @@ public class GenericController {
         this.stage=stage;
     }
     
-    public void genericController (Parent Root){
+    public void genericController (ActionEvent event){
         
         //Barra menu Sector
         menuSector.setOnAction(this::openWindowSector);
