@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitMenuButton?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <SplitPane focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+         <items>
+            <ScrollPane prefHeight="-1.0" prefWidth="-1.0">
+               <content>
+                  <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="570.0" prefWidth="897.0">
+                     <children>
+                        <TableView layoutX="179.0" layoutY="157.0" prefHeight="338.0" prefWidth="545.0">
+                           <columns>
+                              <TableColumn prefWidth="96.0" text="Email" />
+                              <TableColumn prefWidth="84.0" text="DNI" />
+                              <TableColumn prefWidth="124.0" text="Nombre y Apellidos" />
+                              <TableColumn prefWidth="92.0" text="Último Acceso" />
+                              <TableColumn prefWidth="68.0" text="Visitado" />
+                              <TableColumn prefWidth="84.0" text="Acceso" />
+                           </columns>
+                        </TableView>
+                        <SplitMenuButton layoutX="319.0" layoutY="72.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="259.0" text="Buscar">
+                           <items>
+                              <MenuItem mnemonicParsing="false" text="Action 1" />
+                              <MenuItem mnemonicParsing="false" text="Action 2" />
+                           </items>
+                        </SplitMenuButton>
+                        <DatePicker layoutX="365.0" layoutY="113.0" />
+                        <Label layoutX="821.0" layoutY="37.0" text="tipoUsuario" />
+                        <Label layoutX="375.0" layoutY="23.0" text="VISITANTES">
+                           <font>
+                              <Font size="30.0" />
+                           </font>
+                        </Label>
+                        <Button layoutX="415.0" layoutY="531.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="73.0" text="Borrar" />
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </AnchorPane>
+               </content>
+            </ScrollPane>
+         </items>
+      </SplitPane>
+   </children>
+</VBox>
