@@ -288,7 +288,7 @@ public class GestionarVisitorController {
         }
         tblVisitors.setItems(visitorsData);
     }
-    
+    /**
     @FXML
     private void changeDatePicker(ActionEvent event) {
         try {
@@ -298,5 +298,5 @@ public class GestionarVisitorController {
             Logger.getLogger(GestionarVisitorController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+    **/
 }

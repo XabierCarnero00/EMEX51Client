@@ -5,7 +5,7 @@
  */
 package emex51crudclient;
 
-import controller.ArmyManagementController;
+import controller.GestionarVisitorController;
 import controller.SignInController;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,18 +32,18 @@ public class EMEX51CRUDClient extends Application {
         LOGGER.log(Level.INFO, "Método start de la aplicación");
         //New FXMLLoader Añadir el fxml de MenuPrincipal que es la ventana principal
         FXMLLoader loader = new FXMLLoader(getClass().
-                getResource("/view/FXMLSignIn.fxml"));
+                getResource("/view/FXMLVisitorManagement.fxml"));
                 //getResource("/view/FXMLArmyManagement.fxml"));
         //Parent es una clase gráfica de nodos xml son nodos.
         Parent root = (Parent) loader.load();
         //Relacionamos el documento FXML con el controlador que le va a controlar.
-        SignInController signInController = (SignInController) loader.getController();
+        GestionarVisitorController visitorController = (GestionarVisitorController) loader.getController();
         //ArmyManagementController armyManagementController = (ArmyManagementController) loader.getController();
         //Llamada al método setStage del controlador de la ventana SignIn. Pasa la ventana.
-        signInController.setStage(stage);
+        visitorController.setStage(stage);
         //armyManagementController.setStage(stage);
         //Llamada al método initStage del controlador de la ventana SignIn. Pasa el documento fxml en un nodo.
-        signInController.initStage(root);
+        visitorController.initStage(root);
         //armyManagementController.initStage(root);
         //Llamada al método inicializarComponenentesVentana del controlador de la ventana signIn.
     }
