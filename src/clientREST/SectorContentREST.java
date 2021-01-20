@@ -8,6 +8,7 @@ package clientREST;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 
 /**
  * Jersey REST client generated for REST resource:SectorContentFacadeREST
@@ -63,7 +64,7 @@ public class SectorContentREST {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
     }
 
-    public <T> T findSectorContentBySector(Class<T> responseType, String sectorId) throws ClientErrorException {
+    public <T> T findSectorContentBySector(GenericType <T> responseType, String sectorId) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("sectorId/{0}", new Object[]{sectorId}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);

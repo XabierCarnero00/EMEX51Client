@@ -120,7 +120,6 @@ public class Employee extends User implements Serializable {
      * Gets the {@link Boss} of the employee.
      * @return The {@link Boss} value.
      */
-    @XmlTransient
     public Boss getBoss() {
         return boss;
     }

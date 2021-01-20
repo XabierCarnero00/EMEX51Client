@@ -163,6 +163,7 @@ public class EmployeeManagementController {
         buttonAniadir.setOnAction(this::clickAniadir);
         buttonModificar.setOnAction(this::clickModificar);
         buttonLimpiar.setOnAction(this::limpiarListener);
+        buttonBorrar.setOnAction(this::clickBorrar);
         table.getSelectionModel().selectedItemProperty().addListener(this::clickTabla);
     }
 
@@ -174,20 +175,6 @@ public class EmployeeManagementController {
         tableLogin.setCellValueFactory(new PropertyValueFactory<>("login"));
 
         table.setItems(employees);
-    }
-
-    private void clickTabla(ObservableValue observable, Object oldValue, Object newValue) {
-        buttonModificar.setDisable(false);
-        Employee selectedEmp = ((Employee) table.getSelectionModel()
-                .getSelectedItem());
-
-        textfieldEmail.setText(selectedEmp.getEmail());
-        textfieldNombApell.setText(selectedEmp.getFullName());
-        textfieldSalario.setText(Float.toString(selectedEmp.getWage()));
-        textfieldTrabajo.setText(selectedEmp.getJob());
-        textfieldLogin.setText(selectedEmp.getLogin());
-
-        savedEmail = selectedEmp.getEmail();
     }
 
     private void textfieldListener(ObservableValue observable, String oldValue, String newValue) {
@@ -260,9 +247,6 @@ public class EmployeeManagementController {
             Boolean confirmar = mostrarAlertConfirmation("Create", "Are you sure you want to create?");
 
             if (confirmar) {
-                Boss boss = new Boss();
-                boss.setId(1);
-
                 Employee employee = new Employee();
                 employee.setJob(textfieldTrabajo.getText().trim());
                 employee.setEmail(textfieldEmail.getText().trim());
@@ -272,7 +256,7 @@ public class EmployeeManagementController {
                 employee.setPassword(textfieldPassword.getText().trim());
                 employee.setLastAccess(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)));
                 employee.setLastPasswordChange(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)));
-                employee.setBoss(boss);
+                employee.setBoss((Boss) user);
                 employee.setStatus(UserStatus.ENABLED);
 
                 employeeInt.createEmployee(employee);
@@ -291,9 +275,8 @@ public class EmployeeManagementController {
                 && verifyLogin(textfieldLogin.getText().trim())
                 && verifySalario(textfieldSalario.getText().trim())
                 && verifyTrabajo(textfieldTrabajo.getText().trim())) {
-            Boolean confirmar = mostrarAlertConfirmation("Modify", "Are you sure you want to modify?");
 
-            if (confirmar) {
+            if (mostrarAlertConfirmation("Modify", "Are you sure you want to modify?")) {
                 Employee employee = new Employee();
                 employee = employeeInt.getSingleEmployeeByEmail(savedEmail);
 
@@ -304,13 +287,42 @@ public class EmployeeManagementController {
                 employee.setLogin(textfieldLogin.getText());
 
                 employeeInt.updateEmployee(employee);
-
+                
                 employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
                 table.setItems(employees);
 
                 limpiarCampos();
             }
         }
+    }
+
+    private void clickBorrar(ActionEvent event) {
+        if (mostrarAlertConfirmation("Delete", "Are you sure you want to delete?")) {
+            Employee selectedEmp = ((Employee) table.getSelectionModel()
+                    .getSelectedItem());
+            employeeInt.deleteEmployee(selectedEmp.getId().toString());
+
+            employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
+            table.setItems(employees);
+
+            buttonBorrar.setDisable(true);
+            limpiarCampos();
+        }
+    }
+
+    private void clickTabla(ObservableValue observable, Object oldValue, Object newValue) {
+        buttonModificar.setDisable(false);
+        buttonBorrar.setDisable(false);
+        Employee selectedEmp = ((Employee) table.getSelectionModel()
+                .getSelectedItem());
+
+        textfieldEmail.setText(selectedEmp.getEmail());
+        textfieldNombApell.setText(selectedEmp.getFullName());
+        textfieldSalario.setText(Float.toString(selectedEmp.getWage()));
+        textfieldTrabajo.setText(selectedEmp.getJob());
+        textfieldLogin.setText(selectedEmp.getLogin());
+
+        savedEmail = selectedEmp.getEmail();
     }
 
     @FXML

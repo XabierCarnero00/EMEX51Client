@@ -11,7 +11,6 @@ import businessLogic.BusinessLogicException;
 import businessLogic.SectorFactory;
 import businessLogic.SectorInterface;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Optional;
@@ -33,10 +32,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import static javafx.scene.input.KeyCode.T;
 import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 import model.Army;
@@ -139,6 +136,8 @@ public class ArmyManagementController {
             buttonAniadir.setDisable(true);
             buttonBorrar.setDisable(true);
             buttonBuscar.setDisable(true);
+            datePicker.setEditable(false);
+            datePickerAniadir.setEditable(false);
 
             ObservableList<String> cbOptions = FXCollections.observableArrayList();
             cbOptions.addAll("Nombre", "Municion", "Todos");
@@ -183,22 +182,6 @@ public class ArmyManagementController {
                 LOGGER.info("Error al updatear en la lambda del nombre edit");
             }
         });
-        
-        /*
-        ObservableList<Sector> options = FXCollections.observableArrayList(sectorInt.getAllSectors());
-        tableColumnSector.setCellFactory(ComboBoxTableCell.forTableColumn(options));
-        tableColumnSector.setOnEditCommit((CellEditEvent<Sector, String> t) -> {
-        try {
-        t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getNewValue());
-        Sector sector = t.getRowValue();
-        Army army = new Army();
-        armyInt.editArmy(army);
-        } catch (BusinessLogicException ex) {
-        Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
-        LOGGER.info("Error al updatear en la lambda del nombre edit");
-        }
-        });
-        */
         
         tableView.setEditable(true);
     }

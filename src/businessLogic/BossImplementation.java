@@ -9,6 +9,6 @@ package businessLogic;
  *
  * @author xabig
  */
-public class BossImplementation implements BossInterface{
+public class BossImplementation implements BossInterface {
     
 }

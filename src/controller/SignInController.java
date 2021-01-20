@@ -300,7 +300,7 @@ public class SignInController {
         }
     }
 
-    private void openMenuWindowEmployee(User user) {
+    private void openMenuWindowBoss(User user) {
         try {
             //Mensaje Logger al acceder al método
             LOGGER.log(Level.INFO, "Método para abrir el menu principal de la aplicación");
@@ -321,6 +321,10 @@ public class SignInController {
         } catch (IOException ex) {
             Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private void openMenuWindowEmployee(User user) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     /**
@@ -347,9 +351,4 @@ public class SignInController {
             Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-    private void openMenuWindowBoss(User user) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }
