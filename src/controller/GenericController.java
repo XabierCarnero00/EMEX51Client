@@ -13,7 +13,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -107,7 +106,7 @@ public class GenericController {
         this.stage=stage;
     }
     
-    public void initStage (Parent Root){
+    public void genericController (Parent Root){
         
         //Barra menu Sector
         menuSector.setOnAction(this::openWindowSector);
