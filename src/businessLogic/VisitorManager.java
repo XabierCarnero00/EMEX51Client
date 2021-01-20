@@ -10,7 +10,7 @@ import model.Visitor;
 
 /**
  *
- * @author 2dam
+ * @author markel
  */
 public interface VisitorManager {
     /**

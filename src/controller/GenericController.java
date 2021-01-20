@@ -26,7 +26,7 @@ import model.User;
 
 /**
  *
- * @author 2dam
+ * @author markel
  */
 public class GenericController {
     

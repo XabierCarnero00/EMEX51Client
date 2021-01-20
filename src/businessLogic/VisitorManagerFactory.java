@@ -7,7 +7,7 @@ package businessLogic;
 
 /**
  *
- * @author 2dam
+ * @author markel
  */
 public class VisitorManagerFactory {
      public static VisitorManager getVisitorManager(){
