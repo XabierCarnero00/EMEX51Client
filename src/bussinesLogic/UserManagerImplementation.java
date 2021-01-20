@@ -6,7 +6,9 @@
 package bussinesLogic;
 
 import clientREST.UserREST;
+import excepciones.ExcepcionUserNoExiste;
 import java.util.logging.Logger;
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.WebApplicationException;
 import model.Boss;
 import model.Employee;
@@ -72,8 +74,8 @@ public class UserManagerImplementation implements UserManager{
                user = webClient.loginUser(Employee.class, login, password);
            else
                user = webClient.loginUser(Visitor.class, login, password);
-        }catch(WebApplicationException e){
-            throw  new BusinessLogicException(e.getMessage());
+        }catch(ForbiddenException e){
+            throw new BusinessLogicException(e.getMessage());
         }
     }
 
