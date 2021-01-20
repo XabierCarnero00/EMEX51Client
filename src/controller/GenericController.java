@@ -34,30 +34,30 @@ public class GenericController {
      * Logger object used to log messages for application.
     */
     protected static final Logger LOGGER=Logger.getLogger("EMEX51CRUDClient.controller.GenericController");
+    
     /**
      * The sig in user 
      */
     private User user;
     /**
+     * La ventana 
+     */
+    protected Stage stage;
+    @FXML
+    private MenuBar MenuLogout;
+    /**
+     * The menu Item to exit
+     */
+    private MenuItem ItemExit;
+    /**
+     * The menu Item of logout
+     */
+    private MenuItem ItemLogout;
+    /**
     * The menu Bar
     */
     @FXML
     private MenuBar menuBar;
-    /**
-    * The menu of sector
-    */
-    @FXML 
-    private Menu menuSector;
-    /**
-    * The menu of employee
-    */
-    @FXML 
-    private Menu menuEmployee;
-    /**
-    * The menu of visitor
-    */
-    @FXML 
-    private Menu menuVisitor;
     /**
      * The menu Item of sector
      */
@@ -75,10 +75,6 @@ public class GenericController {
      */
     @FXML 
     private Label lblTipoUsuario;
-    /**
-     * La ventana 
-     */
-    protected Stage stage;
     /**
      * @return 
      */
@@ -108,14 +104,15 @@ public class GenericController {
     
     public void genericController (ActionEvent event){
         
-        //Barra menu Sector
-        menuSector.setOnAction(this::openWindowSector);
-        ItemSectores.setOnAction(this::openWindowSector);
-        //Barra menu Empleado
-        menuEmployee.setOnAction(this::openWindowEmployee);
-        ItemEmpleados.setOnAction(this::openWindowEmployee);
         //Barra menu Visitante
-        menuVisitor.setOnAction(this::openWindowVisitor);
+        ItemExit.setOnAction(this::openWindowExit);
+        //Barra menu Visitante
+        ItemLogout.setOnAction(this::openWindowLogout);
+        //Menu Sector
+        ItemSectores.setOnAction(this::openWindowSector);
+        //Menu Empleado
+        ItemEmpleados.setOnAction(this::openWindowEmployee);
+        //Menu Visitante
         ItemVisitantes.setOnAction(this::openWindowVisitor);
         
         //Label para el tipo de usuario
@@ -123,7 +120,31 @@ public class GenericController {
                 lblTipoUsuario.setText(user.getLogin()+"(BOSS)");
         }else
             lblTipoUsuario.setText(user.getLogin()+"(EMPLEADO)");
-            menuEmployee.setDisable(true);
+            ItemEmpleados.setDisable(true);
+    }
+    
+    private void openWindowLogout(ActionEvent event) {
+        try {
+            //New FXMLLoader Añadir el fxml de logout que es la escena a la que se redirige si todo va bien
+            FXMLLoader loader = new FXMLLoader(getClass().
+                    getResource("/view/SectorManagementController.fxml"));
+            //Parent es una clase gráfica de nodos. xml son nodos.
+            Parent root = (Parent) loader.load();
+            //Relacionamos el documento FXML con el controlador que le va a controlar.
+            SignInController signInController = (SignInController) loader.getController();
+            //Llamada al método setStage del controlador de la ventana signIn. Pasa la ventana.
+            signInController.setStage(stage);
+            //Llamada al método initStage del controlador de la ventana LogOut. Pasa el documento fxml en un nodo.
+            signInController.initStage(root);
+        } catch (IOException ex) {
+            LOGGER.log(Level.INFO,"Execepción abrir ventana Sector");
+        }   
+    }    
+       
+    private void openWindowExit(ActionEvent event) {
+        LOGGER.log(Level.INFO,"Cerrando aplicación");
+        stage.close();
+        
     }
     
     private void openWindowSector(ActionEvent event) {
@@ -134,11 +155,11 @@ public class GenericController {
             //Parent es una clase gráfica de nodos. xml son nodos.
             Parent root = (Parent) loader.load();
             //Relacionamos el documento FXML con el controlador que le va a controlar.
-            SectorManagementController gestionarSectorController = (SectorManagementController) loader.getController();
+            SignInController signInController = (SignInController) loader.getController();
             //Llamada al método setStage del controlador de la ventana signIn. Pasa la ventana.
-            gestionarSectorController.setStage(stage);
+            signInController.setStage(stage);
             //Llamada al método initStage del controlador de la ventana LogOut. Pasa el documento fxml en un nodo.
-            gestionarSectorController.initStage(root);
+            signInController.initStage(root);
         } catch (IOException ex) {
             LOGGER.log(Level.INFO,"Execepción abrir ventana Sector");
         }

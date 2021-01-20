@@ -7,7 +7,6 @@ package controller;
 import businessLogic.BusinessLogicException;
 import businessLogic.VisitorManager;
 import businessLogic.VisitorManagerFactory;
-import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -63,6 +62,11 @@ public class GestionarVisitorController {
     @FXML
     private TextField txtBuscar;
     /**
+     * Boton buscar to serach visitors
+     */
+    @FXML
+    private Button btnBuscar;
+    /**
      * Date Picker to search visitors
      */
     @FXML
@@ -110,12 +114,7 @@ public class GestionarVisitorController {
      * Label for user info.
      */
     @FXML 
-    private Label lblUsuario;
-    /**
-     * Combo for different sector type.
-     */
-    @FXML 
-    private ComboBox cbTipo; 
+    private Label lblUsuario; 
     /**
      * Button removing a visitor.
      */
