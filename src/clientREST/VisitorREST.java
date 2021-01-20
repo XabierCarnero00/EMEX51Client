@@ -8,6 +8,7 @@ package clientREST;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 
 /**
  * Jersey REST client generated for REST resource:VisitorFacadeREST
@@ -37,7 +38,7 @@ public class VisitorREST {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T find(Class<T> responseType, String id) throws ClientErrorException {
+    public <T> T find(GenericType<T> responseType, String id) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{id}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -47,13 +48,13 @@ public class VisitorREST {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T findVisitorsByName(Class<T> responseType, String name) throws ClientErrorException {
+    public <T> T findVisitorsByName(GenericType<T> responseType, String name) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("name/{0}", new Object[]{name}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public <T> T findAllVisitors(Class<T> responseType) throws ClientErrorException {
+    public <T> T findAllVisitors(GenericType<T> responseType) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path("all");
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
