@@ -34,7 +34,7 @@ public class EMEX51CRUDClient extends Application {
     public void start(Stage stage) throws Exception {
         //Mensaje Logger al acceder al método
         LOGGER.log(Level.INFO, "Método start de la aplicación");
-        //New FXMLLoader Añadir el fxml de MenuPrincipal que es la ventana principal
+       //New FXMLLoader Añadir el fxml de MenuPrincipal que es la ventana principal
         FXMLLoader loader = new FXMLLoader(getClass().
                 getResource("/view/FXMLSignIn.fxml"));
         //Parent es una clase gráfica de nodos xml son nodos.

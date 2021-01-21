@@ -176,11 +176,7 @@ public class SectorManagementController{
             btnIr.setDisable(true);
             btnAnadir.setDisable(true);
             btnBorrar.setDisable(true);
-            
-            if(user.getPrivilege()==UserPrivilege.BOSS)
-                lblUsuario.setText(user.getLogin()+" (Boss)");
-            else
-               lblUsuario.setText(user.getLogin()+" (Employee)");
+
             //La tabla sera editable.
             tbSectores.setEditable(true);
             //Añadir listener a la seleccion de la tabla 
@@ -246,10 +242,11 @@ public class SectorManagementController{
             //Si se pulsa la x de la ventana para salir
             stage.setOnCloseRequest(this::manejarCierreVentana);
             //Hace visible la pantalla
-            stage.show();           
+                     
         }catch(BusinessLogicException e){
-            mostrarVentanaAlertError("No se ha podido iniciar la ventana");
+            mostrarVentanaAlertError("No se ha podido iniciar la ventana: "+e.getMessage());
         }
+        stage.show();  
     } 
     /**
      * Acciones que se realizan en el momento previo a que se muestre la ventana.
@@ -258,8 +255,7 @@ public class SectorManagementController{
     private void manejarInicioVentana(WindowEvent event){
         LOGGER.info("Iniciando CreatureController::handleWindowShowing.Metodo_ManejarInicioVentana");
         //Asignar texto cuando el campo está desenfocado.
-        txtFieldNombre.setPromptText("Introduce el nombre.");
-        txtFieldNombre.setEditable(false);
+        txtFieldNombre.setPromptText("Sector.");
         //El boton está inhabilitado al arrancar la ventana.
         //Botones inhabilitados al arrancar la ventana. Todos menos el de volver.
         btnIr.setDisable(true);

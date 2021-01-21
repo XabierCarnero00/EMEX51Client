@@ -42,7 +42,6 @@ import javafx.stage.WindowEvent;
 import model.Creature;
 import model.Sector;
 import model.User;
-import model.UserPrivilege;
 
 
 /**
@@ -340,6 +339,7 @@ public class CreatureManagementController {
         //No hay ningun elemento de la tabla seleccionado limpiar los textfields
             txtFieldNombre.setText("");
             txtFieldEspecie.setText("");
+            datePickerFechaLlegada.setValue(null);
             btnAnadir.setDisable(true);
             btnModificar.setDisable(true);
         }
