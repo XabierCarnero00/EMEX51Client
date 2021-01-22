@@ -5,6 +5,8 @@
  */
 package businessLogic;
 
+import exceptions.ExcepcionEmailYaExiste;
+import exceptions.ExcepcionUserYaExiste;
 import java.util.List;
 import model.Employee;
 
@@ -22,7 +24,7 @@ public interface EmployeeInterface {
     
     public Employee getSingleEmployeeByEmail(String email);
     
-    public void createEmployee(Employee employee);
+    public void createEmployee(Employee employee)throws ExcepcionUserYaExiste, ExcepcionEmailYaExiste;
     
     public void updateEmployee(Employee employee);
     

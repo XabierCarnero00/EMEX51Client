@@ -8,6 +8,7 @@ package businessLogic;
 import java.util.Date;
 import java.util.List;
 import model.Army;
+import model.Sector;
 
 /**
  *  Interface encupsating methods for ArmyInterface for Emex51 proyect.
@@ -39,12 +40,20 @@ public interface ArmyInterface {
     public List<Army> getArmysByAmmunition(Integer ammunition) throws BusinessLogicException;
     
     /**
-     * Returns armys whitch had arrived at that date
+     * Returns armys which had arrived at that date
      * @param date arrived date
      * @return list of Armys
      * @throws BusinessLogicException 
      */
     public List<Army> getArmysByDate(Date date) throws BusinessLogicException;
+    
+    /**
+     * Returns the armys of the Sector. 
+     * @param sector the sector of the armys
+     * @return list of Armys
+     * @throws BusinessLogicException 
+     */
+     public List<Army> getArmysBySector(Sector sector) throws BusinessLogicException;
     
     /**
      * Updates the Army send in the DataBase
@@ -59,4 +68,11 @@ public interface ArmyInterface {
      * @throws BusinessLogicException 
      */
     public void createArmy(Army army) throws BusinessLogicException;
+    
+    /**
+     * Deletes the Army of the DataBase
+     * @param id the id of the Army to be deleted
+     * @throws BusinessLogicException 
+     */
+    public void deleteArmy(String id) throws BusinessLogicException;
 }

@@ -41,7 +41,7 @@ public class EMEX51CRUDClient extends Application {
         //Relacionamos el documento FXML con el controlador que le va a controlar.
         //SignInController signInController = (SignInController) loader.getController();
         //ArmyManagementController armyManagementController = (ArmyManagementController) loader.getController();
-         SectorManagementController sectorManagementController = (SectorManagementController) loader.getController();
+        SectorManagementController sectorManagementController = (SectorManagementController) loader.getController();
         //Llamada al método setStage del controlador de la ventana SignIn. Pasa la ventana.
         //signInController.setStage(stage);
         //armyManagementController.setStage(stage);

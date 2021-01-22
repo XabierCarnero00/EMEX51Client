@@ -43,7 +43,9 @@
                                 <TextField fx:id="textfieldMunicion" layoutX="325.0" layoutY="475.0" prefHeight="25.0" prefWidth="139.0" promptText="Municion" />
                         <DatePicker fx:id="datePickerAniadir" layoutX="475.0" layoutY="475.0" promptText="Introducir Fecha" />
                                 <Button fx:id="buttonAniadir" layoutX="662.0" layoutY="475.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="81.0" text="Añadir" />
-                                <Button fx:id="buttonBorrar" layoutX="415.0" layoutY="507.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="67.0" text="Borrar" />
+                                <Button fx:id="buttonBorrar" layoutX="662.0" layoutY="510.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="81.0" text="Borrar" />
+                        <Label fx:id="labelError" layoutX="164.0" layoutY="516.0" prefHeight="17.0" prefWidth="221.0" />
+                        <Button fx:id="buttonVolver" layoutX="804.0" layoutY="512.0" mnemonicParsing="false" onAction="#clickVolver" prefHeight="38.0" prefWidth="75.0" text="Volver" />
                             </children>
                             <opaqueInsets>
                                 <Insets />

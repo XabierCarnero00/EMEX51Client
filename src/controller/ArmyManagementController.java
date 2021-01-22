@@ -10,6 +10,7 @@ import businessLogic.ArmyInterface;
 import businessLogic.BusinessLogicException;
 import businessLogic.SectorFactory;
 import businessLogic.SectorInterface;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Date;
@@ -21,6 +22,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -28,15 +30,18 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 import model.Army;
+import model.Employee;
 import model.Sector;
 import model.User;
 
@@ -59,7 +64,7 @@ public class ArmyManagementController {
     User user;
 
     ArmyInterface armyInt = ArmyFactory.getArmyImp();
-    
+
     SectorInterface sectorInt = SectorFactory.getSector();
 
     ObservableList armys;
@@ -108,6 +113,12 @@ public class ArmyManagementController {
     @FXML
     private DatePicker datePickerAniadir;
 
+    @FXML
+    private Label labelError;
+
+    @FXML
+    private Button buttonVolver;
+
     public Stage getStage() {
         return stage;
     }
@@ -143,8 +154,10 @@ public class ArmyManagementController {
             cbOptions.addAll("Nombre", "Municion", "Todos");
             comboBox.setItems(cbOptions);
 
-            armys = FXCollections.observableArrayList(armyInt.getAllArmys());
-            loadArmysTable(armys);
+            armys = FXCollections.observableArrayList(armyInt.getArmysBySector(sector));
+            if (armys != null) {
+                loadArmysTable(armys);
+            }
             makeTableEditable();
 
             stage.show();
@@ -153,6 +166,8 @@ public class ArmyManagementController {
             textfieldNombre.textProperty().addListener(this::nombreListener);
             buttonBuscar.setOnAction(this::clickBuscar);
             buttonAniadir.setOnAction(this::clickAniadir);
+            buttonBorrar.setOnAction(this::clickBorrar);
+            tableView.getSelectionModel().selectedItemProperty().addListener(this::clickTabla);
         } catch (BusinessLogicException ex) {
             Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -182,7 +197,7 @@ public class ArmyManagementController {
                 LOGGER.info("Error al updatear en la lambda del nombre edit");
             }
         });
-        
+
         tableView.setEditable(true);
     }
 
@@ -196,26 +211,20 @@ public class ArmyManagementController {
     }
 
     private void clickBuscar(ActionEvent event) {
-        if (comboBox.getValue().equals("Todos")) {
-            try {
+        try {
+            if (comboBox.getValue().equals("Todos")) {
                 armys = FXCollections.observableArrayList(armyInt.getAllArmys());
-            } catch (BusinessLogicException ex) {
-                Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else if (comboBox.getValue().equals("Nombre")) {
-            try {
+            } else if (comboBox.getValue().equals("Nombre")) {
                 armys = FXCollections.observableArrayList(armyInt.getArmysByName(textfieldBuscar.getText().trim()));
-            } catch (BusinessLogicException ex) {
-                Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            try {
+            } else {
                 armys = FXCollections.observableArrayList(armyInt.getArmysByAmmunition(Integer.parseInt(textfieldBuscar.getText().trim())));
-            } catch (BusinessLogicException ex) {
-                Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
             }
+            tableView.setItems(armys);
+        } catch (BusinessLogicException ex) {
+            Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
+            labelError.setText("Error when trying to Find Armys, try again later");
+            labelError.setTextFill(Color.web("#ff0000"));
         }
-        tableView.setItems(armys);
     }
 
     private void clickAniadir(ActionEvent event) {
@@ -234,13 +243,45 @@ public class ArmyManagementController {
                     //Actualizar lista
                     textfieldNombre.setText("");
                     textfieldMunicion.setText("");
-                    datePickerAniadir.setValue(LocalDate.parse(""));
+                    datePickerAniadir.getEditor().clear();
+
+                    armys = FXCollections.observableArrayList(armyInt.getArmysBySector(sector));
+                    tableView.setItems(armys);
                 } catch (BusinessLogicException ex) {
                     Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
+                    labelError.setText("Error when trying to Create an Army, try again later");
+                    labelError.setTextFill(Color.web("#ff0000"));
                 }
             }
         } else {
             mostrarAlertConfirmation("Espabila", "Introduce fecha");
+        }
+    }
+
+    private void clickBorrar(ActionEvent event) {
+        if (mostrarAlertConfirmation("Delete", "Are you sure you want to delete?")) {
+            try {
+                Army selectedArmy = ((Army) tableView.getSelectionModel()
+                        .getSelectedItem());
+                armyInt.deleteArmy(selectedArmy.getId().toString());
+
+                armys = FXCollections.observableArrayList(armyInt.getArmysBySector(sector));
+                tableView.setItems(armys);
+
+                buttonBorrar.setDisable(true);
+            } catch (BusinessLogicException ex) {
+                Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
+                labelError.setText("Error when trying to Delete an Army, try again later");
+                labelError.setTextFill(Color.web("#ff0000"));
+            }
+        }
+    }
+
+    private void clickTabla(ObservableValue observable, Object oldValue, Object newValue) {
+        if (newValue != null) {
+            buttonBorrar.setDisable(false);
+        } else {
+            buttonBorrar.setDisable(true);
         }
     }
 
@@ -280,6 +321,26 @@ public class ArmyManagementController {
             buttonAniadir.setDisable(false);
         } else {
             buttonAniadir.setDisable(true);
+        }
+    }
+
+    /**
+     * Metodo para volver a la ventana Sectors.
+     *
+     * @param event el evento
+     */
+    @FXML
+    private void clickVolver(ActionEvent event) {
+        try {
+            LOGGER.log(Level.INFO, "Método clickVolver de la clase ArmyManagementController");
+            FXMLLoader loader = new FXMLLoader(getClass().
+                    getResource("/view/FXMLSectorManagement.fxml"));
+            Parent root = (Parent) loader.load();
+            SectorManagementController sectorManagementController = (SectorManagementController) loader.getController();
+            sectorManagementController.setStage(stage);
+            sectorManagementController.initStage(root);
+        } catch (IOException ex) {
+            Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

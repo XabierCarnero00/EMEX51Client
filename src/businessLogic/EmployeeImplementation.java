@@ -6,6 +6,8 @@
 package businessLogic;
 
 import clientREST.EmployeeREST;
+import exceptions.ExcepcionEmailYaExiste;
+import exceptions.ExcepcionUserYaExiste;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.GenericType;
@@ -58,7 +60,7 @@ public class EmployeeImplementation implements EmployeeInterface {
     }
 
     @Override
-    public void createEmployee(Employee employee) {
+    public void createEmployee(Employee employee) throws ExcepcionUserYaExiste, ExcepcionEmailYaExiste {
         employee.setPassword(ClavePublicaCliente.cifrarTexto(employee.getPassword()));
         employeeRest.create(employee);
     }

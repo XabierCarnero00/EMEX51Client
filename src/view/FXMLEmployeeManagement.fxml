@@ -15,6 +15,7 @@
 
 <VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.EmployeeManagementController">
     <children>
+        <fx:include source="FXMLMenuBar.fxml"/>
         <SplitPane focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
             <items>
                 <ScrollPane prefHeight="-1.0" prefWidth="-1.0">
@@ -48,7 +49,7 @@
                                 <Button fx:id="buttonModificar" layoutX="677.0" layoutY="447.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="Modificar" />
                                 <Button fx:id="buttonBorrar" layoutX="677.0" layoutY="477.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="Borrar" />
                                 <Button fx:id="buttonLimpiar" layoutX="677.0" layoutY="507.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="Limpiar" />
-                        <Label fx:id="labelError" layoutX="280.0" layoutY="548.0" prefHeight="17.0" prefWidth="471.0" />
+                                <Label fx:id="labelError" layoutX="280.0" layoutY="548.0" prefHeight="17.0" prefWidth="471.0" />
                             </children>
                             <opaqueInsets>
                                 <Insets />

@@ -31,7 +31,7 @@ public class UserImplementation implements UserInterface {
     public User login(String login, String password) throws ExcepcionUserNoExiste, ExcepcionPasswdIncorrecta, BusinessLogicException {
         Employee employee = new Employee();
         Boss boss = new Boss();
-        User user = new User();
+        User user;
 
         try {
             user = userRest.comprobateUserType(User.class, login);

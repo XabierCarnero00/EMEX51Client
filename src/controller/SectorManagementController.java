@@ -36,30 +36,26 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.ws.rs.core.GenericType;
 import model.Sector;
 import model.SectorContent;
 import model.SectorType;
-import model.User;
-import model.UserPrivilege;
 
 /**
  * FXML Controller class for <code>Sector</code> class.
+ *
  * @author Endika Ubierna Lopez.
  */
-public class SectorManagementController{
+public class SectorManagementController extends GenericController {
+
     /**
-     * Logger object used to control activity from class SectorManagementController.
+     * Logger object used to control activity from class
+     * SectorManagementController.
      */
     private static final Logger LOGGER = Logger.getLogger("emex51.cliente.controlador.FXMLDocumentSectorController");
     /**
-     * The Window showing sector components.
-     */
-    private Stage stage;
-    /**
-     * A {@link SectorManager} object 
+     * A {@link SectorManager} object
      */
     private SectorInterface sectorManager;
     /**
@@ -69,96 +65,70 @@ public class SectorManagementController{
     /**
      * Min length allow in current stage textFields.
      */
-    private static final Integer TEXTFIELD_MIN_LENGTH = 4;
+    private static final Integer TEXTFIELD_MIN_LENGTH = 2;
     /**
      * A sector selected in te table.
      */
     private Sector sector;
     /**
-     * The user logged session.
-     */
-    private User user;
-    /**
      * TableView containing sectors.
      */
-    @FXML 
+    @FXML
     private TableView tbSectores;
     /**
      * TableColumn contains sector name.
      */
-    @FXML 
-    private TableColumn <Sector,String> colNombre;
+    @FXML
+    private TableColumn<Sector, String> colNombre;
     /**
      * TableColumn contains sector type.
      */
-    @FXML 
-    private TableColumn <Sector,SectorType> colTipo;
+    @FXML
+    private TableColumn<Sector, SectorType> colTipo;
     /**
      * TextField for sector name.
      */
-    @FXML 
+    @FXML
     private TextField txtFieldNombre;
     /**
      * Combo for different sector type.
      */
-    @FXML 
-    private ComboBox cbTipo; 
+    @FXML
+    private ComboBox cbTipo;
     /**
      * Button removing a sector.
      */
-    @FXML 
+    @FXML
     private Button btnBorrar;
-    @FXML 
+    /**
+     * Label qith the information of the User.
+     */
+    @FXML
     private Label lblUsuario;
     /**
      * Button creating a sector.
      */
-    @FXML 
+    @FXML
     private Button btnAnadir;
     /**
      * Button redirecting to the sectorcontent scene.
      */
-    @FXML 
+    @FXML
     private Button btnIr;
     /**
      * Sectors table data model.
      */
-    private ObservableList<Sector> sectorsData;    
+    private ObservableList<Sector> sectorsData;
+
     /**
-     * Sets a stage.
-     * @param stage A JavaFx stage.
-     */
-    public void setStage(Stage stage) {
-        this.stage = stage;    
-    }    
-    /**
-     * Gets a stage.
-     * @return A stage.
-     */
-    public Stage getStage(){
-        return stage;
-    } 
-    /**
-     * 
-     * @return 
-     */
-    public User getUser() {
-        return user;
-    }
-    /**
-     * 
-     * @param user 
-     */
-    public void setUser(User user) {
-        this.user = user;
-    }
-    /**
-     * This method adds a scene in the window and initializes the components of the scene.
+     * This method adds a scene in the window and initializes the components of
+     * the scene.
+     *
      * @param root A FXML node in graphic format.
      */
     public void initStage(Parent root) {
-        try{
-            LOGGER.log(Level.INFO,"Inicializando la ventana Sectors. ");
+        try {
+            LOGGER.log(Level.INFO, "Inicializando la ventana Sectors. ");
             //Creación de  una nueva escena
             Scene scene = new Scene(root);
             //Añadir escena a la ventana
@@ -166,7 +136,7 @@ public class SectorManagementController{
             //Asignación de un título a la ventana
             stage.setTitle("Sectores");
             //Asignar tamaño fijo a la ventana
-            stage.setResizable(false); 
+            stage.setResizable(false);
             //Conseguimos un creature managerimplementation
             sectorManager = SectorFactory.getSector();
             //Asignar texto cuando el campo está desenfocado.        
@@ -176,7 +146,6 @@ public class SectorManagementController{
             btnIr.setDisable(true);
             btnAnadir.setDisable(true);
             btnBorrar.setDisable(true);
-
             //La tabla sera editable.
             tbSectores.setEditable(true);
             //Añadir listener a la seleccion de la tabla 
@@ -186,10 +155,10 @@ public class SectorManagementController{
             //Añadir factoria para hacerla editable. Le digo que colNombre es un textField
             colNombre.setCellFactory(TextFieldTableCell.<Sector>forTableColumn());
             //Con editcommit la hago que los cambios se guarden al pulsar enter. Es un metodo lanbda hace lo siguiente a ->
-            colNombre.setOnEditCommit((CellEditEvent<Sector,String> t) -> {
+            colNombre.setOnEditCommit((CellEditEvent<Sector, String> t) -> {
                 try {
                     //guardar en sector el sector seleccionado de la tabla
-                    sector = (Sector)tbSectores.getSelectionModel().getSelectedItem();
+                    sector = (Sector) tbSectores.getSelectionModel().getSelectedItem();
                     //Actualiza el campo que se ha modificado
                     t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getNewValue());
                     //guardar en sector el valor nuevo
@@ -205,11 +174,11 @@ public class SectorManagementController{
             //Añadir las opciones de busqueda  a la combo. El tipo de la columna coltipo es una combo de SectorType 
             ObservableList<SectorType> options = FXCollections.observableArrayList((SectorType.values()));
             colTipo.setCellFactory(ComboBoxTableCell.forTableColumn(options));
-            colTipo.setOnEditCommit((CellEditEvent<Sector,SectorType> t) -> {
+            colTipo.setOnEditCommit((CellEditEvent<Sector, SectorType> t) -> {
                 try {
                     SectorContentREST sc = new SectorContentREST();
                     List<SectorContent> contenido = sc.findSectorContentBySector(new GenericType<List<SectorContent>>() {
-                    }, sector.getIdSector().toString());
+                    }, sector.getIdSector());
                     if (!contenido.isEmpty()) {
                         mostrarVentanaAlertError("El sector no está vacío. No se puede modificar el tipo.");
                     } else {
@@ -242,30 +211,32 @@ public class SectorManagementController{
             //Si se pulsa la x de la ventana para salir
             stage.setOnCloseRequest(this::manejarCierreVentana);
             //Hace visible la pantalla
-            stage.show();           
-        }catch(BusinessLogicException e){
+            stage.show();
+        } catch (BusinessLogicException e) {
             mostrarVentanaAlertError("No se ha podido iniciar la ventana");
         }
-    } 
+    }
+
     /**
-     * Acciones que se realizan en el momento previo a que se muestre la ventana.
+     * Acciones que se realizan en el momento previo a que se muestre la
+     * ventana.
+     *
      * @param event Evento de ventana.
      */
-    private void manejarInicioVentana(WindowEvent event){
+    private void manejarInicioVentana(WindowEvent event) {
         LOGGER.info("Iniciando CreatureController::handleWindowShowing.Metodo_ManejarInicioVentana");
-        //Asignar texto cuando el campo está desenfocado.
-        txtFieldNombre.setPromptText("Introduce el nombre.");
-        txtFieldNombre.setEditable(false);
         //El boton está inhabilitado al arrancar la ventana.
         //Botones inhabilitados al arrancar la ventana. Todos menos el de volver.
         btnIr.setDisable(true);
         btnAnadir.setDisable(true);
         btnBorrar.setDisable(true);
-        
+
         tbSectores.setItems(sectorsData);
     }
+
     /**
      * This method handles the event when a row of the table is selected.
+     *
      * @param observable Property being observed.
      * @param oldValue Old creature row selected.
      * @param newValue New creature row selected.
@@ -274,50 +245,54 @@ public class SectorManagementController{
         LOGGER.info("Iniciando CreatureController::manejarSeleccionTabla");
         //If there is a row selected, move row data to corresponding fields in the
         //window and enable create, modify and delete buttons
-        if(newValue!=null){                                   
+        if (newValue != null) {
             sector = (Sector) newValue;
             btnIr.setDisable(false);
             btnBorrar.setDisable(false);
-        }else{
-        //No hay ningun elemento de la tabla seleccionado limpiar los textfields
+        } else {
+            //No hay ningun elemento de la tabla seleccionado limpiar los textfields
             btnIr.setDisable(false);
             btnBorrar.setDisable(false);
         }
-    } 
+    }
 
     /**
-     * This method controls the event window closing when the window [x] is clicked.
+     * This method controls the event window closing when the window [x] is
+     * clicked.
+     *
      * @param event Window closing
      */
-    private void manejarCierreVentana(WindowEvent event){
+    private void manejarCierreVentana(WindowEvent event) {
         LOGGER.info("Iniciando CreatureController::manejarCierreVentana");
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"Estás seguro que quieres salir?.",ButtonType.OK,ButtonType.CANCEL);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Estás seguro que quieres salir?.", ButtonType.OK, ButtonType.CANCEL);
         alert.setHeaderText(null);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
             //ssi pulsa ok la ventana se cierra
             stage.close();
-        }else{
+        } else {
             //pulsa cancelar se consume el evento. Es decir, no hace nada y por tanto, se queda en la ventana.
             event.consume();
         }
     }
+
     /**
      * Registers textFields changes.
-     * @param observable 
+     *
+     * @param observable
      * @param oldValue Textfield value prior to the event thrown.
      * @param newValue TextField new value after the event thrown.
      */
-    private void cambioTexto(ObservableValue observable,String oldValue,String newValue){
+    private void cambioTexto(ObservableValue observable, String oldValue, String newValue) {
         LOGGER.info("Iniciando CreatureController::cambioTexto");
         //Si llevo 20 caracteres metidos ya no dejar meter mas.
-        if(this.txtFieldNombre.getText().trim().length()>=TEXTFIELD_MAX_LENGTH){
+        if (this.txtFieldNombre.getText().trim().length() >= TEXTFIELD_MAX_LENGTH) {
             txtFieldNombre.setText(txtFieldNombre.getText().substring(0, (TEXTFIELD_MAX_LENGTH)));
         }
         //Si uno de los dos textfield está vacío botones deshabilitados Modificar y añadir.
-        if(this.txtFieldNombre.getText().length()<TEXTFIELD_MIN_LENGTH)
+        if (this.txtFieldNombre.getText().length() < TEXTFIELD_MIN_LENGTH) {
             btnAnadir.setDisable(true);
-        else{//Los dos campos están informados.
+        } else {//Los dos campos están informados.
             //Habilitar botón 
             btnAnadir.setDisable(false);
             //Añadir tooltip al botón.
@@ -326,8 +301,10 @@ public class SectorManagementController{
             btnAnadir.setMnemonicParsing(true);
         }
     }
+
     /**
      * Action event handler for delete button.
+     *
      * @param event The ActionEvent object for the event.
      */
     private void accionBotonBorrar(ActionEvent event) {
@@ -336,7 +313,8 @@ public class SectorManagementController{
         try {
             //Antes de borrar mirar si el sector no está vacío.
             SectorContentREST sc = new SectorContentREST();
-            List <SectorContent> contenido = sc.findSectorContentBySector(new GenericType<List<SectorContent>>(){},sector.getIdSector().toString());
+            List<SectorContent> contenido = sc.findSectorContentBySector(new GenericType<List<SectorContent>>() {
+            }, sector.getIdSector());
             if (contenido.isEmpty()) {
                 alert = new Alert(Alert.AlertType.CONFIRMATION, "Estas seguro de borrar el sector?.");
                 alert.setHeaderText(null);
@@ -346,16 +324,19 @@ public class SectorManagementController{
                     //Borrar en la tabla el nuevo registro
                     tbSectores.getItems().remove(sector);
                 }
-            }else
+            } else {
                 mostrarVentanaAlertError("El sector no está vacío. Mueve su contenido antes de borrarlo.");
+            }
         } catch (BusinessLogicException ex) {
             Logger.getLogger(SectorManagementController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception e) {
             mostrarVentanaAlertError("Error al intentar borrar.");
         }
     }
+
     /**
      * Action event handler for return button. Returns to the previews scene.
+     *
      * @param event The ActionEvent object for the event.
      */
     private void accionBotonAnadir(ActionEvent event) {
@@ -371,8 +352,9 @@ public class SectorManagementController{
                 newSector.setType((SectorType) cbTipo.getSelectionModel().getSelectedItem());
                 //Mirar si el nombre de sector elegido existe
                 sectorManager.sectorNameIsRegistered(newSector.getName());
-                alert = new Alert(Alert.AlertType.CONFIRMATION, "Confirmar registro?.");
+                alert = new Alert(Alert.AlertType.CONFIRMATION, "Confirmar registro?");
                 alert.setTitle(null);
+                alert.setHeaderText(null);
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
                     //mirar que el nombre de sector sean letras
@@ -380,7 +362,8 @@ public class SectorManagementController{
                         //llamar al metodo de creatureimplementation
                         sectorManager.createSector(newSector);
                         //Añadir en la tabla el nuevo registro
-                        tbSectores.getItems().add(newSector);
+                        sectorsData = FXCollections.observableArrayList(sectorManager.getAllSectors());
+                        tbSectores.setItems(sectorsData);
                         //creo que se puede hacer asi directamente y la tabla reconoce el cambio en la lista observable
                         //creaturesData.add(creature);
                         //Vaciar textfields y datepicker
@@ -401,53 +384,70 @@ public class SectorManagementController{
             txtFieldNombre.requestFocus();
         }
     }
+
     /**
      * Action event handler for return button. Returns to the previews scene.
+     *
      * @param event The ActionEvent object for the event.
      */
-    private void accionBotonIr(ActionEvent event){
+    private void accionBotonIr(ActionEvent event) {
         LOGGER.info("Iniciando SectorController::accionBotonIr");
-        try{
-            if(sector.getType().equals(SectorType.CREATURE)){
+        try {
+            if (sector.getType().equals(SectorType.CREATURE)) {
                 //New FXMLLoader Añadir el fxml de sector que es la ventana a la que se redirige si todo va bien
-               FXMLLoader loader = new FXMLLoader(getClass().
-                   getResource("/view/FXMLCreatureManagement.fxml"));
-               //Parent es una clase gráfica de nodos xml son nodos.
-               Parent root = (Parent)loader.load();
-               //Relacionamos el documento FXML con el controlador que le va a controlar.
-               CreatureManagementController controladorCriaturas = (CreatureManagementController)loader.getController();
-               //Pasar la ventana al controlador de la ventana signIn.
-               controladorCriaturas.setStage(stage);
-               //Le pasamos el sector
-               controladorCriaturas.setSector(sector);
-               //Le pasamos el usuario a la nueva escena
-               controladorCriaturas.setUser(user);
-               //Llamada al método initStage del controlador de la ventana signIn. Pasa el documento fxml en un nodo.
-               controladorCriaturas.initStage(root);               
-            }else{
-  //Redireccinado a la ventana army
-  //Falta añadir el controller de armys
-                mostrarVentanaAlertError("No hay ventana armas");
+                FXMLLoader loader = new FXMLLoader(getClass().
+                        getResource("/view/FXMLCreatureManagement.fxml"));
+                //Parent es una clase gráfica de nodos xml son nodos.
+                Parent root = (Parent) loader.load();
+                //Relacionamos el documento FXML con el controlador que le va a controlar.
+                CreatureManagementController controladorCriaturas = (CreatureManagementController) loader.getController();
+                //Pasar la ventana al controlador de la ventana signIn.
+                controladorCriaturas.setStage(stage);
+                //Le pasamos el sector
+                controladorCriaturas.setSector(sector);
+                //Le pasamos el usuario a la nueva escena
+                controladorCriaturas.setUser(super.getUser());
+                //Llamada al método initStage del controlador de la ventana signIn. Pasa el documento fxml en un nodo.
+                controladorCriaturas.initStage(root);
+            } else {
+                //New FXMLLoader Añadir el fxml de sector que es la ventana a la que se redirige si todo va bien
+                FXMLLoader loader = new FXMLLoader(getClass().
+                        getResource("/view/FXMLArmyManagement.fxml"));
+                //Parent es una clase gráfica de nodos xml son nodos.
+                Parent root = (Parent) loader.load();
+                //Relacionamos el documento FXML con el controlador que le va a controlar.
+                ArmyManagementController armyManagementController = (ArmyManagementController) loader.getController();
+                //Pasar la ventana al controlador de la ventana signIn.
+                armyManagementController.setStage(stage);
+                //Le pasamos el sector
+                armyManagementController.setSector(sector);
+                //Le pasamos el usuario a la nueva escena
+                //armyManagementController.setUser(user);
+                //Llamada al método initStage del controlador de la ventana signIn. Pasa el documento fxml en un nodo.
+                armyManagementController.initStage(root);
             }
-        //Error al cargar la nueva escenamostrar mensaje.
-        }catch(IOException e){
+            //Error al cargar la nueva escenamostrar mensaje.
+        } catch (IOException e) {
             mostrarVentanaAlertError("Error al intentar salir, espera unos segundos.");
-        } 
-    } 
+        }
+    }
+
     /**
      * This methos shows alert error messages.
+     *
      * @param msg Message shown in the alert.
      */
-    private static void mostrarVentanaAlertError(String msg){
-        Alert alert = new Alert(Alert.AlertType.ERROR,msg
-                    ,ButtonType.OK);
+    private static void mostrarVentanaAlertError(String msg) {
+        Alert alert = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
         alert.setHeaderText(null);
-        alert.showAndWait();       
+        alert.showAndWait();
     }
+
     /**
      * This method searches if a String has only letters.
+     *
      * @param field
-     * @return 
+     * @return
      */
     private Boolean comprobarNombreCorrecto(String texto) {
         //Guardamos valos textField en string sin espacios delante ni detras.
@@ -455,9 +455,9 @@ public class SectorManagementController{
         //VAriable de retorno. Inicializar a false
         Boolean textoCorrecto = true;
         //ForEach de character. Recorremos letra a letra
-        for(Character t:textoSinEspacios.toCharArray()){
+        for (Character t : textoSinEspacios.toCharArray()) {
             //Condición de igualdad. Propiedad equals de Character. Si el caracter actual igual a espacio
-            if(!Character.isLetter(t)){
+            if (!Character.isLetter(t)) {
                 textoCorrecto = false;
                 break;
             }

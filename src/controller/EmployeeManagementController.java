@@ -7,10 +7,13 @@ package controller;
 
 import businessLogic.EmployeeFactory;
 import businessLogic.EmployeeInterface;
+import exceptions.ExcepcionEmailYaExiste;
+import exceptions.ExcepcionUserYaExiste;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -32,7 +35,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import model.Boss;
 import model.Employee;
-import model.User;
 import model.UserStatus;
 import utilMethods.MetodosUtiles;
 
@@ -41,18 +43,13 @@ import utilMethods.MetodosUtiles;
  *
  * @author xabig
  */
-public class EmployeeManagementController {
+public class EmployeeManagementController extends GenericController{
 
     /**
      * Atributo Logger para rastrear los pasos de ejecución del programa.
      */
     private static final Logger LOGGER
             = Logger.getLogger("grupog5.signinsignupapplication.cliente.application");
-
-    /**
-     * Una ventana sobre la que se coloca una escena.
-     */
-    private Stage stage;
     /**
      * The email of the Employee to be changed.
      */
@@ -60,7 +57,6 @@ public class EmployeeManagementController {
     /**
      * The User that operates on the window.
      */
-    User user;
 
     @FXML
     private TableView table;
@@ -114,14 +110,6 @@ public class EmployeeManagementController {
 
     public void setStage(Stage stage) {
         this.stage = stage;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     /**
@@ -238,36 +226,48 @@ public class EmployeeManagementController {
     }
 
     private void clickAniadir(ActionEvent event) {
-        if (verifyEmail(textfieldEmail.getText().trim())
-                && verifyFullName(textfieldNombApell.getText().trim())
-                && verifyLogin(textfieldLogin.getText().trim())
-                && verifySalario(textfieldSalario.getText().trim())
-                && verifyTrabajo(textfieldTrabajo.getText().trim())
-                && verifyPassword(textfieldPassword.getText().trim())) {
-            Boolean confirmar = mostrarAlertConfirmation("Create", "Are you sure you want to create?");
+        try {
+            if (verifyEmail(textfieldEmail.getText().trim())
+                    && verifyFullName(textfieldNombApell.getText().trim())
+                    && verifyLogin(textfieldLogin.getText().trim())
+                    && verifySalario(textfieldSalario.getText().trim())
+                    && verifyTrabajo(textfieldTrabajo.getText().trim())
+                    && verifyPassword(textfieldPassword.getText().trim())) {
+                Boolean confirmar = mostrarAlertConfirmation("Create", "Are you sure you want to create?");
 
-            if (confirmar) {
-                Employee employee = new Employee();
-                employee.setJob(textfieldTrabajo.getText().trim());
-                employee.setEmail(textfieldEmail.getText().trim());
-                employee.setFullName(textfieldNombApell.getText().trim());
-                employee.setWage(Float.parseFloat(textfieldSalario.getText().trim()));
-                employee.setLogin(textfieldLogin.getText().trim());
-                employee.setPassword(textfieldPassword.getText().trim());
-                employee.setLastAccess(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)));
-                employee.setLastPasswordChange(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)));
-                employee.setBoss((Boss) user);
-                employee.setStatus(UserStatus.ENABLED);
+                if (confirmar) {
+                    Employee employee = new Employee();
+                    employee.setJob(textfieldTrabajo.getText().trim());
+                    employee.setEmail(textfieldEmail.getText().trim());
+                    employee.setFullName(textfieldNombApell.getText().trim());
+                    employee.setWage(Float.parseFloat(textfieldSalario.getText().trim()));
+                    employee.setLogin(textfieldLogin.getText().trim());
+                    employee.setPassword(textfieldPassword.getText().trim());
+                    employee.setLastAccess(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)));
+                    employee.setLastPasswordChange(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)));
+                    employee.setBoss((Boss) super.getUser());
+                    employee.setStatus(UserStatus.ENABLED);
 
-                employeeInt.createEmployee(employee);
+                    employeeInt.createEmployee(employee);
 
-                employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
-                table.setItems(employees);
+                    employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
+                    table.setItems(employees);
 
-                limpiarCampos();
+                    limpiarCampos();
+                }
             }
+        } catch (ExcepcionUserYaExiste ex) {
+            Logger.getLogger(EmployeeManagementController.class.getName()).log(Level.SEVERE, null, ex);
+            labelError.setText("Ya existe un usuario con ese Login");
+            labelError.setTextFill(Color.web("#ff0000"));
+        } catch (ExcepcionEmailYaExiste ex) {
+            Logger.getLogger(EmployeeManagementController.class.getName()).log(Level.SEVERE, null, ex);
+            labelError.setText("Ya existe un usuario con ese Email");
+            labelError.setTextFill(Color.web("#ff0000"));
         }
     }
+
+    
 
     private void clickModificar(ActionEvent event) {
         if (verifyEmail(textfieldEmail.getText().trim())
@@ -287,7 +287,7 @@ public class EmployeeManagementController {
                 employee.setLogin(textfieldLogin.getText());
 
                 employeeInt.updateEmployee(employee);
-                
+
                 employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
                 table.setItems(employees);
 
@@ -311,18 +311,27 @@ public class EmployeeManagementController {
     }
 
     private void clickTabla(ObservableValue observable, Object oldValue, Object newValue) {
-        buttonModificar.setDisable(false);
-        buttonBorrar.setDisable(false);
-        Employee selectedEmp = ((Employee) table.getSelectionModel()
-                .getSelectedItem());
+        if (newValue != null) {
+            buttonModificar.setDisable(false);
+            buttonBorrar.setDisable(false);
+            Employee selectedEmp = ((Employee) table.getSelectionModel()
+                    .getSelectedItem());
 
-        textfieldEmail.setText(selectedEmp.getEmail());
-        textfieldNombApell.setText(selectedEmp.getFullName());
-        textfieldSalario.setText(Float.toString(selectedEmp.getWage()));
-        textfieldTrabajo.setText(selectedEmp.getJob());
-        textfieldLogin.setText(selectedEmp.getLogin());
+            textfieldEmail.setText(selectedEmp.getEmail());
+            textfieldNombApell.setText(selectedEmp.getFullName());
+            textfieldSalario.setText(Float.toString(selectedEmp.getWage()));
+            textfieldTrabajo.setText(selectedEmp.getJob());
+            textfieldLogin.setText(selectedEmp.getLogin());
 
-        savedEmail = selectedEmp.getEmail();
+            savedEmail = selectedEmp.getEmail();
+        } else {
+            textfieldEmail.setText("");
+            textfieldNombApell.setText("");
+            textfieldSalario.setText("");
+            textfieldTrabajo.setText("");
+            textfieldLogin.setText("");
+            buttonBorrar.setDisable(true);
+        }
     }
 
     @FXML
