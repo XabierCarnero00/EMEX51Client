@@ -11,7 +11,7 @@ import businessLogic.BusinessLogicException;
 import businessLogic.SectorFactory;
 import businessLogic.SectorInterface;
 import java.io.IOException;
-import java.time.LocalDate;
+import java.lang.reflect.InvocationTargetException;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Optional;
@@ -41,9 +41,9 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 import model.Army;
-import model.Employee;
 import model.Sector;
 import model.User;
+import utilMethods.MetodosUtiles;
 
 /**
  *
@@ -178,12 +178,15 @@ public class ArmyManagementController {
         tableColumnNombre.setCellFactory(TextFieldTableCell.forTableColumn());
         tableColumnNombre.setOnEditCommit((CellEditEvent<Army, String> t) -> {
             try {
-                t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getNewValue());
-                Army army = t.getRowValue();
-                armyInt.editArmy(army);
+                if (verifyNombre(t.getNewValue())) {
+                    t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getNewValue());
+                    Army army = t.getRowValue();
+                    armyInt.editArmy(army);
+                }
             } catch (BusinessLogicException ex) {
                 Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
-                LOGGER.info("Error al updatear en la lambda del nombre edit");
+                labelError.setText("Error when trying to Update Armys, try again later: " + ex.getMessage());
+                labelError.setTextFill(Color.web("#ff0000"));
             }
         });
         tableColumnMunicion.setCellFactory(TextFieldTableCell.<Army, Integer>forTableColumn(new IntegerStringConverter()));
@@ -194,7 +197,8 @@ public class ArmyManagementController {
                 armyInt.editArmy(army);
             } catch (BusinessLogicException ex) {
                 Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
-                LOGGER.info("Error al updatear en la lambda del nombre edit");
+                labelError.setText("Error when trying to Update Armys, try again later: " + ex.getMessage());
+                labelError.setTextFill(Color.web("#ff0000"));
             }
         });
 
@@ -211,50 +215,66 @@ public class ArmyManagementController {
     }
 
     private void clickBuscar(ActionEvent event) {
-        try {
-            if (comboBox.getValue().equals("Todos")) {
-                armys = FXCollections.observableArrayList(armyInt.getAllArmys());
-            } else if (comboBox.getValue().equals("Nombre")) {
-                armys = FXCollections.observableArrayList(armyInt.getArmysByName(textfieldBuscar.getText().trim()));
-            } else {
-                armys = FXCollections.observableArrayList(armyInt.getArmysByAmmunition(Integer.parseInt(textfieldBuscar.getText().trim())));
+        labelError.setText("");
+        if (MetodosUtiles.maximoCaracteres(textfieldBuscar, 50)) {
+            try {
+                if (comboBox.getValue().equals("Todos")) {
+                    armys = FXCollections.observableArrayList(armyInt.getAllArmys());
+                } else if (comboBox.getValue().equals("Nombre")) {
+                    armys = FXCollections.observableArrayList(armyInt.getArmysByName(textfieldBuscar.getText().trim()));
+                } else {
+                    if (MetodosUtiles.verifyFloat(textfieldBuscar.getText().trim())) {
+                        armys = FXCollections.observableArrayList(armyInt.getArmysByAmmunition(Integer.parseInt(textfieldBuscar.getText().trim())));
+                    } else {
+                        labelError.setText("Introduce numeros en el campo Buscar");
+                        labelError.setTextFill(Color.web("#ff0000"));
+                    }
+                }
+                tableView.setItems(armys);
+            } catch (BusinessLogicException ex) {
+                Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
+                labelError.setText("Error when trying to Find Armys, try again later: " + ex.getMessage());
+                labelError.setTextFill(Color.web("#ff0000"));
             }
-            tableView.setItems(armys);
-        } catch (BusinessLogicException ex) {
-            Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
-            labelError.setText("Error when trying to Find Armys, try again later");
+        } else {
+            textfieldBuscar.setText("");
+            labelError.setText("Demasiados caracteres en el campo Buscar");
             labelError.setTextFill(Color.web("#ff0000"));
         }
     }
 
     private void clickAniadir(ActionEvent event) {
-        if (datePickerAniadir.getValue().toString().compareToIgnoreCase("") != 0) {
-            Boolean confirmar = mostrarAlertConfirmation("Añadir", "Estas seguro que quieres añadir?");
-            if (confirmar) {
-                try {
-                    Army army = new Army();
-                    army.setSector(sector);
-                    army.setName(textfieldNombre.getText().trim());
-                    army.setAmmunition(Integer.parseInt(textfieldMunicion.getText().trim()));
-                    army.setArrivalDate(Date.from(datePickerAniadir.getValue().atStartOfDay().toInstant(ZoneOffset.UTC)));
+        try {
+            labelError.setText("");
+            if (verifyNombre(textfieldNombre.getText().trim())
+                    && verifyMunicion(textfieldMunicion.getText().trim())) {
+                if (mostrarAlertConfirmation("Añadir", "Estas seguro que quieres añadir?")) {
+                    try {
+                        Army army = new Army();
+                        army.setSector(sector);
+                        army.setName(textfieldNombre.getText().trim());
+                        army.setAmmunition(Integer.parseInt(textfieldMunicion.getText().trim()));
+                        army.setArrivalDate(Date.from(datePickerAniadir.getValue().atStartOfDay().toInstant(ZoneOffset.UTC)));
 
-                    armyInt.createArmy(army);
+                        armyInt.createArmy(army);
 
-                    //Actualizar lista
-                    textfieldNombre.setText("");
-                    textfieldMunicion.setText("");
-                    datePickerAniadir.getEditor().clear();
+                        //Actualizar lista
+                        textfieldNombre.setText("");
+                        textfieldMunicion.setText("");
+                        datePickerAniadir.setValue(null);
 
-                    armys = FXCollections.observableArrayList(armyInt.getArmysBySector(sector));
-                    tableView.setItems(armys);
-                } catch (BusinessLogicException ex) {
-                    Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
-                    labelError.setText("Error when trying to Create an Army, try again later");
-                    labelError.setTextFill(Color.web("#ff0000"));
+                        armys = FXCollections.observableArrayList(armyInt.getArmysBySector(sector));
+                        tableView.setItems(armys);
+                    } catch (BusinessLogicException ex) {
+                        Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
+                        labelError.setText("Error when trying to Create an Army, try again later: " + ex.getMessage());
+                        labelError.setTextFill(Color.web("#ff0000"));
+                    }
                 }
             }
-        } else {
-            mostrarAlertConfirmation("Espabila", "Introduce fecha");
+        } catch (NullPointerException ex) {
+            labelError.setText("Introduce una fecha para poder añadir");
+            labelError.setTextFill(Color.web("#ff0000"));
         }
     }
 
@@ -263,7 +283,7 @@ public class ArmyManagementController {
             try {
                 Army selectedArmy = ((Army) tableView.getSelectionModel()
                         .getSelectedItem());
-                armyInt.deleteArmy(selectedArmy.getId().toString());
+                armyInt.deleteArmy(selectedArmy);
 
                 armys = FXCollections.observableArrayList(armyInt.getArmysBySector(sector));
                 tableView.setItems(armys);
@@ -271,13 +291,14 @@ public class ArmyManagementController {
                 buttonBorrar.setDisable(true);
             } catch (BusinessLogicException ex) {
                 Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
-                labelError.setText("Error when trying to Delete an Army, try again later");
+                labelError.setText("Error when trying to Delete an Army, try again later: " + ex.getMessage());
                 labelError.setTextFill(Color.web("#ff0000"));
             }
         }
     }
 
     private void clickTabla(ObservableValue observable, Object oldValue, Object newValue) {
+        labelError.setText("");
         if (newValue != null) {
             buttonBorrar.setDisable(false);
         } else {
@@ -288,6 +309,7 @@ public class ArmyManagementController {
     @FXML
     private void cbListener(ActionEvent event) {
         buttonBuscar.setDisable(false);
+        labelError.setText("");
         if (comboBox.getValue().equals("Todos")) {
             textfieldBuscar.setText("");
             textfieldBuscar.setDisable(true);
@@ -301,8 +323,13 @@ public class ArmyManagementController {
         try {
             armys = FXCollections.observableArrayList(armyInt.getArmysByDate(Date.from(datePicker.getValue().atStartOfDay().toInstant(ZoneOffset.UTC))));
             tableView.setItems(armys);
+            datePicker.setValue(null);
         } catch (BusinessLogicException ex) {
             Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
+            labelError.setText("Error when trying to Find an Army, try again later: " + ex.getMessage());
+            labelError.setTextFill(Color.web("#ff0000"));
+        } catch (NullPointerException ex) {
+
         }
     }
 
@@ -321,6 +348,40 @@ public class ArmyManagementController {
             buttonAniadir.setDisable(false);
         } else {
             buttonAniadir.setDisable(true);
+        }
+    }
+
+    /**
+     * Este metodo verifica que el el TextField Nombre este rellenado
+     * adecuadamente
+     *
+     * @param comp El textfield a comprobar
+     * @return un Booleano
+     */
+    private Boolean verifyNombre(String comp) {
+        if (MetodosUtiles.maximoCaracteres(textfieldNombre, 50)) {
+            return true;
+        } else {
+            labelError.setText("El campo Nombre debe tener menos caracteres");
+            labelError.setTextFill(Color.web("#ff0000"));
+            return false;
+        }
+    }
+
+    /**
+     * Este metodo verifica que el el TextField Municion este rellenado
+     * adecuadamente
+     *
+     * @param comp El textfield a comprobar
+     * @return un Booleano
+     */
+    private Boolean verifyMunicion(String comp) {
+        if (MetodosUtiles.verifyFloat(comp)) {
+            return true;
+        } else {
+            labelError.setText("El campo Municion debe tener contener numeros");
+            labelError.setTextFill(Color.web("#ff0000"));
+            return false;
         }
     }
 

@@ -36,18 +36,20 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.ws.rs.core.GenericType;
 import model.Sector;
 import model.SectorContent;
 import model.SectorType;
+import model.User;
 
 /**
  * FXML Controller class for <code>Sector</code> class.
  *
  * @author Endika Ubierna Lopez.
  */
-public class SectorManagementController extends GenericController {
+public class SectorManagementController {
 
     /**
      * Logger object used to control activity from class
@@ -58,6 +60,14 @@ public class SectorManagementController extends GenericController {
      * A {@link SectorManager} object
      */
     private SectorInterface sectorManager;
+    /**
+     * Una ventana sobre la que se coloca una escena.
+     */
+    private Stage stage;
+    /**
+     * The User that controls the Window.
+     */
+    private User user;
     /**
      * Max length allow in current stage textFields.
      */
@@ -70,6 +80,12 @@ public class SectorManagementController extends GenericController {
      * A sector selected in te table.
      */
     private Sector sector;
+
+    /**
+     * Generic controller of the application.
+     */
+    @FXML
+    GenericController menuController = new GenericController();
     /**
      * TableView containing sectors.
      */
@@ -115,6 +131,42 @@ public class SectorManagementController extends GenericController {
      */
     @FXML
     private Button btnIr;
+
+    /**
+     * Asigna al atributo Stage de la clase una Stage recibida como parámetro.
+     *
+     * @param stage Una ventana JavaFx.
+     */
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    /**
+     * Retorna una Stage (ventana).
+     *
+     * @return Una Stage (ventana)
+     */
+    public Stage getStage() {
+        return stage;
+    }
+
+    /**
+     * Retorna un User (usuario).
+     *
+     * @return Un User (usuario)
+     */
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * Introduce el User que llega al User de la ventana
+     *
+     * @param user el User a introducir
+     */
+    public void setUser(User user) {
+        this.user = user;
+    }
     /**
      * Sectors table data model.
      */
@@ -148,6 +200,8 @@ public class SectorManagementController extends GenericController {
             btnBorrar.setDisable(true);
             //La tabla sera editable.
             tbSectores.setEditable(true);
+            //Añadir stage a la superclase
+            menuController.setStage(stage);
             //Añadir listener a la seleccion de la tabla 
             tbSectores.getSelectionModel().selectedItemProperty().addListener(this::manejarSeleccionTabla);
             //Set factorias a las celdas de las columnas de la tabla.
@@ -211,10 +265,10 @@ public class SectorManagementController extends GenericController {
             //Si se pulsa la x de la ventana para salir
             stage.setOnCloseRequest(this::manejarCierreVentana);
             //Hace visible la pantalla
-            stage.show();
         } catch (BusinessLogicException e) {
             mostrarVentanaAlertError("No se ha podido iniciar la ventana");
         }
+        stage.show();
     }
 
     /**
@@ -264,7 +318,7 @@ public class SectorManagementController extends GenericController {
      */
     private void manejarCierreVentana(WindowEvent event) {
         LOGGER.info("Iniciando CreatureController::manejarCierreVentana");
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Estás seguro que quieres salir?.", ButtonType.OK, ButtonType.CANCEL);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Estás seguro que quieres salir?", ButtonType.OK, ButtonType.CANCEL);
         alert.setHeaderText(null);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {
@@ -406,7 +460,7 @@ public class SectorManagementController extends GenericController {
                 //Le pasamos el sector
                 controladorCriaturas.setSector(sector);
                 //Le pasamos el usuario a la nueva escena
-                controladorCriaturas.setUser(super.getUser());
+                controladorCriaturas.setUser(user);
                 //Llamada al método initStage del controlador de la ventana signIn. Pasa el documento fxml en un nodo.
                 controladorCriaturas.initStage(root);
             } else {

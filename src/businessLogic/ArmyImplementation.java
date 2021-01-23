@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.GenericType;
 import model.Army;
 import model.Sector;
@@ -37,9 +36,9 @@ public class ArmyImplementation implements ArmyInterface {
         try {
             return armyRest.findAllArmys(new GenericType<List<Army>>() {
             });
-        } catch (WebApplicationException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(ArmyImplementation.class.getName()).log(Level.SEVERE, null, ex);
-            throw new BusinessLogicException("Error trying to get all Armys");
+            throw new BusinessLogicException(ex.getMessage());
         }
     }
 
@@ -55,9 +54,9 @@ public class ArmyImplementation implements ArmyInterface {
                 }
             }
             return armyReturn;
-        } catch (WebApplicationException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(ArmyImplementation.class.getName()).log(Level.SEVERE, null, ex);
-            throw new BusinessLogicException("Error trying to get Armys by Name");
+            throw new BusinessLogicException(ex.getMessage());
         }
     }
 
@@ -66,9 +65,9 @@ public class ArmyImplementation implements ArmyInterface {
         try {
             return armyRest.findArmyByMuniton(new GenericType<List<Army>>() {
             }, Integer.toString(ammunition));
-        } catch (WebApplicationException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(ArmyImplementation.class.getName()).log(Level.SEVERE, null, ex);
-            throw new BusinessLogicException("Error trying to get Armys by Ammunition");
+            throw new BusinessLogicException(ex.getMessage());
         }
     }
 
@@ -83,9 +82,9 @@ public class ArmyImplementation implements ArmyInterface {
                 }
             }
             return armyReturn;
-        } catch (WebApplicationException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(ArmyImplementation.class.getName()).log(Level.SEVERE, null, ex);
-            throw new BusinessLogicException("Error getting Armys by date");
+            throw new BusinessLogicException(ex.getMessage());
         }
     }
     
@@ -105,28 +104,31 @@ public class ArmyImplementation implements ArmyInterface {
     public void editArmy(Army army) throws BusinessLogicException {
         try {
             armyRest.edit(army);
-        } catch (WebApplicationException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(ArmyImplementation.class.getName()).log(Level.SEVERE, null, ex);
-            throw new BusinessLogicException("Error editing Army");
+            throw new BusinessLogicException(ex.getMessage());
         }
     }
 
+    
     @Override
     public void createArmy(Army army) throws BusinessLogicException {
         try {
             armyRest.create(army);
-        } catch (WebApplicationException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(ArmyImplementation.class.getName()).log(Level.SEVERE, null, ex);
-            throw new BusinessLogicException("Error creating Army");
+            throw new BusinessLogicException(ex.getMessage());
         }
     }
 
-    public void deleteArmy(String id) throws BusinessLogicException {
+    public void deleteArmy(Army army) throws BusinessLogicException {
         try {
-            armyRest.remove(id);
-        } catch (WebApplicationException ex) {
+            army.setSector(null);
+            armyRest.edit(army);
+            armyRest.remove(army.getId().toString());
+        } catch (Exception ex) {
             Logger.getLogger(ArmyImplementation.class.getName()).log(Level.SEVERE, null, ex);
-            throw new BusinessLogicException("Error deleting Army");
+            throw new BusinessLogicException(ex.getMessage());
         }
     }
 

@@ -20,6 +20,7 @@ public interface ArmyInterface {
      * Returns all Armys.
      * @return list of Armys
      * @throws businessLogic.BusinessLogicException
+     * @throws exceptions.NoDataBaseException
      */
     public List<Army> getAllArmys() throws BusinessLogicException;
     
@@ -28,6 +29,7 @@ public interface ArmyInterface {
      * @param name name of the Armys returned
      * @return list of Armys
      * @throws businessLogic.BusinessLogicException
+     * @throws exceptions.NoDataBaseException
      */
     public List<Army> getArmysByName(String name) throws BusinessLogicException;
     
@@ -36,6 +38,7 @@ public interface ArmyInterface {
      * @param ammunition ammuninition minim
      * @return list of Armys
      * @throws businessLogic.BusinessLogicException
+     * @throws exceptions.NoDataBaseException
      */
     public List<Army> getArmysByAmmunition(Integer ammunition) throws BusinessLogicException;
     
@@ -44,6 +47,7 @@ public interface ArmyInterface {
      * @param date arrived date
      * @return list of Armys
      * @throws BusinessLogicException 
+     * @throws exceptions.NoDataBaseException 
      */
     public List<Army> getArmysByDate(Date date) throws BusinessLogicException;
     
@@ -52,6 +56,7 @@ public interface ArmyInterface {
      * @param sector the sector of the armys
      * @return list of Armys
      * @throws BusinessLogicException 
+     * @throws exceptions.NoDataBaseException 
      */
      public List<Army> getArmysBySector(Sector sector) throws BusinessLogicException;
     
@@ -71,8 +76,8 @@ public interface ArmyInterface {
     
     /**
      * Deletes the Army of the DataBase
-     * @param id the id of the Army to be deleted
+     * @param army the Army to be deleted 
      * @throws BusinessLogicException 
      */
-    public void deleteArmy(String id) throws BusinessLogicException;
+    public void deleteArmy(Army army) throws BusinessLogicException;
 }

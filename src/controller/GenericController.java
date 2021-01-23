@@ -17,7 +17,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -43,6 +42,7 @@ public class GenericController {
      * La ventana
      */
     protected Stage stage;
+    
     @FXML
     private Menu MenuLogout;
     /**
@@ -74,6 +74,7 @@ public class GenericController {
      * Label informatimo para saber el tipo de usuario
      */
     private Label lblTipoUsuario;
+    
     @FXML
     private Menu menu;
 
@@ -177,7 +178,7 @@ public class GenericController {
         try {
             //New FXMLLoader Añadir el fxml de logout que es la escena a la que se redirige si todo va bien
             FXMLLoader loader = new FXMLLoader(getClass().
-                    getResource("/view/EmployeeManagementController.fxml"));
+                    getResource("/view/FXMLEmployeeManagement.fxml"));
             //Parent es una clase gráfica de nodos. xml son nodos.
             Parent root = (Parent) loader.load();
             //Relacionamos el documento FXML con el controlador que le va a controlar.
