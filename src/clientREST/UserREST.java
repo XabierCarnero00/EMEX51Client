@@ -5,9 +5,11 @@
  */
 package clientREST;
 
+import java.util.ResourceBundle;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 
 /**
  * Jersey REST client generated for REST resource:UserFacadeREST [user]<br>
@@ -22,19 +24,20 @@ import javax.ws.rs.client.WebTarget;
  * @author xabig
  */
 public class UserREST {
+    private static ResourceBundle rb = ResourceBundle.getBundle("clientREST.RestURL");
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:8080/EMEX51Server/webresources";
+    private static final String BASE_URI = rb.getString("URL");
 
     public UserREST() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("user");
     }
 
-    public <T> T findUsersByLogin(Class<T> responseType, String login) throws ClientErrorException {
+    public <T> T comprobateUserType(Class<T> responseType, String login) throws ClientErrorException {
         WebTarget resource = webTarget;
-        resource = resource.path(java.text.MessageFormat.format("login/{0}", new Object[]{login}));
+        resource = resource.path(java.text.MessageFormat.format("compUserType/{0}", new Object[]{login}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
@@ -48,26 +51,36 @@ public class UserREST {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
+    public <T> T comprobateLogin(Class<T> responseType, String login, String password) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("makeLogin/{0}/{1}", new Object[]{login, password}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
+    public <T> T sendMail(Class<T> responseType, String email) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("sendMail/{0}", new Object[]{email}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
     public void create(Object requestEntity) throws ClientErrorException {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public <T> T findAllEmployees(Class<T> responseType) throws ClientErrorException {
+    public <T> T findAllUsers(GenericType<T> responseType) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path("all");
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
-    }
-
-    public void temporalPassword(Object requestEntity, String email) throws ClientErrorException {
-        webTarget.path(java.text.MessageFormat.format("temporalPassword/{0}", new Object[]{email})).request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
     public void remove(String id) throws ClientErrorException {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
     }
 
-    public void changePassword(Object requestEntity, String user) throws ClientErrorException {
-        webTarget.path(java.text.MessageFormat.format("newPassword/{0}", new Object[]{user})).request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
+    public <T> T changePassword(Class<T> responseType, String email, String tempPass, String newPass) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("newPassword/{0}/{1}/{2}", new Object[]{email, tempPass, newPass}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
     public void close() {

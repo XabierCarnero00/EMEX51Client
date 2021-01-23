@@ -5,9 +5,11 @@
  */
 package clientREST;
 
+import java.util.ResourceBundle;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 
 /**
  * Jersey REST client generated for REST resource:ArmyFacadeREST [army]<br>
@@ -22,10 +24,11 @@ import javax.ws.rs.client.WebTarget;
  * @author xabig
  */
 public class ArmyREST {
+    private static ResourceBundle rb = ResourceBundle.getBundle("clientREST.RestURL");
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:8080/EMEX51Server/webresources";
+    private static final String BASE_URI = rb.getString("URL");
 
     public ArmyREST() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
@@ -62,9 +65,15 @@ public class ArmyREST {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public <T> T findAllArmys(Class<T> responseType) throws ClientErrorException {
+    public <T> T findAllArmys(GenericType<T> responseType) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path("all");
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
+    public <T> T findArmyByMuniton(GenericType<T> responseType, String ammunition) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("ammunition/{0}", new Object[]{ammunition}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 

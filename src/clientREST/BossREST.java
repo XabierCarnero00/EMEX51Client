@@ -5,6 +5,7 @@
  */
 package clientREST;
 
+import java.util.ResourceBundle;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
@@ -22,10 +23,11 @@ import javax.ws.rs.client.WebTarget;
  * @author xabig
  */
 public class BossREST {
+    private static ResourceBundle rb = ResourceBundle.getBundle("clientREST.RestURL");
 
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:8080/EMEX51Server/webresources";
+    private static final String BASE_URI = rb.getString("URL");
 
     public BossREST() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
