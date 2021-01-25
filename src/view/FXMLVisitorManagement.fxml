@@ -1,68 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitMenuButton?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.GestionarVisitorController">
+<AnchorPane id="Content" fx:id="visitorPane" minHeight="-1.0" minWidth="-1.0" prefHeight="570.0" prefWidth="897.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <SplitPane focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+      <TableView fx:id="tblVisitors" layoutX="180.0" layoutY="183.0" prefHeight="338.0" prefWidth="545.0">
+         <columns>
+            <TableColumn fx:id="colEmail" prefWidth="96.0" text="Email" />
+            <TableColumn fx:id="colDni" prefWidth="84.0" text="DNI" />
+            <TableColumn fx:id="colFullName" prefWidth="124.0" text="Nombre y Apellidos" />
+            <TableColumn fx:id="colLastAccess" prefWidth="92.0" text="Último Acceso" />
+            <TableColumn fx:id="colVisited" prefWidth="68.0" text="Visitado" />
+            <TableColumn fx:id="colVisitReply" prefWidth="84.0" text="Acceso" />
+         </columns>
+      </TableView>
+      <SplitMenuButton fx:id="cbxBuscar" layoutX="311.0" layoutY="110.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="285.0" text="Buscar">
          <items>
-            <ScrollPane prefHeight="-1.0" prefWidth="-1.0">
-               <content>
-                  <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="570.0" prefWidth="897.0">
-                     <children>
-                        <TableView fx:id="tblVisitors" layoutX="180.0" layoutY="183.0" prefHeight="338.0" prefWidth="545.0">
-                           <columns>
-                              <TableColumn fx:id="colEmail" prefWidth="96.0" text="Email" />
-                              <TableColumn fx:id="colDni" prefWidth="84.0" text="DNI" />
-                              <TableColumn fx:id="colFullName" prefWidth="124.0" text="Nombre y Apellidos" />
-                              <TableColumn fx:id="colLastAccess" prefWidth="92.0" text="Último Acceso" />
-                              <TableColumn fx:id="colVisited" prefWidth="68.0" text="Visitado" />
-                              <TableColumn fx:id="colVisitReply" prefWidth="84.0" text="Acceso" />
-                           </columns>
-                        </TableView>
-                        <SplitMenuButton fx:id="cbxBuscar" layoutX="311.0" layoutY="111.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="285.0" text="Buscar">
-                           <items>
-                              <MenuItem mnemonicParsing="false" text="Action 1" />
-                              <MenuItem mnemonicParsing="false" text="Action 2" />
-                           </items>
-                        </SplitMenuButton>
-                        <DatePicker fx:id="datePicker" layoutX="366.0" layoutY="144.0" />
-                        <Label fx:id="lblUsuario" layoutX="821.0" layoutY="37.0" text="tipoUsuario" />
-                        <Label fx:id="lblVisitanteTitulo" layoutX="376.0" layoutY="32.0" text="VISITANTES">
-                           <font>
-                              <Font size="30.0" />
-                           </font>
-                        </Label>
-                        <Button fx:id="btnBorrar" layoutX="415.0" layoutY="531.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="73.0" text="Borrar" />
-                        <Button fx:id="btnBuscar" layoutX="537.0" layoutY="80.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="59.0" text="Buscar" />
-                        <TextField fx:id="txtBuscar" layoutX="311.0" layoutY="81.0" prefHeight="25.0" prefWidth="220.0" promptText="Buscar" />
-                     </children>
-                     <opaqueInsets>
-                        <Insets />
-                     </opaqueInsets>
-                  </AnchorPane>
-               </content>
-            </ScrollPane>
+            <MenuItem fx:id="miTodos" mnemonicParsing="false" text="Todos" />
+            <MenuItem fx:id="miNombre" mnemonicParsing="false" text="Nombre" />
          </items>
-      </SplitPane>
+      </SplitMenuButton>
+      <DatePicker fx:id="datePicker" layoutX="366.0" layoutY="144.0" />
+      <Label fx:id="lblUsuario" layoutX="821.0" layoutY="37.0" text="tipoUsuario" />
+      <Label fx:id="lblVisitanteTitulo" layoutX="376.0" layoutY="32.0" text="VISITANTES">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Label>
+      <Button fx:id="btnBorrar" layoutX="415.0" layoutY="531.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="73.0" text="Borrar" />
+      <Button fx:id="btnBuscar" layoutX="537.0" layoutY="80.0" mnemonicParsing="false" prefHeight="28.0" prefWidth="59.0" text="Buscar" />
+      <TextField fx:id="txtBuscar" layoutX="311.0" layoutY="81.0" prefHeight="25.0" prefWidth="220.0" promptText="Buscar" />
    </children>
-</VBox>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
+</AnchorPane>
