@@ -51,7 +51,7 @@
                </VBox.margin></PasswordField>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Label fx:id="lblPreguntaRegistrate" text="*¿Has olvidado tu contrseña?">
+                  <Label fx:id="lblPreguntaRegistrate" text="*¿Has olvidado tu contraseña?">
                      <HBox.margin>
                         <Insets top="10.0" />
                      </HBox.margin>

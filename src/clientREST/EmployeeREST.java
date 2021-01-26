@@ -5,16 +5,8 @@
  */
 package clientREST;
 
-import businessLogic.EmployeeImplementation;
-import exceptions.ExcepcionEmailYaExiste;
-import exceptions.ExcepcionUserYaExiste;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ws.rs.ClientErrorException;
-import javax.ws.rs.ForbiddenException;
-import javax.ws.rs.NotAuthorizedException;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
@@ -33,6 +25,7 @@ import javax.ws.rs.core.GenericType;
  * @author xabig
  */
 public class EmployeeREST {
+    
     private static ResourceBundle rb = ResourceBundle.getBundle("clientREST.RestURL");
 
     private WebTarget webTarget;
@@ -60,16 +53,8 @@ public class EmployeeREST {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public void create(Object requestEntity) throws ClientErrorException, ExcepcionEmailYaExiste, ExcepcionUserYaExiste {
-        try {
-            webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
-        } catch (ForbiddenException ex) {
-            Logger.getLogger(EmployeeImplementation.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ExcepcionEmailYaExiste();
-        } catch (NotAuthorizedException ex) {
-            Logger.getLogger(EmployeeImplementation.class.getName()).log(Level.SEVERE, null, ex);
-            throw new ExcepcionUserYaExiste();
-        }
+    public void create(Object requestEntity) throws ClientErrorException {
+        webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
     public <T> T findAllEmployees(GenericType<T> responseType) throws ClientErrorException {
@@ -78,7 +63,7 @@ public class EmployeeREST {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
-    public <T> T findEmployeeByEmail(Class<T> responseType, String email) throws ClientErrorException {
+    public <T> T findEmployeeByEmail(GenericType<T> responseType, String email) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("email/{0}", new Object[]{email}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -91,5 +76,5 @@ public class EmployeeREST {
     public void close() {
         client.close();
     }
-
+    
 }

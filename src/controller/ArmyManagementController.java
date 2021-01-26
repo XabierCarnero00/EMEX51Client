@@ -164,6 +164,7 @@ public class ArmyManagementController {
 
             textfieldMunicion.textProperty().addListener(this::municionListener);
             textfieldNombre.textProperty().addListener(this::nombreListener);
+            textfieldBuscar.textProperty().addListener(this::buscarListener);
             buttonBuscar.setOnAction(this::clickBuscar);
             buttonAniadir.setOnAction(this::clickAniadir);
             buttonBorrar.setOnAction(this::clickBorrar);
@@ -332,8 +333,13 @@ public class ArmyManagementController {
 
         }
     }
+    
+    private void buscarListener(ObservableValue observable, String oldValue, String newValue){
+        labelError.setText("");
+    } 
 
     private void municionListener(ObservableValue observable, String oldValue, String newValue) {
+        labelError.setText("");
         if (textfieldMunicion.getText().compareToIgnoreCase("") != 0
                 && textfieldNombre.getText().compareToIgnoreCase("") != 0) {
             buttonAniadir.setDisable(false);
@@ -343,6 +349,7 @@ public class ArmyManagementController {
     }
 
     private void nombreListener(ObservableValue observable, String oldValue, String newValue) {
+        labelError.setText("");
         if (textfieldMunicion.getText().compareToIgnoreCase("") != 0
                 && textfieldNombre.getText().compareToIgnoreCase("") != 0) {
             buttonAniadir.setDisable(false);
