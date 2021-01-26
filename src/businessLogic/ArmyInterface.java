@@ -5,6 +5,7 @@
  */
 package businessLogic;
 
+import exceptions.ExceptionArmyExiste;
 import java.util.Date;
 import java.util.List;
 import model.Army;
@@ -29,7 +30,6 @@ public interface ArmyInterface {
      * @param name name of the Armys returned
      * @return list of Armys
      * @throws businessLogic.BusinessLogicException
-     * @throws exceptions.NoDataBaseException
      */
     public List<Army> getArmysByName(String name) throws BusinessLogicException;
     
@@ -38,7 +38,6 @@ public interface ArmyInterface {
      * @param ammunition ammuninition minim
      * @return list of Armys
      * @throws businessLogic.BusinessLogicException
-     * @throws exceptions.NoDataBaseException
      */
     public List<Army> getArmysByAmmunition(Integer ammunition) throws BusinessLogicException;
     
@@ -47,7 +46,6 @@ public interface ArmyInterface {
      * @param date arrived date
      * @return list of Armys
      * @throws BusinessLogicException 
-     * @throws exceptions.NoDataBaseException 
      */
     public List<Army> getArmysByDate(Date date) throws BusinessLogicException;
     
@@ -56,7 +54,6 @@ public interface ArmyInterface {
      * @param sector the sector of the armys
      * @return list of Armys
      * @throws BusinessLogicException 
-     * @throws exceptions.NoDataBaseException 
      */
      public List<Army> getArmysBySector(Sector sector) throws BusinessLogicException;
     
@@ -64,6 +61,7 @@ public interface ArmyInterface {
      * Updates the Army send in the DataBase
      * @param army Army to be edit
      * @throws businessLogic.BusinessLogicException
+     * @throws exceptions.ExceptionArmyExiste
      */
     public void editArmy(Army army) throws BusinessLogicException;
     
@@ -71,8 +69,9 @@ public interface ArmyInterface {
      * Creates a new Army in the DataBase
      * @param army the Army to be created
      * @throws BusinessLogicException 
+     * @throws exceptions.ExceptionArmyExiste 
      */
-    public void createArmy(Army army) throws BusinessLogicException;
+    public void createArmy(Army army) throws BusinessLogicException, ExceptionArmyExiste;
     
     /**
      * Deletes the Army of the DataBase

@@ -10,10 +10,12 @@ import businessLogic.ArmyInterface;
 import businessLogic.BusinessLogicException;
 import businessLogic.SectorFactory;
 import businessLogic.SectorInterface;
+import exceptions.ExceptionArmyExiste;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
 import java.time.ZoneOffset;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +33,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
@@ -41,6 +44,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 import model.Army;
+import model.Creature;
 import model.Sector;
 import model.User;
 import utilMethods.MetodosUtiles;
@@ -160,6 +164,26 @@ public class ArmyManagementController {
             }
             makeTableEditable();
 
+            //Formatear la fecha para que se vea formateada.
+            tableColumnFechaLlegada.setCellFactory(column -> {
+                TableCell<Army, Date> cell = new TableCell<Army, Date>() {
+                    private SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+
+                    @Override
+                    protected void updateItem(Date item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setText(null);
+                        } else {
+                            this.setText(format.format(item));
+
+                        }
+                    }
+                };
+
+                return cell;
+            });
+
             stage.show();
 
             textfieldMunicion.textProperty().addListener(this::municionListener);
@@ -178,8 +202,16 @@ public class ArmyManagementController {
     private void makeTableEditable() {
         tableColumnNombre.setCellFactory(TextFieldTableCell.forTableColumn());
         tableColumnNombre.setOnEditCommit((CellEditEvent<Army, String> t) -> {
+            labelError.setText("");
+            boolean existe = false;
             try {
                 if (verifyNombre(t.getNewValue())) {
+                    List<Army> armys = armyInt.getAllArmys();
+                    for (Army a : armys) {
+                        if (a.getName().equals(t.getNewValue())) {
+                            throw new ExceptionArmyExiste();
+                        }
+                    }
                     t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getNewValue());
                     Army army = t.getRowValue();
                     armyInt.editArmy(army);
@@ -188,10 +220,17 @@ public class ArmyManagementController {
                 Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
                 labelError.setText("Error when trying to Update Armys, try again later: " + ex.getMessage());
                 labelError.setTextFill(Color.web("#ff0000"));
+                tableView.requestFocus();
+                t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getOldValue());
+            } catch (ExceptionArmyExiste ex) {
+                Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
+                labelError.setText("That Name alredy exists");
+                labelError.setTextFill(Color.web("#ff0000"));
             }
         });
         tableColumnMunicion.setCellFactory(TextFieldTableCell.<Army, Integer>forTableColumn(new IntegerStringConverter()));
         tableColumnMunicion.setOnEditCommit((CellEditEvent<Army, Integer> t) -> {
+            labelError.setText("");
             try {
                 t.getTableView().getItems().get(t.getTablePosition().getRow()).setAmmunition(t.getNewValue());
                 Army army = t.getRowValue();
@@ -270,6 +309,10 @@ public class ArmyManagementController {
                         Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
                         labelError.setText("Error when trying to Create an Army, try again later: " + ex.getMessage());
                         labelError.setTextFill(Color.web("#ff0000"));
+                    } catch (ExceptionArmyExiste ex) {
+                        Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
+                        labelError.setText("The Army you want to Create alredy exists");
+                        labelError.setTextFill(Color.web("#ff0000"));
                     }
                 }
             }
@@ -333,10 +376,10 @@ public class ArmyManagementController {
 
         }
     }
-    
-    private void buscarListener(ObservableValue observable, String oldValue, String newValue){
+
+    private void buscarListener(ObservableValue observable, String oldValue, String newValue) {
         labelError.setText("");
-    } 
+    }
 
     private void municionListener(ObservableValue observable, String oldValue, String newValue) {
         labelError.setText("");

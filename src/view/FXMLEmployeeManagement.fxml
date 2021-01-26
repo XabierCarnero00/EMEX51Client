@@ -15,7 +15,6 @@
 
 <VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.EmployeeManagementController">
     <children>
-        <fx:include source="FXMLMenuBar.fxml" />
         <SplitPane focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
             <items>
                 <ScrollPane prefHeight="-1.0" prefWidth="-1.0">
