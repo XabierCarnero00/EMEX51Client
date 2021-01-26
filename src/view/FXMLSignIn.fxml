@@ -51,12 +51,12 @@
                </VBox.margin></PasswordField>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Label fx:id="lblPreguntaRegistrate" text="*¿Has olvidado tu contrseña?">
+                  <Label fx:id="lblPreguntaRegistrate" text="*¿No tienes una cuenta?">
                      <HBox.margin>
                         <Insets top="10.0" />
                      </HBox.margin>
                   </Label>
-                  <Hyperlink fx:id="hplRegistrate" text="Recuperar">
+                  <Hyperlink fx:id="hplRegistrate" text="Registrate">
                      <HBox.margin>
                         <Insets top="7.0" />
                      </HBox.margin>
@@ -65,6 +65,8 @@
             </HBox>
             <VBox prefHeight="200.0" prefWidth="100.0">
                <children>
+                  <Label text="¿Has olvidado la contraseña?" />
+                  <Hyperlink fx:id="hplContrasenia" text="Recuperar contraseña" />
                   <Label fx:id="lblErrorExcepcion">
                      <VBox.margin>
                         <Insets top="15.0" />
@@ -76,7 +78,7 @@
       </VBox>
    </center>
    <left>
-      <VBox prefHeight="277.0" prefWidth="155.0" BorderPane.alignment="CENTER" />
+      <VBox prefHeight="305.0" prefWidth="155.0" BorderPane.alignment="CENTER" />
    </left>
    <bottom>
       <Button fx:id="btnEntrar" mnemonicParsing="false" text="ENTRAR" BorderPane.alignment="CENTER">

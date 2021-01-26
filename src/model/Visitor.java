@@ -6,7 +6,8 @@
 package model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
+import java.sql.Date;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -57,6 +58,17 @@ public class Visitor extends User implements Serializable {
      * Class constructor.
      */
     public Visitor() {
+    }
+    
+        
+    public Visitor(String login, String email, String fullName, String password,String Dni) {
+        super(login, email, fullName, password);
+        this.setDni(Dni);
+        super.setPrivilege(UserPrivilege.VISITOR);
+        super.setLastAccess(Date.valueOf(LocalDate.now()));
+        super.setLastPasswordChange(Date.valueOf(LocalDate.now()));
+        this.setVisitaRespuesta(false);
+        this.setVisitado(false);
     }
 
     /**

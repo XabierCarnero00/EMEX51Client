@@ -6,8 +6,8 @@
 package businessLogic;
 
 /**
- *
- * @author xabig
+ * 
+ * @author Endika Ubierna Lopez
  */
 public class UserFactory {
         

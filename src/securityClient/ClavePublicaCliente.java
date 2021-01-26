@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ResourceBundle;
 import javax.crypto.Cipher;
 
 /**
@@ -23,7 +24,9 @@ public class ClavePublicaCliente {
         byte[] encodedMessage = null;
         String encodedMessageHex = null;
         try {
-            byte fileKey[] = fileReader("Public.key");
+            ResourceBundle fichero = ResourceBundle.getBundle("securityClient.PublicKeyFile");
+            String rutaFichero = fichero.getString("filepath");
+            byte fileKey[] = fileReader(rutaFichero);
 
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(fileKey);

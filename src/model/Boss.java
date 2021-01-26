@@ -6,6 +6,8 @@
 package model;
 
 import java.io.Serializable;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -35,6 +37,14 @@ public class Boss extends User implements Serializable {
      * Class constructor.
      */
     public Boss() {
+    }
+    
+    public Boss(String login, String email, String fullName, String password) {
+        super(login, email, fullName, password);
+        this.wage = 3500;
+        super.setPrivilege(UserPrivilege.BOSS);
+        super.setLastAccess(Date.valueOf(LocalDate.now()));
+        super.setLastPasswordChange(Date.valueOf(LocalDate.now()));
     }
 
     /**

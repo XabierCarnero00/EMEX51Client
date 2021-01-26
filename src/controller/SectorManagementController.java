@@ -36,6 +36,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.ws.rs.core.GenericType;
 import model.Sector;
@@ -69,6 +70,7 @@ public class SectorManagementController extends GenericController {
     /**
      * A sector selected in te table.
      */
+    private Stage stage;
     private Sector sector;
     /**
      * TableView containing sectors.
@@ -119,6 +121,21 @@ public class SectorManagementController extends GenericController {
      * Sectors table data model.
      */
     private ObservableList<Sector> sectorsData;
+    /**
+     * Gets the Stage object related to this controller.
+     * @return The Stage object initialized by this controller.
+     */
+    public Stage getStage() {
+        return stage;
+    }
+
+    /**
+     * Sets the Stage object related to this controller.
+     * @param stage The Stage object to be initialized.
+     */
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
 
     /**
      * This method adds a scene in the window and initializes the components of
@@ -137,11 +154,14 @@ public class SectorManagementController extends GenericController {
             stage.setTitle("Sectores");
             //Asignar tamaño fijo a la ventana
             stage.setResizable(false);
+            
+            GenericController controllerGeneric = new GenericController();
+            controllerGeneric.setStage(stage);
+            
             //Conseguimos un creature managerimplementation
             sectorManager = SectorFactory.getSector();
             //Asignar texto cuando el campo está desenfocado.        
             txtFieldNombre.setPromptText("Sector");
-
             //Botones inhabilitados al arrancar la ventana. Todos menos el de volver.
             btnIr.setDisable(true);
             btnAnadir.setDisable(true);
@@ -214,6 +234,8 @@ public class SectorManagementController extends GenericController {
             stage.show();
         } catch (BusinessLogicException e) {
             mostrarVentanaAlertError("No se ha podido iniciar la ventana");
+        }catch(Exception e){
+            mostrarVentanaAlertError("No se pudo conectar con el servidor");
         }
     }
 
@@ -251,8 +273,8 @@ public class SectorManagementController extends GenericController {
             btnBorrar.setDisable(false);
         } else {
             //No hay ningun elemento de la tabla seleccionado limpiar los textfields
-            btnIr.setDisable(false);
-            btnBorrar.setDisable(false);
+            btnIr.setDisable(true);
+            btnBorrar.setDisable(true);
         }
     }
 
@@ -329,8 +351,8 @@ public class SectorManagementController extends GenericController {
             }
         } catch (BusinessLogicException ex) {
             Logger.getLogger(SectorManagementController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (Exception e) {
-            mostrarVentanaAlertError("Error al intentar borrar.");
+        }catch(Exception e){
+            mostrarVentanaAlertError("No se pudo conectar con el servidor");
         }
     }
 
@@ -382,6 +404,8 @@ public class SectorManagementController extends GenericController {
             Logger.getLogger(SectorManagementController.class.getName()).log(Level.SEVERE, null, ex);
             mostrarVentanaAlertError("El sector " + newSector.getName() + " ya existe");
             txtFieldNombre.requestFocus();
+        }catch(Exception e){
+            mostrarVentanaAlertError("No se pudo conectar con el servidor");
         }
     }
 
@@ -429,6 +453,8 @@ public class SectorManagementController extends GenericController {
             //Error al cargar la nueva escenamostrar mensaje.
         } catch (IOException e) {
             mostrarVentanaAlertError("Error al intentar salir, espera unos segundos.");
+        }catch(Exception e){
+            mostrarVentanaAlertError("No se pudo conectar con el servidor");
         }
     }
 
@@ -438,7 +464,7 @@ public class SectorManagementController extends GenericController {
      * @param msg Message shown in the alert.
      */
     private static void mostrarVentanaAlertError(String msg) {
-        Alert alert = new Alert(Alert.AlertType.ERROR, msg, ButtonType.OK);
+        Alert alert = new Alert(Alert.AlertType.ERROR, msg, ButtonType.CLOSE);
         alert.setHeaderText(null);
         alert.showAndWait();
     }

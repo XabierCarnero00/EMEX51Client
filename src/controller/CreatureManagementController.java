@@ -280,6 +280,8 @@ public class CreatureManagementController {
             stage.show();            
         }catch(BusinessLogicException ex){
             mostrarVentanaAlertError("No se ha podido abrir la ventana.");
+        }catch(Exception e){
+            mostrarVentanaAlertError("No se pudo conectar con el servidor");
         }
 
     }
@@ -405,7 +407,9 @@ public class CreatureManagementController {
         }catch(BusinessLogicException e){
             Logger.getLogger(CreatureManagementController.class.getName()).log(Level.SEVERE, null, e);
             tbCreature.getItems().removeAll(creaturesData);
-        } 
+        }catch(Exception e){
+            mostrarVentanaAlertError("No se pudo conectar con el servidor");
+        }
     }
     /**
      * Action event handler for search button.
@@ -465,8 +469,7 @@ public class CreatureManagementController {
             mostrarVentanaAlertError("La criatura "+creature.getName()+" ya existe. Elije otro nombre");
             txtFieldNombre.requestFocus();
         }catch(Exception e){
-            Logger.getLogger(CreatureManagementController.class.getName()).log(Level.SEVERE, null, e); 
-            mostrarVentanaAlertError("Error al añadir criatura");
+            mostrarVentanaAlertError("No se pudo conectar con el servidor");
         }
     }
     /**
@@ -517,9 +520,8 @@ public class CreatureManagementController {
             Logger.getLogger(CreatureManagementController.class.getName()).log(Level.SEVERE, null, ex);
             mostrarVentanaAlertError("La criatura "+creature.getName()+" ya existe. Elije otro nombre");
             txtFieldNombre.requestFocus();
-        }catch (Exception e){
-            Logger.getLogger(CreatureManagementController.class.getName()).log(Level.SEVERE, null, e); 
-            mostrarVentanaAlertError("Error al modificar criaturas");            
+        }catch(Exception e){
+            mostrarVentanaAlertError("No se pudo conectar con el servidor");
         }
     }
     /**
@@ -531,27 +533,27 @@ public class CreatureManagementController {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"Estás seguro que quieres salir?.");
         alert.setHeaderText(null);
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {       
+        if (result.get() == ButtonType.OK) {
             //Abrir ventana sector
-        try{
-            //New FXMLLoader Añadir el fxml de sector que es la ventana a la que se redirige si todo va bien
-            FXMLLoader loader = new FXMLLoader(getClass().
-                getResource("/view/FXMLSectorManagement.fxml"));
-            //Parent es una clase gráfica de nodos xml son nodos.
-            Parent root = (Parent)loader.load();
-            //Relacionamos el documento FXML con el controlador que le va a controlar.
-            SectorManagementController controladorSector = (SectorManagementController)loader.getController();
-            //Pasar la ventana al controlador de la ventana signIn.
-            controladorSector.setStage(stage);
-            controladorSector.setUser(user);
-            //Llamada al método initStage del controlador de la ventana signIn. Pasa el documento fxml en un nodo.
-            controladorSector.initStage(root);
-            
-        //Error al cargar la nueva escenamostrar mensaje.
-        }catch(IOException e){
-            mostrarVentanaAlertError("Error al intentar salir, espera unos segundos.");
-        } 
-        }             
+            try {
+                //New FXMLLoader Añadir el fxml de sector que es la ventana a la que se redirige si todo va bien
+                FXMLLoader loader = new FXMLLoader(getClass().
+                        getResource("/view/FXMLSectorManagement.fxml"));
+                //Parent es una clase gráfica de nodos xml son nodos.
+                Parent root = (Parent) loader.load();
+                //Relacionamos el documento FXML con el controlador que le va a controlar.
+                SectorManagementController controladorSector = (SectorManagementController) loader.getController();
+                //Pasar la ventana al controlador de la ventana signIn.
+                controladorSector.setStage(stage);
+                controladorSector.setUser(user);
+                //Llamada al método initStage del controlador de la ventana signIn. Pasa el documento fxml en un nodo.
+                controladorSector.initStage(root);
+
+                //Error al cargar la nueva escenamostrar mensaje.
+            } catch (IOException e) {
+                mostrarVentanaAlertError("Error al intentar salir, espera unos segundos.");
+            }
+        }            
     }
     /**
      * This methos shows alert error messages.
@@ -559,7 +561,7 @@ public class CreatureManagementController {
      */
     private static void mostrarVentanaAlertError(String msg){
         Alert alert = new Alert(Alert.AlertType.ERROR,msg
-                    ,ButtonType.OK);
+                    ,ButtonType.CLOSE);
         alert.setHeaderText(null);
         alert.showAndWait();       
     }

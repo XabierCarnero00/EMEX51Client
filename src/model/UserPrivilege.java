@@ -3,18 +3,22 @@ package model;
 
 
 /**
- * This enumeration is for users profiles. Includes the values USER and ADMIN. 
+ * This enumeration is for users profiles. Includes the terms Boss, Employee, Visitor.. 
  * @since 23/11/2020
  * @version 1.0
  * @author Xabier Carnero, Endika Ubierna, Markel Lopez de Uralde.
  */
 public enum UserPrivilege{
     /**
-     * The user is a regular user.
+     * The user is a boss.
      */
-    USER,
+    BOSS,
     /**
-     * The user is a privileged user.
+     * The user is an employee.
      */
-    ADMIN
+    EMPLOYEE,
+    /**
+     * The user is a visitor.
+     */
+    VISITOR
 }

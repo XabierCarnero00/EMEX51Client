@@ -1,18 +1,11 @@
 package controller;
 
 import businessLogic.BusinessLogicException;
-import utilMethods.MetodosUtiles;
-import businessLogic.UserFactory;
-import businessLogic.UserInterface;
-import exceptions.ExcepcionPasswdIncorrecta;
-import exceptions.ExcepcionUserNoExiste;
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -24,10 +17,15 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import model.Boss;
-import model.Employee;
 import model.User;
 import securityClient.ClavePublicaCliente;
+import businessLogic.UserFactory;
+import businessLogic.UserInterface;
+import java.io.IOException;
+import java.util.Optional;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 /**
  * FXML Controller class para la escena SignIn
@@ -46,7 +44,9 @@ public class SignInController {
      * Una ventana sobre la que se coloca una escena.
      */
     private Stage stage;
-
+    /**
+     * The interface 
+     */
     UserInterface userImp = UserFactory.getUserImp();
     /**
      * Longitud máxima de los campos de texto permitida.
@@ -77,7 +77,11 @@ public class SignInController {
      */
     @FXML
     private Hyperlink hplRegistrate;
-
+    /**
+     * Hyperlink de recuperar contraseña. Enlace a la escena SendMail.
+     */
+    @FXML
+    private Hyperlink hplContrasenia;
     /**
      * Label Mensajes Error usuario,contraseña.
      */
@@ -135,6 +139,8 @@ public class SignInController {
         //Ejecutar método handleWindowShowing cuando se produzca el evento setOnShowing
         //Este evento se lanza cuando la ventana esta a punto de aparecer. Este evento no se lanza al volver de otra escena porque no abrimos una stage cambiamos de scene
         stage.setOnShowing(this::manejarInicioVentana);
+        //Si se pulsa la x de la ventana para salir
+        stage.setOnCloseRequest(this::manejarCierreVentana);
         //Ejecutar método cambioTexto cuando el texto de el campo txtFieldUsuario cambie.
         txtFieldUsuario.textProperty().addListener(this::cambioTexto);
         //Ejecutar método cambioTexto cuando el texto de el campo pswFieldContraseña cambie.
@@ -142,7 +148,8 @@ public class SignInController {
         //Ejecutar método evento acción clickar botón
         btnEntrar.setOnAction(this::accionBoton);
         //Ejecutar método Hyperlink clickado
-        hplRegistrate.setOnAction(this::hyperlinkClickado);
+        hplRegistrate.setOnAction(this::hyperlinkClickadoRegistro);
+        hplContrasenia.setOnAction(this::hyperlinkClickadoContrasenia);
         //Hace visible la pantalla
         stage.show();
     }
@@ -162,23 +169,78 @@ public class SignInController {
         //El boton está inhabilitado al arrancar la ventana.
         btnEntrar.setDisable(true);
     }
+    /**
+     * Controla el evento de orden de cerrar la ventana al pulsar el usuario la x de salir.
+     * @param event El evento de cierre de ventana
+     */
+    private void manejarCierreVentana(WindowEvent event){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"Estás seguro que quieres salir?.",ButtonType.OK,ButtonType.CANCEL);
+        alert.setHeaderText(null);
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            //ssi pulsa ok la ventana se cierra
+            stage.close();
+        }else{
+            //pulsa cancelar se consume el evento. Es decir, no hace nada y por tanto, se queda en la ventana.
+            event.consume();
+        }         
+    }
+    /**
+     * Evento del Hyperlink clickado. Redirige a la escena SignUp.
+     *
+     * @param event Un evento del Hyperlink.
+     */
+    public void hyperlinkClickadoContrasenia(ActionEvent event) {
+        LOGGER.log(Level.INFO, "Evento del Hyperlink clickado. ");
+        //Se ha pulsado el botón y los datos han sido validados en la BBDD.
+        LOGGER.log(Level.INFO,"Abriendo ventana Send Mail. ");
+        try{
+            //New FXMLLoader Añadir el fxml de logout que es la escena a la que se redirige si todo va bien
+            FXMLLoader loader = new FXMLLoader(getClass().
+                    getResource("/view/FXMLSendMail.fxml"));
+            //Parent es una clase gráfica de nodos. xml son nodos.
+            Parent root = (Parent)loader.load();
+            //Relacionamos el documento FXML con el controlador que le va a controlar.
+            SendMailController controladorMail = (SendMailController)loader.getController();
+            //Llamada al método setStage del controlador de la ventana signIn. Pasa la ventana.
+            controladorMail.setStage(stage);
+            //Llamada al método initStage del controlador de la ventana LogOut. Pasa el documento fxml en un nodo.
+            controladorMail.initStage(root);
+        //Error al cargar la nueva escena, mostrar mensaje.
+        }catch(IOException e){
+            lblErrorExcepcion.setText("Se ha producido un error. Lo sentimos. Inténtalo mas tarde");
+            //Cambia de color el texto del label, en este caso a rojo
+            lblErrorExcepcion.setTextFill(Color.web("#ff0000"));
+        }
+    }
 
     /**
      * Evento del Hyperlink clickado. Redirige a la escena SignUp.
      *
      * @param event Un evento del Hyperlink.
      */
-    public void hyperlinkClickado(ActionEvent event) {
-        LOGGER.log(Level.INFO, "Evento del Hyperlink clickado. ");
-        try {
-            //Llamada a método abrirVentanaSignUp
-            openChangePasswordWindow();
-        } catch (Exception e) {
-            //Escribir en el label.
-            lblErrorExcepcion.setText("Intentalo mas tarde. Fallo la conexión");
+    public void hyperlinkClickadoRegistro(ActionEvent event) {
+        //A este método llegamos cuando se clicka en el Hyperlink.
+        LOGGER.log(Level.INFO,"Abriendo ventana SignUp. ");
+        try{
+            //New FXMLLoader Añadir el fxml de signUp que es la escena a la que se redirige si todo va bien
+            FXMLLoader loader = new FXMLLoader(getClass().
+                getResource("/view/FXMLDocumentSignUp.fxml"));
+            //Parent es una clase gráfica de nodos xml son nodos.
+            Parent root = (Parent)loader.load();
+            //Relacionamos el documento FXML con el controlador que le va a controlar.
+            SignUpController controladorSignUp = (SignUpController)loader.getController();   
+            //Pasa la ventana al controlador de la ventana signUp
+            controladorSignUp.setStage(stage);
+            //Llamada al método initStage del controlador de la ventana signUp. Pasa el documento fxml en un nodo.
+            controladorSignUp.initStage(root);
+        //Error al cargar la nueva escenamostrar mensaje.
+        }catch(IOException e){
+            lblErrorExcepcion.setText("Se ha producido un error. Lo sentimos. Inténtalo mas tarde");
+            //Cambia de color el texto del label, en este caso a rojo
+            lblErrorExcepcion.setTextFill(Color.web("#ff0000"));
         }
     }
-
     /**
      * Registra los cambios de texto en los textField o passwordField.
      *
@@ -216,9 +278,9 @@ public class SignInController {
         LOGGER.info("Iniciando ControllerSignIn.accionBoton");
         //Si cumplen las condiciones enviar datos.
         //El campo usuario tiene una longitud que no está entre 4 y 20 caracteres y no tiene espacios.
-        if (!MetodosUtiles.maximoCaracteres(txtFieldUsuario, TEXTFIELD_MAX_LENGTH)
-                || !MetodosUtiles.minimoCaracteres(txtFieldUsuario, TEXTFIELD_MIN_LENGTH)
-                || !MetodosUtiles.comprobarEspaciosBlancos(txtFieldUsuario)) {
+        if (txtFieldUsuario.getText().trim().length()> TEXTFIELD_MAX_LENGTH
+                || txtFieldUsuario.getText().trim().length()< TEXTFIELD_MIN_LENGTH
+                || !SignInController.comprobarEspaciosBlancos(txtFieldUsuario)) {
             LOGGER.info("Longitud del textfield erronea y espacios blancos ControllerSignIn.accionBoton");
             //El foco lo pone en el campo usuario
             txtFieldUsuario.requestFocus();
@@ -231,9 +293,9 @@ public class SignInController {
             //Cambia de color el texto del label, en este caso a rojo
             lblErrorUsuarioContrasena.setTextFill(Color.web("#ff0000"));
             //El campo contraseña tiene una longitud que no está entre 4 y 20 caracteres y no tiene espacios.
-        } else if (!MetodosUtiles.maximoCaracteres((TextField) pswFieldContrasena, TEXTFIELD_MAX_LENGTH)
-                || !MetodosUtiles.minimoCaracteres((TextField) pswFieldContrasena, TEXTFIELD_MIN_LENGTH)
-                || !MetodosUtiles.comprobarEspaciosBlancos((TextField) pswFieldContrasena)) {
+        } else if (pswFieldContrasena.getText().trim().length()> TEXTFIELD_MAX_LENGTH
+                || pswFieldContrasena.getText().trim().length()< TEXTFIELD_MIN_LENGTH
+                || !SignInController.comprobarEspaciosBlancos(pswFieldContrasena)) {
             LOGGER.info("Longitud del passwordField erronea y espacios blancos ControllerSignIn.accionBoton");
             pswFieldContrasena.requestFocus();
             pswFieldContrasena.selectAll();
@@ -253,102 +315,73 @@ public class SignInController {
      * como atributo esta clase y que implementa la Interfaz.
      */
     private void enviarDatosServidorBBDD() {
+        User user = null;
         try {
             //Cuando entra a este método sabemos que los campos usuario y contraseña cumplen todas las condiciones preestablecidas.
             LOGGER.info("Iniciando ControllerSignIn.EnviarDatosServidorBBDD");
             //Almacenar en el objeto de la clase User los datos recogidos de los campos de la ventana.
-            User user = userImp.login(txtFieldUsuario.getText().trim(), ClavePublicaCliente.cifrarTexto(pswFieldContrasena.getText().trim()));
-            if (user != null) {
-                if (user instanceof Boss) {
-                    openMenuWindowBoss(user);
-                } else if (user instanceof Employee) {
-                    openMenuWindowEmployee(user);
-                }
+            userImp.loginUser(txtFieldUsuario.getText().trim(),ClavePublicaCliente.cifrarTexto(pswFieldContrasena.getText().trim()));
+            //Le llamo otra vez para que asi me dice que tipo de usuario es. Para evitar el error de xml
+            user = userImp.findUsersByLogin(txtFieldUsuario.getText().trim());
+            user.setLogin(txtFieldUsuario.getText().trim());
+            abrirVentanaSector(user);
+            //Vaciar campos de texto
+            txtFieldUsuario.setText("");
+            pswFieldContrasena.setText("");
 
-            } else {
-                //Vaciar campos de texto
-                txtFieldUsuario.setText("");
-                pswFieldContrasena.setText("");
-                //Colocar el texto de la excepción en el label
-                lblErrorExcepcion.setText("Se ha producido un error. Lo sentimos. Inténtalo mas tarde");
-                //Cambia de color el texto del label, en este caso a rojo
-                lblErrorExcepcion.setTextFill(Color.web("#ff0000"));
-            }
-        } catch (ExcepcionUserNoExiste ex) {
-            Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
-            //Vaciar campos de texto
-            txtFieldUsuario.setText("");
-            pswFieldContrasena.setText("");
-            //Colocar el texto de la excepción en el label
-            lblErrorExcepcion.setText("El usuario no existe");
-            //Cambia de color el texto del label, en este caso a rojo
-            lblErrorExcepcion.setTextFill(Color.web("#ff0000"));
-        } catch (ExcepcionPasswdIncorrecta ex) {
-            Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
-            //Vaciar campos de texto
-            txtFieldUsuario.setText("");
-            pswFieldContrasena.setText("");
-            //Colocar el texto de la excepción en el label
-            lblErrorExcepcion.setText("Incorrect password");
-            //Cambia de color el texto del label, en este caso a rojo
-            lblErrorExcepcion.setTextFill(Color.web("#ff0000"));
         } catch (BusinessLogicException ex) {
-            Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);            //Colocar el texto de la excepción en el label
-            lblErrorExcepcion.setText("Error en el servidor. Intentelo de nuevo mas tarde");
-            //Cambia de color el texto del label, en este caso a rojo
-            lblErrorExcepcion.setTextFill(Color.web("#ff0000"));
-        }
-    }
-
-    private void openMenuWindowBoss(User user) {
-        try {
-            //Mensaje Logger al acceder al método
-            LOGGER.log(Level.INFO, "Método para abrir el menu principal de la aplicación");
-            //New FXMLLoader Añadir el fxml de MenuPrincipal que es la ventana principal
-            FXMLLoader loader = new FXMLLoader(getClass().
-                    getResource("/view/FXMLEmployeeManagement.fxml"));
-            //Parent es una clase gráfica de nodos xml son nodos.
-            Parent root = (Parent) loader.load();
-            //Relacionamos el documento FXML con el controlador que le va a controlar.
-            EmployeeManagementController employeeManagementController = (EmployeeManagementController) loader.getController();
-            //Introducir el user a la ventana
-            employeeManagementController.setUser(user);
-            //Llamada al método setStage del controlador de la ventana SignIn. Pasa la ventana.
-            employeeManagementController.setStage(stage);
-            //Llamada al método initStage del controlador de la ventana SignIn. Pasa el documento fxml en un nodo.
-            employeeManagementController.initStage(root);
-            //Llamada al método inicializarComponenentesVentana del controlador de la ventana signIn.
-        } catch (IOException ex) {
             Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private void openMenuWindowEmployee(User user) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            //Colocar el texto de la excepción en el label
+            lblErrorExcepcion.setText("ERROR. No hay conexión");
+            //Cambia de color el texto del label, en este caso a rojo
+            lblErrorExcepcion.setTextFill(Color.web("#ff0000"));           
+            LOGGER.log(Level.SEVERE, "CAtch enviardatosalservidor");
+        } catch (Exception ex) {
+            Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
+        }          
     }
 
     /**
-     * Carga la ventana ChangePassword para que el usuario se pueda recuperar y
-     * cambiar su contraseña.
+     * Cargar la escena de LogOut en la ventana. Se le pasa el usuario para que
+     * pueda cerrar la sesión.
      */
-    private void openChangePasswordWindow() {
-        try {
-            //Mensaje Logger al acceder al método
-            LOGGER.log(Level.INFO, "Método para abrir el menu principal de la aplicación");
-            //New FXMLLoader Añadir el fxml de MenuPrincipal que es la ventana principal
+  
+    private void abrirVentanaSector(User usuario) throws Exception{
+        //Se ha pulsado el botón y los datos han sido validados en la BBDD.
+        LOGGER.log(Level.INFO,"Abriendo ventana Sector. ");
+        try{
+            //New FXMLLoader Añadir el fxml de logout que es la escena a la que se redirige si todo va bien
             FXMLLoader loader = new FXMLLoader(getClass().
-                    getResource("/view/FXMLCPSendMail.fxml"));
-            //Parent es una clase gráfica de nodos xml son nodos.
-            Parent root = (Parent) loader.load();
+                    getResource("/view/FXMLSectorManagement.fxml"));
+            //Parent es una clase gráfica de nodos. xml son nodos.
+            Parent root = (Parent)loader.load();
             //Relacionamos el documento FXML con el controlador que le va a controlar.
-            CPSendMailController cpSendMailController = (CPSendMailController) loader.getController();
-            //Llamada al método setStage del controlador de la ventana SignIn. Pasa la ventana.
-            cpSendMailController.setStage(stage);
-            //Llamada al método initStage del controlador de la ventana SignIn. Pasa el documento fxml en un nodo.
-            cpSendMailController.initStage(root);
-            //Llamada al método inicializarComponenentesVentana del controlador de la ventana signIn.
-        } catch (IOException ex) {
-            Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
+            SectorManagementController controladorSector = (SectorManagementController)loader.getController();
+            //Pasar el usuario al controlador de la ventana logOut.
+            controladorSector.setUser(usuario);
+            //Llamada al método setStage del controlador de la ventana signIn. Pasa la ventana.
+            controladorSector.setStage(stage);
+            //Llamada al método initStage del controlador de la ventana LogOut. Pasa el documento fxml en un nodo.
+            controladorSector.initStage(root);
+        //Error al cargar la nueva escena, mostrar mensaje.
+        }catch(IOException e){
+            lblErrorExcepcion.setText("Se ha producido un error. Lo sentimos. Inténtalo mas tarde");
+            //Cambia de color el texto del label, en este caso a rojo
+            lblErrorExcepcion.setTextFill(Color.web("#ff0000"));
         }
+    }
+  
+    private static Boolean comprobarEspaciosBlancos(TextField field) {
+        //Guardamos valos textField en string sin espacios delante ni detras.
+        String textoSinEspacios = field.getText().trim();
+        //VAriable de retorno. Inicializar a false
+        Boolean textoCorrecto = true;
+        //ForEach de character. Recorremos letra a letra
+        for(Character t:textoSinEspacios.toCharArray()){
+            //Condición de igualdad. Propiedad equals de Character. Si el caracter actual igual a espacio.
+            if(t.equals(' '))
+                textoCorrecto = false;
+        }
+        return textoCorrecto;
     }
 }
