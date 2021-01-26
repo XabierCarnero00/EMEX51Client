@@ -5,6 +5,8 @@
  */
 package businessLogic;
 import clientREST.VisitorREST;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -98,6 +100,29 @@ public class VisitorImplementation implements VisitorManager{
             LOGGER.log(Level.SEVERE,"Exception deleting visitor");
             throw new BusinessLogicException("Error deleting visitor:\n"+ex.getMessage());
         } 
+    }
+    /**
+     * This method return a date 
+     * @param date
+     * @return
+     * @throws BusinessLogicException 
+     */
+    
+    @Override
+    public List<Visitor> getVisitorsByDate(Date date) throws BusinessLogicException {
+        try {
+            List<Visitor> armys = getAllVisitors();
+            List<Visitor> armyReturn = new ArrayList();
+            for (Visitor a : armys) {
+                if (a.getFechaVisita().compareTo(date) == 0) {
+                    armyReturn.add(a);
+                }
+            }
+            return armyReturn;
+        } catch (Exception ex) {
+            Logger.getLogger(ArmyImplementation.class.getName()).log(Level.SEVERE, null, ex);
+            throw new BusinessLogicException(ex.getMessage());
+        }
     }
 
     

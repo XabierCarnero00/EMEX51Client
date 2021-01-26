@@ -7,6 +7,7 @@ package controller;
 import businessLogic.BusinessLogicException;
 import businessLogic.VisitorManager;
 import businessLogic.VisitorManagerFactory;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -34,14 +35,15 @@ import javafx.stage.Stage;
 import model.Visitor;
 
 /**
+ *
  * @author markel
  */
 public class VisitorManagementController {
     
-     /**
+    /**
      * Logger object used to control activity from class FXMLDocumentVisitorController.
      */
-    private static final Logger LOGGER = Logger.getLogger("emex51.cliente.controlador.VisitorManagementController");
+    private static final Logger LOGGER = Logger.getLogger("emex51.cliente.controlador.FXMLDocumentVisitorController");
     /**
      * The Window showing sector components.
      */
@@ -61,9 +63,9 @@ public class VisitorManagementController {
     @FXML
     private TextField txtBuscar;
     /**
-     * Boton buscar to serach visitors
+     * Button to search 
      */
-    @FXML
+    @FXML 
     private Button btnBuscar;
     /**
      * Date Picker to search visitors
@@ -94,7 +96,7 @@ public class VisitorManagementController {
      * TableColumn contains visitor last Acces
      */
     @FXML 
-    private TableColumn <Visitor,Date> colLastAccess;
+    private TableColumn <Visitor,Date> colVisitDate;
     /**
      * TableColumn contains if the visitor visited
      */
@@ -113,7 +115,12 @@ public class VisitorManagementController {
      * Label for user info.
      */
     @FXML 
-    private Label lblUsuario; 
+    private Label lblUsuario;
+    /**
+     * Combo for different sector type.
+     */
+    @FXML 
+    private ComboBox cbTipo; 
     /**
      * Button removing a visitor.
      */
@@ -159,7 +166,9 @@ public class VisitorManagementController {
             
             //Botones inhabilitados al arrancar la ventana. Todos menos el de volver.
             btnBorrar.setDisable(true);
-
+            btnBuscar.setDisable(true);
+            //datePicker inicialicing 
+            datePicker.setEditable(false);
             //La tabla sera editable.
             tblVisitors.setEditable(true);
             
@@ -169,10 +178,47 @@ public class VisitorManagementController {
             ObservableList<String> cbxOptions = FXCollections.observableArrayList();
             cbxOptions.addAll("Nombre", "Todos");            
             cbxBuscar.setItems(cbxOptions);
+   
+            visitorsData = FXCollections.observableArrayList(visitorManager.getAllVisitors());
+            if(visitorsData != null)
+                loadVisitorsTable(visitorsData);
             
+            tblVisitors.setItems(visitorsData);         
             
+            //Ejecutar método evento acción clickar botón
+            btnBuscar.setOnAction(this::clickBuscar);
+            btnBorrar.setOnAction(this::accionBotonBorrar);     
+            datePicker.setOnAction(this::changeDatePicker);
             
-            //Set factorias a las celdas de las columnas de la tabla.
+            //Hace visible la pantalla
+            stage.show();           
+        }catch(Exception ex){
+            Logger.getLogger(VisitorManagementController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    
+    /**
+     * This method handles the event when a row of the table is selected.
+     * @param observable Property being observed.
+     * @param oldValue Old creature row selected.
+     * @param newValue New creature row selected.
+     */
+    private void manejarSeleccionTabla(ObservableValue observable, Object oldValue, Object newValue) {
+        LOGGER.info("Iniciando VisitorController::manejarSeleccionTabla");
+        //If there is a row selected, move row data to corresponding fields in the
+        //window and enable create, modify and delete buttons
+        if(newValue!=null){
+            visitor = (Visitor) newValue;
+            btnBorrar.setDisable(false);
+        }else{
+        //No hay ningun elemento de la tabla seleccionado limpiar los textfields
+            btnBorrar.setDisable(false);
+
+        }
+    }
+    private void loadVisitorsTable(ObservableList<Visitor> visitors) {
+        //Set factorias a las celdas de las columnas de la tabla.
             colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
 
             colEmail.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -216,41 +262,13 @@ public class VisitorManagementController {
                     LOGGER.info("Error al updatear en la lambda del email edit");
                 }
             });
-
-            visitorsData = FXCollections.observableArrayList(visitorManager.getAllVisitors());
-            tblVisitors.setItems(visitorsData);         
-            
-            //Ejecutar método evento acción clickar botón
-            btnBorrar.setOnAction(this::accionBotonBorrar);
-            
-            
-            //Hace visible la pantalla
-            stage.show();           
-        }catch(Exception ex){
-            Logger.getLogger(VisitorManagementController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+                        
+        colVisitDate.setCellValueFactory(new PropertyValueFactory<>("visitDate"));
+        colVisited.setCellValueFactory(new PropertyValueFactory<>("visited"));
+        colVisitReply.setCellValueFactory(new PropertyValueFactory<>("visitReply"));
+        
+        tblVisitors.setItems(visitors);
     }
-    
-    
-    /**
-     * This method handles the event when a row of the table is selected.
-     * @param observable Property being observed.
-     * @param oldValue Old creature row selected.
-     * @param newValue New creature row selected.
-     */
-    private void manejarSeleccionTabla(ObservableValue observable, Object oldValue, Object newValue) {
-        LOGGER.info("Iniciando VisitorController::manejarSeleccionTabla");
-        //If there is a row selected, move row data to corresponding fields in the
-        //window and enable create, modify and delete buttons
-        if(newValue!=null){
-            visitor = (Visitor) newValue;
-            btnBorrar.setDisable(false);
-        }else{
-        //No hay ningun elemento de la tabla seleccionado limpiar los textfields
-            btnBorrar.setDisable(false);
-
-        }
-    } 
     /**
      * Action event handler for return button. Returns to the previews scene.
      * @param event The ActionEvent object for the event.
@@ -263,10 +281,16 @@ public class VisitorManagementController {
             //si no confirmamos 
             alert = new Alert (Alert.AlertType.CONFIRMATION, "Estas seguro de borrar un visitante?");
             Optional <ButtonType> result = alert.showAndWait();
-            if (result.get()==ButtonType.OK)
+            if (result.get()==ButtonType.OK){
                 visitorManager.deleteVisitor(visitor);
-        }catch(Exception ex){
+                tblVisitors.getItems().remove(visitor);
+            }else{
+                mostrarVentanaAlertError("Error al intentar borrar.");
+            }
+        }catch(BusinessLogicException ex){
             Logger.getLogger(VisitorManagementController.class.getName()).log(Level.SEVERE, null, ex);
+        }catch (Exception e){
+            mostrarVentanaAlertError("Error al intentar borrar.");
         } 
     }   
     
@@ -286,15 +310,26 @@ public class VisitorManagementController {
         }
         tblVisitors.setItems(visitorsData);
     }
-    /**
+    
     @FXML
     private void changeDatePicker(ActionEvent event) {
         try {
             visitorsData = FXCollections.observableArrayList(visitorManager.getVisitorsByDate(Date.from(datePicker.getValue().atStartOfDay().toInstant(ZoneOffset.UTC))));
             tblVisitors.setItems(visitorsData);
+            datePicker.setValue(null);
         } catch (BusinessLogicException ex) {
-            Logger.getLogger(GestionarVisitorController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(VisitorManagementController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    **/    
+    /**
+     * This methos shows alert error messages.
+     * @param msg Message shown in the alert.
+     */
+    private static void mostrarVentanaAlertError(String msg){
+        Alert alert = new Alert(Alert.AlertType.ERROR,msg
+                    ,ButtonType.OK);
+        alert.setHeaderText(null);
+        alert.showAndWait();       
+    }
+    
 }

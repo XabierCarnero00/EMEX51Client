@@ -5,6 +5,7 @@
  */
 package businessLogic;
 
+import java.util.Date;
 import java.util.List;
 import model.Visitor;
 
@@ -38,5 +39,14 @@ public interface VisitorManager {
      * @throws BusinessLogicException 
      */
     public void deleteVisitor(Visitor visitor) throws BusinessLogicException;
+    /**
+     * Returns visitors which had arrived at that date
+     * @param date arrived date
+     * @return list of Visitors
+     * @throws BusinessLogicException 
+     * @throws exceptions.NoDataBaseException 
+     */
+    public List<Visitor> getVisitorsByDate(Date date) throws BusinessLogicException;
+    
     
 }
