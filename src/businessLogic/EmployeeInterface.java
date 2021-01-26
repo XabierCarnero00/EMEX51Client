@@ -16,17 +16,17 @@ import model.Employee;
  */
 public interface EmployeeInterface {
     
-    public List<Employee> getAllEmpoyees();
+    public List<Employee> getAllEmpoyees() throws BusinessLogicException;
     
-    public List<Employee> getEmployeesByName(String name);
+    public List<Employee> getEmployeesByName(String name) throws BusinessLogicException;
     
-    public List<Employee> getEmployeesByEmail(String email);
+    public List<Employee> getEmployeesByEmail(String email) throws BusinessLogicException;
     
-    public Employee getSingleEmployeeByEmail(String email);
+    public Employee getSingleEmployeeByEmail(String email) throws BusinessLogicException;
     
-    public void createEmployee(Employee employee)throws ExcepcionUserYaExiste, ExcepcionEmailYaExiste;
+    public void createEmployee(Employee employee) throws BusinessLogicException, ExcepcionUserYaExiste, ExcepcionEmailYaExiste;
     
-    public void updateEmployee(Employee employee);
+    public void updateEmployee(Employee employee) throws BusinessLogicException;
     
-    public void deleteEmployee(String id);
+    public void deleteEmployee(String id) throws BusinessLogicException;
 }

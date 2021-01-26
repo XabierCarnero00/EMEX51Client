@@ -103,6 +103,7 @@ public class ArmyImplementation implements ArmyInterface {
     @Override
     public void editArmy(Army army) throws BusinessLogicException {
         try {
+            
             armyRest.edit(army);
         } catch (Exception ex) {
             Logger.getLogger(ArmyImplementation.class.getName()).log(Level.SEVERE, null, ex);

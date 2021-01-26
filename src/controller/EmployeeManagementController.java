@@ -5,10 +5,13 @@
  */
 package controller;
 
+import businessLogic.BusinessLogicException;
 import businessLogic.EmployeeFactory;
 import businessLogic.EmployeeInterface;
+import static controller.GenericController.LOGGER;
 import exceptions.ExcepcionEmailYaExiste;
 import exceptions.ExcepcionUserYaExiste;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Date;
@@ -20,6 +23,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -27,14 +31,18 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import model.Boss;
 import model.Employee;
+import model.User;
 import model.UserStatus;
 import utilMethods.MetodosUtiles;
 
@@ -43,7 +51,7 @@ import utilMethods.MetodosUtiles;
  *
  * @author xabig
  */
-public class EmployeeManagementController extends GenericController{
+public class EmployeeManagementController {
 
     /**
      * Atributo Logger para rastrear los pasos de ejecución del programa.
@@ -55,8 +63,13 @@ public class EmployeeManagementController extends GenericController{
      */
     private String savedEmail;
     /**
-     * The User that operates on the window.
+     * The User that operates on the Window.
      */
+    private User user;
+    /**
+     * Una ventana sobre la que se coloca una escena.
+     */
+    private Stage stage;
 
     @FXML
     private TableView table;
@@ -96,20 +109,74 @@ public class EmployeeManagementController extends GenericController{
     private TextField textfieldPassword;
     @FXML
     private Button buttonLimpiar;
+    @FXML
+    private Label labelError;
+    @FXML
+    private Label lblTipoUsuario;
+    /**
+     * The menu Item to exit
+     */
+    @FXML
+    private MenuItem ItemExit;
+    /**
+     * The menu Item of logout
+     */
+    @FXML
+    private MenuItem ItemLogout;
+    /**
+     * The menu Item of sector
+     */
+    @FXML
+    private MenuItem ItemSectores;
+    /**
+     * The menu Item of employee
+     */
+    @FXML
+    private MenuItem ItemEmpleados;
+    /**
+     * The menu Item of visitor
+     */
+    @FXML
+    private MenuItem ItemVisitantes;
 
     ObservableList employees;
 
     EmployeeInterface employeeInt = EmployeeFactory.getEmployeeImp();
 
-    @FXML
-    private Label labelError;
-
+    /**
+     * The Stage where the Window is shown.
+     *
+     * @return the Stage
+     */
     public Stage getStage() {
         return stage;
     }
 
+    /**
+     * Sets the Stage for the Window.
+     *
+     * @param stage The Stage set.
+     */
     public void setStage(Stage stage) {
         this.stage = stage;
+    }
+
+    /**
+     * Returns the User that operates in the Window.
+     *
+     * @return the User
+     */
+    public User getUser() {
+        return user;
+    }
+
+    /**
+     * Sets the User that operates in the Window.
+     *
+     * @param user the User to be set.
+     */
+    public void setUser(User user) {
+        this.user = user;
     }
 
     /**
@@ -118,41 +185,55 @@ public class EmployeeManagementController extends GenericController{
      * @param root
      */
     public void initStage(Parent root) {
-        Scene scene = new Scene(root);
+        try {
+            Scene scene = new Scene(root);
 
-        stage.setScene(scene);
+            stage.setScene(scene);
 
-        stage.setTitle("Gestionar Employee");
+            stage.setTitle("Gestionar Employee");
 
-        stage.setResizable(false);
+            stage.setResizable(false);
 
-        buttonAniadir.setDisable(true);
-        buttonBorrar.setDisable(true);
-        buttonBuscar.setDisable(true);
-        buttonModificar.setDisable(true);
+            buttonAniadir.setDisable(true);
+            buttonBorrar.setDisable(true);
+            buttonBuscar.setDisable(true);
+            buttonModificar.setDisable(true);
 
-        employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
-        loadEmployeesTable(employees);
+            employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
+            loadEmployeesTable(employees);
 
-        ObservableList<String> cbOptions = FXCollections.observableArrayList();
-        cbOptions.addAll("Nombre", "Email", "Todos");
-        comboBox.setItems(cbOptions);
+            ObservableList<String> cbOptions = FXCollections.observableArrayList();
+            cbOptions.addAll("Nombre", "Email", "Todos");
+            comboBox.setItems(cbOptions);
 
-        stage.show();
+            stage.show();
 
-        buttonBuscar.setOnAction(this::clickBuscar);
-        textfieldEmail.textProperty().addListener(this::textfieldListener);
-        textfieldNombApell.textProperty().addListener(this::textfieldListener);
-        textfieldSalario.textProperty().addListener(this::textfieldListener);
-        textfieldTrabajo.textProperty().addListener(this::textfieldListener);
-        textfieldPassword.textProperty().addListener(this::textfieldListener);
-        textfieldLogin.textProperty().addListener(this::textfieldListener);
-        textfieldBuscar.textProperty().addListener(this::listenerBuscar);
-        buttonAniadir.setOnAction(this::clickAniadir);
-        buttonModificar.setOnAction(this::clickModificar);
-        buttonLimpiar.setOnAction(this::limpiarListener);
-        buttonBorrar.setOnAction(this::clickBorrar);
-        table.getSelectionModel().selectedItemProperty().addListener(this::clickTabla);
+            buttonBuscar.setOnAction(this::clickBuscar);
+            textfieldEmail.textProperty().addListener(this::textfieldListener);
+            textfieldNombApell.textProperty().addListener(this::textfieldListener);
+            textfieldSalario.textProperty().addListener(this::textfieldListener);
+            textfieldTrabajo.textProperty().addListener(this::textfieldListener);
+            textfieldPassword.textProperty().addListener(this::textfieldListener);
+            textfieldLogin.textProperty().addListener(this::textfieldListener);
+            textfieldBuscar.textProperty().addListener(this::listenerBuscar);
+            buttonAniadir.setOnAction(this::clickAniadir);
+            buttonModificar.setOnAction(this::clickModificar);
+            buttonLimpiar.setOnAction(this::limpiarListener);
+            buttonBorrar.setOnAction(this::clickBorrar);
+            table.getSelectionModel().selectedItemProperty().addListener(this::clickTabla);
+
+            //Label para el tipo de usuario
+            if (user instanceof Boss) {
+                lblTipoUsuario.setText(user.getLogin() + "(BOSS)");
+            } else {
+                lblTipoUsuario.setText(user.getLogin() + "(EMPLEADO)");
+                ItemEmpleados.setDisable(true);
+            }
+        } catch (BusinessLogicException ex) {
+            Logger.getLogger(EmployeeManagementController.class.getName()).log(Level.SEVERE, null, ex);
+            labelError.setText("Error when trying to Find Employee, try again later: " + ex.getMessage());
+            labelError.setTextFill(Color.web("#ff0000"));
+        }
     }
 
     private void loadEmployeesTable(ObservableList<Employee> employees) {
@@ -207,20 +288,26 @@ public class EmployeeManagementController extends GenericController{
 
     private void clickBuscar(ActionEvent event) {
         labelError.setText("");
-        if (MetodosUtiles.maximoCaracteres(textfieldBuscar, 50)) {
-            if (comboBox.getValue().equals("Nombre")) {
-                String name = textfieldBuscar.getText().trim();
-                employees = FXCollections.observableArrayList(employeeInt.getEmployeesByName(name));
-            } else if (comboBox.getValue().equals("Email")) {
-                String email = textfieldBuscar.getText().trim();
-                employees = FXCollections.observableArrayList(employeeInt.getEmployeesByEmail(email));
+        try {
+            if (MetodosUtiles.maximoCaracteres(textfieldBuscar, 50)) {
+                if (comboBox.getValue().equals("Nombre")) {
+                    String name = textfieldBuscar.getText().trim();
+                    employees = FXCollections.observableArrayList(employeeInt.getEmployeesByName(name));
+                } else if (comboBox.getValue().equals("Email")) {
+                    String email = textfieldBuscar.getText().trim();
+                    employees = FXCollections.observableArrayList(employeeInt.getEmployeesByEmail(email));
+                } else {
+                    employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
+                }
+                table.setItems(employees);
             } else {
-                employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
+                textfieldBuscar.setText("");
+                labelError.setText("Demasiados caracteres en el campo Buscar");
+                labelError.setTextFill(Color.web("#ff0000"));
             }
-            table.setItems(employees);
-        } else {
-            textfieldBuscar.setText("");
-            labelError.setText("Demasiados caracteres en el campo Buscar");
+        } catch (BusinessLogicException ex) {
+            Logger.getLogger(EmployeeManagementController.class.getName()).log(Level.SEVERE, null, ex);
+            labelError.setText("Error when trying to Find Employee, try again later: " + ex.getMessage());
             labelError.setTextFill(Color.web("#ff0000"));
         }
     }
@@ -245,10 +332,16 @@ public class EmployeeManagementController extends GenericController{
                     employee.setPassword(textfieldPassword.getText().trim());
                     employee.setLastAccess(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)));
                     employee.setLastPasswordChange(Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC)));
-                    employee.setBoss((Boss) super.getUser());
+                    employee.setBoss((Boss) user);
                     employee.setStatus(UserStatus.ENABLED);
 
-                    employeeInt.createEmployee(employee);
+                    try {
+                        employeeInt.createEmployee(employee);
+                    } catch (BusinessLogicException ex) {
+                        Logger.getLogger(EmployeeManagementController.class.getName()).log(Level.SEVERE, null, ex);
+                        labelError.setText("Error when trying to Create Employee, try again later: " + ex.getMessage());
+                        labelError.setTextFill(Color.web("#ff0000"));
+                    }
 
                     employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
                     table.setItems(employees);
@@ -264,10 +357,12 @@ public class EmployeeManagementController extends GenericController{
             Logger.getLogger(EmployeeManagementController.class.getName()).log(Level.SEVERE, null, ex);
             labelError.setText("Ya existe un usuario con ese Email");
             labelError.setTextFill(Color.web("#ff0000"));
+        } catch (BusinessLogicException ex) {
+            Logger.getLogger(EmployeeManagementController.class.getName()).log(Level.SEVERE, null, ex);
+            labelError.setText("Error when trying to Find Employee, try again later: " + ex.getMessage());
+            labelError.setTextFill(Color.web("#ff0000"));
         }
     }
-
-    
 
     private void clickModificar(ActionEvent event) {
         if (verifyEmail(textfieldEmail.getText().trim())
@@ -277,36 +372,48 @@ public class EmployeeManagementController extends GenericController{
                 && verifyTrabajo(textfieldTrabajo.getText().trim())) {
 
             if (mostrarAlertConfirmation("Modify", "Are you sure you want to modify?")) {
-                Employee employee = new Employee();
-                employee = employeeInt.getSingleEmployeeByEmail(savedEmail);
+                try {
+                    Employee employee = new Employee();
+                    employee = employeeInt.getSingleEmployeeByEmail(savedEmail);
 
-                employee.setEmail(textfieldEmail.getText());
-                employee.setFullName(textfieldNombApell.getText());
-                employee.setJob(textfieldTrabajo.getText());
-                employee.setWage(Float.parseFloat(textfieldSalario.getText()));
-                employee.setLogin(textfieldLogin.getText());
+                    employee.setEmail(textfieldEmail.getText());
+                    employee.setFullName(textfieldNombApell.getText());
+                    employee.setJob(textfieldTrabajo.getText());
+                    employee.setWage(Float.parseFloat(textfieldSalario.getText()));
+                    employee.setLogin(textfieldLogin.getText());
 
-                employeeInt.updateEmployee(employee);
+                    employeeInt.updateEmployee(employee);
 
-                employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
-                table.setItems(employees);
+                    employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
+                    table.setItems(employees);
 
-                limpiarCampos();
+                    limpiarCampos();
+                } catch (BusinessLogicException ex) {
+                    Logger.getLogger(EmployeeManagementController.class.getName()).log(Level.SEVERE, null, ex);
+                    labelError.setText("Error when trying to Update Employee, try again later: " + ex.getMessage());
+                    labelError.setTextFill(Color.web("#ff0000"));
+                }
             }
         }
     }
 
     private void clickBorrar(ActionEvent event) {
         if (mostrarAlertConfirmation("Delete", "Are you sure you want to delete?")) {
-            Employee selectedEmp = ((Employee) table.getSelectionModel()
-                    .getSelectedItem());
-            employeeInt.deleteEmployee(selectedEmp.getId().toString());
+            try {
+                Employee selectedEmp = ((Employee) table.getSelectionModel()
+                        .getSelectedItem());
+                employeeInt.deleteEmployee(selectedEmp.getId().toString());
 
-            employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
-            table.setItems(employees);
+                employees = FXCollections.observableArrayList(employeeInt.getAllEmpoyees());
+                table.setItems(employees);
 
-            buttonBorrar.setDisable(true);
-            limpiarCampos();
+                buttonBorrar.setDisable(true);
+                limpiarCampos();
+            } catch (BusinessLogicException ex) {
+                Logger.getLogger(EmployeeManagementController.class.getName()).log(Level.SEVERE, null, ex);
+                labelError.setText("Error when trying to Delete Employee, try again later: " + ex.getMessage());
+                labelError.setTextFill(Color.web("#ff0000"));
+            }
         }
     }
 
@@ -465,6 +572,122 @@ public class EmployeeManagementController extends GenericController{
         textfieldLogin.setText("");
         textfieldPassword.setText("");
 
+    }
+
+    
+    //HERE STARTS WHAT CONTROLS THE MENU
+    
+    
+    @FXML
+    private void openWindowLogout(ActionEvent event) {
+        try {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Seguro que quieres cerrar sesion?");
+            alert.setTitle(null);
+            alert.setHeaderText(null);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                //New FXMLLoader Añadir el fxml de MenuPrincipal que es la ventana principal
+                FXMLLoader loader = new FXMLLoader(getClass().
+                        getResource("/view/FXMLSignIn.fxml"));
+                //getResource("/view/FXMLArmyManagement.fxml"));
+                //getResource("/view/FXMLSectorManagement.fxml"));
+                //Parent es una clase gráfica de nodos xml son nodos.
+                Parent root = (Parent) loader.load();
+                //Relacionamos el documento FXML con el controlador que le va a controlar.
+                SignInController signInController = (SignInController) loader.getController();
+                //ArmyManagementController armyManagementController = (ArmyManagementController) loader.getController();
+                //SectorManagementController sectorManagementController = (SectorManagementController) loader.getController();
+                //Llamada al método setStage del controlador de la ventana SignIn. Pasa la ventana.
+                signInController.setStage(getStage());
+                //armyManagementController.setStage(stage);
+                //sectorManagementController.setStage(stage);
+                //Llamada al método initStage del controlador de la ventana SignIn. Pasa el documento fxml en un nodo.
+                signInController.initStage(root);
+                //armyManagementController.initStage(root);
+                //sectorManagementController.initStage(root);
+                //Llamada al método inicializarComponenentesVentana del controlador de la ventana signIn.
+            }
+        } catch (IOException ex) {
+            LOGGER.log(Level.INFO, "Execepción abrir ventana Sector");
+        }
+
+    }
+
+    @FXML
+    private void alertaCerrarVentana(ActionEvent event) {
+        LOGGER.log(Level.INFO, "Cerrando aplicación");
+        stage.close();
+    }
+
+    @FXML
+    private void openWindowEmployee(ActionEvent event) {
+        try {
+            //New FXMLLoader Añadir el fxml de logout que es la escena a la que se redirige si todo va bien
+            FXMLLoader loader = new FXMLLoader(getClass().
+                    getResource("/view/FXMLEmployeeManagement.fxml"));
+            //Parent es una clase gráfica de nodos. xml son nodos.
+            Parent root = (Parent) loader.load();
+            //Relacionamos el documento FXML con el controlador que le va a controlar.
+            EmployeeManagementController gestionarEmployeeController = (EmployeeManagementController) loader.getController();
+            //Llamada al método setStage del controlador de la ventana signIn. Pasa la ventana.
+            gestionarEmployeeController.setStage(stage);
+            //Llamada al método initStage del controlador de la ventana LogOut. Pasa el documento fxml en un nodo.
+            gestionarEmployeeController.initStage(root);
+        } catch (IOException ex) {
+            LOGGER.log(Level.INFO, "Execepción abrir ventana Empleado");
+        }
+    }
+
+    @FXML
+    private void openWindowVisitor(ActionEvent event) {
+        try {
+            //New FXMLLoader Añadir el fxml de logout que es la escena a la que se redirige si todo va bien
+            FXMLLoader loader = new FXMLLoader(getClass().
+                    getResource("/view/VisitorManagementController.fxml"));
+            //Parent es una clase gráfica de nodos. xml son nodos.
+            Parent root = (Parent) loader.load();
+            //Relacionamos el documento FXML con el controlador que le va a controlar.
+            //GestionarVisitorController gestionarVisitorController = (GestionarVisitorController) loader.getController();
+            //Llamada al método setStage del controlador de la ventana signIn. Pasa la ventana.
+            //gestionarVisitorController.setStage(stage);
+            //Llamada al método initStage del controlador de la ventana LogOut. Pasa el documento fxml en un nodo.
+            //gestionarVisitorController.initStage(root);
+        } catch (IOException ex) {
+            LOGGER.log(Level.INFO, "Execepción abrir ventana Visitante");
+        }
+    }
+
+    private void alertaCerrarPestaña(WindowEvent event) {
+        LOGGER.info("Iniciando Controller::alertaCerrarPestaña");
+        Alert alert;
+
+        alert = new Alert(Alert.AlertType.CONFIRMATION, "Estás seguro que quieres salir?.");
+        alert.setHeaderText(null);
+        Optional<ButtonType> result = alert.showAndWait();
+        event.consume();
+        if (result.get() == ButtonType.OK) {
+            //Cerrar ventana
+            stage.close();
+        }
+    }
+
+    @FXML
+    private void openWindowSector(ActionEvent event) {
+        try {
+            //New FXMLLoader Añadir el fxml de sector management que es la escena a la que se redirige si todo va bien
+            FXMLLoader loader = new FXMLLoader(getClass().
+                    getResource("/view/FXMLSectorManagement.fxml"));
+            //Parent es una clase gráfica de nodos. xml son nodos.
+            Parent root = (Parent) loader.load();
+            //Relacionamos el documento FXML con el controlador que le va a controlar.
+            SectorManagementController sectorManagementController = (SectorManagementController) loader.getController();
+            //Llamada al método setStage del controlador de la ventana signIn. Pasa la ventana.
+            sectorManagementController.setStage(getStage());
+            //Llamada al método initStage del controlador de la ventana LogOut. Pasa el documento fxml en un nodo.
+            sectorManagementController.initStage(root);
+        } catch (IOException ex) {
+            LOGGER.log(Level.INFO, "Execepción abrir ventana Sector");
+        }
     }
 
 }

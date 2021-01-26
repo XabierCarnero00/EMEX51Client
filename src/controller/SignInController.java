@@ -46,7 +46,9 @@ public class SignInController {
      * Una ventana sobre la que se coloca una escena.
      */
     private Stage stage;
-
+    /**
+     * The Logic Interface of User.
+     */
     UserInterface userImp = UserFactory.getUserImp();
     /**
      * Longitud máxima de los campos de texto permitida.

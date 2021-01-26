@@ -42,7 +42,7 @@ public class GenericController {
      * La ventana
      */
     protected Stage stage;
-    
+
     @FXML
     private Menu MenuLogout;
     /**
@@ -74,19 +74,23 @@ public class GenericController {
      * Label informatimo para saber el tipo de usuario
      */
     private Label lblTipoUsuario;
-    
+
     @FXML
     private Menu menu;
 
     /**
-     * @return
+     * Returns the User that operates in the Window.
+     *
+     * @return the User
      */
     public User getUser() {
         return user;
     }
 
     /**
-     * @param user
+     * Sets the User that operates in the Window.
+     *
+     * @param user the User to be set.
      */
     public void setUser(User user) {
         this.user = user;
@@ -128,8 +132,9 @@ public class GenericController {
             lblTipoUsuario.setText(user.getLogin() + "(BOSS)");
         } else {
             lblTipoUsuario.setText(user.getLogin() + "(EMPLEADO)");
+            ItemEmpleados.setDisable(true);
         }
-        ItemEmpleados.setDisable(true);
+
     }
 
     @FXML
@@ -152,7 +157,8 @@ public class GenericController {
                 //ArmyManagementController armyManagementController = (ArmyManagementController) loader.getController();
                 //SectorManagementController sectorManagementController = (SectorManagementController) loader.getController();
                 //Llamada al método setStage del controlador de la ventana SignIn. Pasa la ventana.
-                signInController.setStage(stage);
+                Stage st = new Stage();
+                signInController.setStage(st);
                 //armyManagementController.setStage(stage);
                 //sectorManagementController.setStage(stage);
                 //Llamada al método initStage del controlador de la ventana SignIn. Pasa el documento fxml en un nodo.

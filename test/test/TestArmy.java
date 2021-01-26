@@ -40,6 +40,9 @@ public class TestArmy extends ApplicationTest {
         FxToolkit.setupApplication(EMEX51CRUDClient.class);
     }
 
+    /**
+     * Class contructor.
+     */
     public TestArmy() {
 
     }
@@ -102,7 +105,7 @@ public class TestArmy extends ApplicationTest {
     public void TextC() {
         table = lookup("#tableView").queryTableView();
         clickOn("#comboBox");
-        clickOn("Muncion");
+        clickOn("Municion");
         clickOn("#textfieldBuscar");
         write("123456789012345678901234567890123456789012345678901234567890");
         clickOn("#buttonBuscar");
@@ -161,18 +164,10 @@ public class TestArmy extends ApplicationTest {
     }
 
     /**
-     * Tests that the table is editable.
-     */
-    @Test
-    public void TestF() {
-
-    }
-
-    /**
      * Tests when the Button Añadir is Enabled.
      */
     @Test
-    public void TestG() {
+    public void TestF() {
         verifyThat("#buttonAniadir", isDisabled());
         clickOn("#textfieldNombre");
         write("aaaa");
@@ -186,7 +181,7 @@ public class TestArmy extends ApplicationTest {
      * Tests what happens when you click on the Button Añadir.
      */
     @Test
-    public void TestH() {
+    public void TestG() {
         clickOn("#buttonAniadir");
         verifyThat("Aceptar", NodeMatchers.isVisible());
         verifyThat("Cancelar", NodeMatchers.isVisible());
@@ -227,6 +222,14 @@ public class TestArmy extends ApplicationTest {
         verifyThat(table, TableViewMatchers.hasNumRows(totalRow + 1));
 
         //Combrobar que lo que esta escrito es lo correcto
+    }
+
+    /**
+     * Tests that the table is editable.
+     */
+    @Test
+    public void TestH() {
+        clickOn("aaaa");
     }
 
     /**
