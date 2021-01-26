@@ -46,7 +46,6 @@ public class EMEX51CRUDClient extends Application {
         //Llamada al método initStage del controlador de la ventana SignIn. Pasa el documento fxml en un nodo.
         //signInController.initStage(root);
         sectorManagementController.initStage(root);
-        //Llamada al método inicializarComponenentesVentana del controlador de la ventana signIn.
     }
 
     /**

@@ -6,6 +6,7 @@
 package businessLogic;
 
 import clientREST.ArmyREST;
+import exceptions.ExceptionArmyExiste;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -87,13 +88,13 @@ public class ArmyImplementation implements ArmyInterface {
             throw new BusinessLogicException(ex.getMessage());
         }
     }
-    
+
     @Override
     public List<Army> getArmysBySector(Sector sector) throws BusinessLogicException {
-        List<Army>armys = getAllArmys();
-            List<Army> armyReturn = new ArrayList();
-        for(Army a:armys){
-            if(a.getSector().getIdSector().compareTo(sector.getIdSector())==0){
+        List<Army> armys = getAllArmys();
+        List<Army> armyReturn = new ArrayList();
+        for (Army a : armys) {
+            if (a.getSector().getIdSector().compareTo(sector.getIdSector()) == 0) {
                 armyReturn.add(a);
             }
         }
@@ -102,8 +103,8 @@ public class ArmyImplementation implements ArmyInterface {
 
     @Override
     public void editArmy(Army army) throws BusinessLogicException {
+        //verifyArmy(army.getName());
         try {
-            
             armyRest.edit(army);
         } catch (Exception ex) {
             Logger.getLogger(ArmyImplementation.class.getName()).log(Level.SEVERE, null, ex);
@@ -111,9 +112,10 @@ public class ArmyImplementation implements ArmyInterface {
         }
     }
 
-    
     @Override
-    public void createArmy(Army army) throws BusinessLogicException {
+    public void createArmy(Army army) throws BusinessLogicException, ExceptionArmyExiste {
+        //Verificar que el Armamento con ese nombre no existe ya
+        verifyArmy(army.getName());
         try {
             armyRest.create(army);
         } catch (Exception ex) {
@@ -122,6 +124,7 @@ public class ArmyImplementation implements ArmyInterface {
         }
     }
 
+    @Override
     public void deleteArmy(Army army) throws BusinessLogicException {
         try {
             army.setSector(null);
@@ -130,6 +133,15 @@ public class ArmyImplementation implements ArmyInterface {
         } catch (Exception ex) {
             Logger.getLogger(ArmyImplementation.class.getName()).log(Level.SEVERE, null, ex);
             throw new BusinessLogicException(ex.getMessage());
+        }
+    }
+
+    public void verifyArmy(String name) throws BusinessLogicException, ExceptionArmyExiste {
+        List<Army> armys = getAllArmys();
+        for (Army a : armys) {
+            if (a.getName().equals(name)) {
+                throw new ExceptionArmyExiste();
+            }
         }
     }
 
