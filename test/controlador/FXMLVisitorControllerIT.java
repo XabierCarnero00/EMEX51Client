@@ -5,9 +5,9 @@
  */
 package controlador;
 
-import controller.SectorManagementController;
 import java.awt.Button;
 import java.awt.TextField;
+import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableView;
@@ -17,9 +17,11 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import static org.testfx.api.FxAssert.verifyThat;
 import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.matcher.base.NodeMatchers;
 import static org.testfx.matcher.base.NodeMatchers.isDisabled;
 import static org.testfx.matcher.base.NodeMatchers.isEnabled;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
+import org.testfx.matcher.control.TableViewMatchers;
 import static org.testfx.matcher.control.TextInputControlMatchers.hasText;
 
 
@@ -45,14 +47,8 @@ public class FXMLVisitorControllerIT extends ApplicationTest{
 @Override 
     public void start(Stage stage) throws Exception {
         //start JavaFX application to be tested    
-        new SectorManagementController().start(stage);
-        //lookup for some nodes to be used in testing
-        datePicker=lookup("#datePicker").query();
-        txtBuscar=lookup("#txtBuscar").query();
-        btnBuscar=lookup("#btnBuscar").query();
-        btnBorrar=lookup("#btnBorrar").query();
-        tblVisitors=lookup("#tblVisitors").queryTableView();
-        cbxBuscar=lookup("#cbxBuscar").queryComboBox();
+        new FXMLVisitorManagementController().start(stage);
+       
     }
     
     
@@ -60,15 +56,14 @@ public class FXMLVisitorControllerIT extends ApplicationTest{
      * This method allows to see users' table view by interacting with login 
      * view.
      */
-    @Test
+    //@Test
     public void testA_InicioVentana() {
         clickOn("#txtFieldUsuario");
         write("username");
         clickOn("#pswFieldContrasena");
         write("password");
-        clickOn("#btnEntrar");
+        clickOn("#btnEntrar"); 
         
-        //iteracion Menu
         
         verifyThat("#visitorsPane", isVisible());
     }
@@ -113,42 +108,94 @@ public class FXMLVisitorControllerIT extends ApplicationTest{
         write("username");
         clickOn("#cbxBuscar");
         clickOn("Todos");
-        clickOn("btnBuscar");
-        verifyThat();
-
-        
+        verifyThat("#btnBuscar", isEnabled());
     }
     
     /**
-    * 
+     * Verificar que la busqueda se hacer correctamente
+     */
+    @Test
+    public void testE_BuscarTodos() {
+        tblVisitors = lookup("#tblVisitors").queryTableView();
+        clickOn("#cbxBuscar");
+        clickOn("Todos");
+        clickOn("#txtBuscar");
+        write("a");
+        verifyThat(tblVisitors, TableViewMatchers.hasNumRows(10));
+    }
+    
+    /**
+     * Verificar que la busqueda se hacer correctamente
+     */
+    @Test
+    public void testF_BuscarNombre() {
+        tblVisitors = lookup("#tblVisitors").queryTableView();
+        clickOn("#cbxBuscar");
+        clickOn("Nombre");
+        clickOn("#txtBuscar");
+        write("Asier");
+        verifyThat(tblVisitors, TableViewMatchers.hasNumRows(1));
+    }
+    
+    /**
+    * Test to verify the datePicker
     */
     @Test
-    public void testE_DatePicker() {
+    public void testG_DatePicker() {
+        clickOn(366, 144);
+        clickOn("23");
+        tblVisitors = lookup("#tblVisitors").queryTableView();
+        verifyThat(tblVisitors, TableViewMatchers.hasNumRows(3));
+    }
+    
+    /**
+     * Tests that when you click on a TableView Item Button Borrar is Enabled.
+     */
+    @Test
+    public void TestH_ButtonBorrarEnabled() {
+        Node row = lookup(".tblVisitors-row-cell").nth(0).query();
+        clickOn(row);
+        verifyThat("#btnBorrar", isEnabled());
+    }
+ 
+    /**
+    * Tests that when you click Button Borrar and then on the alert cancelar nothing happens.
+    */
+    @Test
+    public void testI_ButtonBorrarCancelar() {        
+        tblVisitors = lookup("#tblVisitors").queryTableView();
+        int totalRow = tblVisitors.getItems().size();
+        Node row = lookup(".tblVisitors-row-cell").nth(totalRow - 1).query();
+        clickOn(row);
+        clickOn("#btnBorrar");
+        verifyThat("Cancelar", NodeMatchers.isVisible());
+        clickOn("Cancelar");
+        verifyThat(tblVisitors, TableViewMatchers.hasNumRows(totalRow));
+    }
+    
+    /**
+    * Tests that when you click Button Borrar and then on the alert Aceptar the action happens.
+    */
+    @Test
+    public void testJ_ButtonBorrarAceptar() {        
+        tblVisitors = lookup("#tblVisitors").queryTableView();
+        int totalRow = tblVisitors.getItems().size();
+        Node row = lookup(".tblVisitors-row-cell").nth(totalRow - 1).query();
+        clickOn(row);
+        clickOn("#btnBorrar");
+        verifyThat("Aceptar", NodeMatchers.isVisible());
+        clickOn("Aceptar");
+        verifyThat(tblVisitors, TableViewMatchers.hasNumRows(totalRow - 1));
 
     }
     
     /**
-    * 
+    * Test that the table is editable 
     */
-    @Test
-    public void testF_ButtonBorrarAceptar() {
-
-    }
-    
-        /**
-    * 
-    */
-    @Test
-    public void testG_ButtonBorrarCancelar() {
-
-    }
-    
-    /**
-    * 
-    */
-    @Test
-    public void testH_EditableTable() {
-
+    //@Test
+    public void testK_EditableTable() {
+         doubleClickOn("#colEmail");
+         write("The table is editable");
     }
     
     
