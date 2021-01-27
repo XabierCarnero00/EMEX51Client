@@ -2,17 +2,16 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="Content" fx:id="visitorPane" minHeight="-1.0" minWidth="-1.0" prefHeight="570.0" prefWidth="897.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="Content" fx:id="visitorPane" minHeight="-1.0" minWidth="-1.0" prefHeight="570.0" prefWidth="897.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.VisitorManagementController">
    <children>
       <TableView fx:id="tblVisitors" layoutX="180.0" layoutY="183.0" prefHeight="338.0" prefWidth="545.0">
          <columns>
@@ -21,16 +20,11 @@
             <TableColumn fx:id="colFullName" prefWidth="124.0" text="Nombre y Apellidos" />
             <TableColumn fx:id="colLastAccess" prefWidth="92.0" text="Último Acceso" />
             <TableColumn fx:id="colVisited" prefWidth="68.0" text="Visitado" />
-            <TableColumn fx:id="colVisitReply" prefWidth="84.0" text="Acceso" />
+            <TableColumn fx:id="colVisitDate" prefWidth="84.0" text="Fecha Visita" />
          </columns>
       </TableView>
-      <SplitMenuButton fx:id="cbxBuscar" layoutX="311.0" layoutY="110.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="285.0" text="Buscar">
-         <items>
-            <MenuItem fx:id="miTodos" mnemonicParsing="false" text="Todos" />
-            <MenuItem fx:id="miNombre" mnemonicParsing="false" text="Nombre" />
-         </items>
-      </SplitMenuButton>
       <DatePicker fx:id="datePicker" layoutX="366.0" layoutY="144.0" />
+      <ComboBox fx:id="cbxBuscar" layoutX="310.0" layoutY="113.0" prefHeight="25.0" prefWidth="286.0" promptText="Buscar" />
       <Label fx:id="lblUsuario" layoutX="821.0" layoutY="37.0" text="tipoUsuario" />
       <Label fx:id="lblVisitanteTitulo" layoutX="376.0" layoutY="32.0" text="VISITANTES">
          <font>

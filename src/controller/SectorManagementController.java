@@ -28,6 +28,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
@@ -39,6 +41,7 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.ws.rs.core.GenericType;
+import model.Boss;
 import model.Sector;
 import model.SectorContent;
 import model.SectorType;
@@ -84,7 +87,6 @@ public class SectorManagementController {
     /**
      * Generic controller of the application.
      */
-    @FXML
     GenericController menuController = new GenericController();
     /**
      * TableView containing sectors.
@@ -131,6 +133,20 @@ public class SectorManagementController {
      */
     @FXML
     private Button btnIr;
+    @FXML
+    private Menu menu;
+    @FXML
+    private MenuItem ItemSectores;
+    @FXML
+    private MenuItem ItemEmpleados;
+    @FXML
+    private MenuItem ItemVisitantes;
+    @FXML
+    private Menu MenuLogout;
+    @FXML
+    private MenuItem ItemExit;
+    @FXML
+    private MenuItem ItemLogout;
 
     /**
      * Asigna al atributo Stage de la clase una Stage recibida como parámetro.
@@ -208,6 +224,15 @@ public class SectorManagementController {
             colNombre.setCellValueFactory(new PropertyValueFactory<>("name"));
             //Añadir factoria para hacerla editable. Le digo que colNombre es un textField
             colNombre.setCellFactory(TextFieldTableCell.<Sector>forTableColumn());
+
+            //Label para el tipo de usuario
+            if (user instanceof Boss) {
+                lblUsuario.setText(user.getLogin() + "(BOSS)");
+            } else {
+                lblUsuario.setText(user.getLogin() + "(EMPLEADO)");
+                ItemEmpleados.setDisable(true);
+            }
+
             //Con editcommit la hago que los cambios se guarden al pulsar enter. Es un metodo lanbda hace lo siguiente a ->
             colNombre.setOnEditCommit((CellEditEvent<Sector, String> t) -> {
                 try {
@@ -455,6 +480,8 @@ public class SectorManagementController {
                 Parent root = (Parent) loader.load();
                 //Relacionamos el documento FXML con el controlador que le va a controlar.
                 CreatureManagementController controladorCriaturas = (CreatureManagementController) loader.getController();
+                //Set the User
+                controladorCriaturas.setUser(user);
                 //Pasar la ventana al controlador de la ventana signIn.
                 controladorCriaturas.setStage(stage);
                 //Le pasamos el sector
@@ -471,6 +498,8 @@ public class SectorManagementController {
                 Parent root = (Parent) loader.load();
                 //Relacionamos el documento FXML con el controlador que le va a controlar.
                 ArmyManagementController armyManagementController = (ArmyManagementController) loader.getController();
+                //Set the User
+                armyManagementController.setUser(user);
                 //Pasar la ventana al controlador de la ventana signIn.
                 armyManagementController.setStage(stage);
                 //Le pasamos el sector
@@ -517,5 +546,107 @@ public class SectorManagementController {
             }
         }
         return textoCorrecto;
+    }
+    //HERE STARTS WHAT CONTROLS THE MENU
+
+    @FXML
+    private void openWindowLogout(ActionEvent event) {
+        try {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Seguro que quieres cerrar sesion?");
+            alert.setTitle(null);
+            alert.setHeaderText(null);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                //New FXMLLoader Añadir el fxml de MenuPrincipal que es la ventana principal
+                FXMLLoader loader = new FXMLLoader(getClass().
+                        getResource("/view/FXMLSignIn.fxml"));
+                //Parent es una clase gráfica de nodos xml son nodos.
+                Parent root = (Parent) loader.load();
+                //Relacionamos el documento FXML con el controlador que le va a controlar.
+                SignInController signInController = (SignInController) loader.getController();
+                //Llamada al método setStage del controlador de la ventana SignIn. Pasa la ventana.
+                signInController.setStage(getStage());
+                //Llamada al método initStage del controlador de la ventana SignIn. Pasa el documento fxml en un nodo.
+                signInController.initStage(root);
+            }
+        } catch (IOException ex) {
+            LOGGER.log(Level.INFO, "Execepción abrir ventana Sector");
+        }
+    }
+
+    @FXML
+    private void openWindowEmployee(ActionEvent event) {
+        try {
+            //New FXMLLoader Añadir el fxml de logout que es la escena a la que se redirige si todo va bien
+            FXMLLoader loader = new FXMLLoader(getClass().
+                    getResource("/view/FXMLEmployeeManagement.fxml"));
+            //Parent es una clase gráfica de nodos. xml son nodos.
+            Parent root = (Parent) loader.load();
+            //Relacionamos el documento FXML con el controlador que le va a controlar.
+            EmployeeManagementController gestionarEmployeeController = (EmployeeManagementController) loader.getController();
+            //Set the User
+            gestionarEmployeeController.setUser(user);
+            //Llamada al método setStage del controlador de la ventana signIn. Pasa la ventana.
+            gestionarEmployeeController.setStage(stage);
+            //Llamada al método initStage del controlador de la ventana LogOut. Pasa el documento fxml en un nodo.
+            gestionarEmployeeController.initStage(root);
+        } catch (IOException ex) {
+            LOGGER.log(Level.INFO, "Execepción abrir ventana Empleado");
+        }
+    }
+
+    @FXML
+    private void openWindowVisitor(ActionEvent event) {
+        try {
+            //New FXMLLoader Añadir el fxml de logout que es la escena a la que se redirige si todo va bien
+            FXMLLoader loader = new FXMLLoader(getClass().
+                    getResource("/view/VisitorManagementController.fxml"));
+            //Parent es una clase gráfica de nodos. xml son nodos.
+            Parent root = (Parent) loader.load();
+            //Relacionamos el documento FXML con el controlador que le va a controlar.
+            //GestionarVisitorController gestionarVisitorController = (GestionarVisitorController) loader.getController();
+            //Llamada al método setStage del controlador de la ventana signIn. Pasa la ventana.
+            //gestionarVisitorController.setStage(stage);
+            //Llamada al método initStage del controlador de la ventana LogOut. Pasa el documento fxml en un nodo.
+            //gestionarVisitorController.initStage(root);
+        } catch (IOException ex) {
+            LOGGER.log(Level.INFO, "Execepción abrir ventana Visitante");
+        }
+    }
+
+    @FXML
+    private void openWindowSector(ActionEvent event) {
+        try {
+            //New FXMLLoader Añadir el fxml de sector management que es la escena a la que se redirige si todo va bien
+            FXMLLoader loader = new FXMLLoader(getClass().
+                    getResource("/view/FXMLSectorManagement.fxml"));
+            //Parent es una clase gráfica de nodos. xml son nodos.
+            Parent root = (Parent) loader.load();
+            //Relacionamos el documento FXML con el controlador que le va a controlar.
+            SectorManagementController sectorManagementController = (SectorManagementController) loader.getController();
+            //Set the User
+            sectorManagementController.setUser(user);
+            //Llamada al método setStage del controlador de la ventana signIn. Pasa la ventana.
+            sectorManagementController.setStage(getStage());
+            //Llamada al método initStage del controlador de la ventana LogOut. Pasa el documento fxml en un nodo.
+            sectorManagementController.initStage(root);
+        } catch (IOException ex) {
+            LOGGER.log(Level.INFO, "Execepción abrir ventana Sector");
+        }
+    }
+
+    @FXML
+    private void openWindowExit(ActionEvent event) {
+        LOGGER.info("Iniciando Controller::alertaCerrarPestaña");
+        Alert alert;
+
+        alert = new Alert(Alert.AlertType.CONFIRMATION, "Estás seguro que quieres salir?.");
+        alert.setHeaderText(null);
+        Optional<ButtonType> result = alert.showAndWait();
+        event.consume();
+        if (result.get() == ButtonType.OK) {
+            //Cerrar ventana
+            stage.close();
+        }
     }
 }
