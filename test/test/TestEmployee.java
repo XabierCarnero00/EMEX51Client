@@ -216,8 +216,8 @@ public class TestEmployee extends ApplicationTest {
         verifyThat("#textfieldEmail", hasText("iratxeurrea@gmail.com"));
         verifyThat("#textfieldNombApell", hasText("Iratxe Urrea"));
         verifyThat("#textfieldLogin", hasText("Iratxe1976"));
-        verifyThat("#textfieldSalario", hasText("1500.0"));
-        verifyThat("#textfieldTrabajo", hasText("Encargada de Alienigenas"));
+        verifyThat("#textfieldSalario", hasText("3000.0"));
+        verifyThat("#textfieldTrabajo", hasText("Encargada de alienigenas"));
         verifyThat("#textfieldPassword", hasText(""));
 
     }

@@ -10,6 +10,7 @@ import java.util.concurrent.TimeoutException;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
+import javafx.scene.input.KeyCode;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -40,9 +41,6 @@ public class TestArmy extends ApplicationTest {
         FxToolkit.setupApplication(EMEX51CRUDClient.class);
     }
 
-    /**
-     * Class contructor.
-     */
     public TestArmy() {
 
     }
@@ -99,75 +97,28 @@ public class TestArmy extends ApplicationTest {
     }
 
     /**
-     * Test of what happens when you click at Button Buscar.
-     */
-    @Test
-    public void TextC() {
-        table = lookup("#tableView").queryTableView();
-        clickOn("#comboBox");
-        clickOn("Municion");
-        clickOn("#textfieldBuscar");
-        write("123456789012345678901234567890123456789012345678901234567890");
-        clickOn("#buttonBuscar");
-        verifyThat("#labelError", LabeledMatchers.hasText("Demasiados caracteres en el campo Buscar"));
-        verifyThat("#textfieldBuscar", hasText(""));
-
-        clickOn("#comboBox");
-        clickOn("Todos");
-        //verifyThat("#comboBox", LabeledMatchers.hasText("Todos"));
-        clickOn("#buttonBuscar");
-        verifyThat(table, TableViewMatchers.hasNumRows(10));
-
-        clickOn("#comboBox");
-        clickOn("Nombre");
-        //verifyThat("#comboBox", LabeledMatchers.hasText("Nombre"));
-        clickOn("#textfieldBuscar");
-        write("Helicoptero");
-        clickOn("#buttonBuscar");
-        verifyThat(table, TableViewMatchers.hasNumRows(2));
-
-        clickOn("#comboBox");
-        clickOn("Municion");
-        //verifyThat("#comboBox", LabeledMatchers.hasText("Municion"));
-        doubleClickOn("#textfieldBuscar");
-        write("aaaaa");
-        clickOn("#buttonBuscar");
-        verifyThat("#labelError", LabeledMatchers.hasText("Introduce numeros en el campo Buscar"));
-        doubleClickOn("#textfieldBuscar");
-        write("12000");
-        verifyThat("#labelError", LabeledMatchers.hasText(""));
-        clickOn("#buttonBuscar");
-        verifyThat(table, TableViewMatchers.hasNumRows(3));
-
-    }
-
-    /**
-     * Test of what happens when you click at Buscar DatePicker.
-     */
-    @Test
-    public void TestD() {
-        //Click on data picker
-        clickOn(1450, 400);
-        clickOn("20");
-        table = lookup("#tableView").queryTableView();
-        verifyThat(table, TableViewMatchers.hasNumRows(3));
-    }
-
-    /**
      * Tests that when you click on a TableView Item Button Borrar is Enabled.
      */
     @Test
-    public void TestE() {
+    public void TestC() {
         Node row = lookup(".table-row-cell").nth(0).query();
         clickOn(row);
         verifyThat("#buttonBorrar", isEnabled());
     }
 
     /**
+     * Tests that the table is editable.
+     */
+    @Test
+    public void TestD() {
+
+    }
+
+    /**
      * Tests when the Button Añadir is Enabled.
      */
     @Test
-    public void TestF() {
+    public void TestE() {
         verifyThat("#buttonAniadir", isDisabled());
         clickOn("#textfieldNombre");
         write("aaaa");
@@ -181,7 +132,7 @@ public class TestArmy extends ApplicationTest {
      * Tests what happens when you click on the Button Añadir.
      */
     @Test
-    public void TestG() {
+    public void TestF() {
         clickOn("#buttonAniadir");
         verifyThat("Aceptar", NodeMatchers.isVisible());
         verifyThat("Cancelar", NodeMatchers.isVisible());
@@ -190,7 +141,7 @@ public class TestArmy extends ApplicationTest {
         verifyThat("#labelError", LabeledMatchers.hasText("Introduce una fecha para poder añadir"));
 
         //Click en el DatePicker
-        clickOn(1650, 1095);
+        clickOn(1150, 630);
         clickOn("30");
 
         clickOn("#textfieldNombre");
@@ -212,24 +163,79 @@ public class TestArmy extends ApplicationTest {
         write("1111");
 
         table = lookup("#tableView").queryTableView();
-        int totalRow = table.getItems().size();
+        int totalRows = table.getItems().size();
 
         clickOn("#buttonAniadir");
         verifyThat("Aceptar", NodeMatchers.isVisible());
         verifyThat("Cancelar", NodeMatchers.isVisible());
         clickOn("Aceptar");
 
-        verifyThat(table, TableViewMatchers.hasNumRows(totalRow + 1));
+        verifyThat(table, TableViewMatchers.hasNumRows(totalRows + 1));
 
-        //Combrobar que lo que esta escrito es lo correcto
+        totalRows = table.getItems().size();
+
+        clickOn("#textfieldNombre");
+        write("aaaa");
+        clickOn("#textfieldMunicion");
+        write("1111");
+        //Click en el DatePicker
+        clickOn(1150, 630);
+        clickOn("30");
+
+        clickOn("#buttonAniadir");
+        verifyThat("Aceptar", NodeMatchers.isVisible());
+        verifyThat("Cancelar", NodeMatchers.isVisible());
+        clickOn("Aceptar");
+
+        verifyThat("#labelError", LabeledMatchers.hasText("The Army you want to Create alredy exists"));
+        verifyThat(table, TableViewMatchers.hasNumRows(totalRows));
     }
 
     /**
-     * Tests that the table is editable.
+     * Test what happens qhen you modify the field Municion of the TableView.
+     */
+    @Test
+    public void TestG() {
+        table = lookup("#tableView").queryTableView();
+        int totalRows = table.getItems().size();
+        Node node = lookup("#tableColumnNombre").nth(table.getItems().size()).query();
+        doubleClickOn(node);
+        write("bbbb");
+        press(KeyCode.ENTER);
+
+        doubleClickOn("#textfieldNombre");
+        write("bbbb");
+        doubleClickOn("#textfieldMunicion");
+        write("1111");
+
+        clickOn("#buttonAniadir");
+        verifyThat("Aceptar", NodeMatchers.isVisible());
+        verifyThat("Cancelar", NodeMatchers.isVisible());
+        clickOn("Aceptar");
+
+        verifyThat("#labelError", LabeledMatchers.hasText("The Army you want to Create alredy exists"));
+        verifyThat(table, TableViewMatchers.hasNumRows(totalRows));
+    }
+
+    /**
+     * Test what happens qhen you modify the field Municion of the TableView.
      */
     @Test
     public void TestH() {
-        clickOn("aaaa");
+        table = lookup("#tableView").queryTableView();
+        int totalRows = table.getItems().size();
+        Node node = lookup("#tableColumnMunicion").nth(table.getItems().size()).query();
+        doubleClickOn(node);
+        write("2222");
+        press(KeyCode.ENTER);
+
+        doubleClickOn(node);
+        this.push(KeyCode.CONTROL, KeyCode.C);
+
+        doubleClickOn("#textfieldMunicion");
+        this.push(KeyCode.CONTROL, KeyCode.V);
+        verifyThat("#textfieldMunicion", hasText("2222"));
+
     }
 
     /**
@@ -258,4 +264,81 @@ public class TestArmy extends ApplicationTest {
 
     }
 
+    /**
+     * Test of what happens when you click at Button Buscar.
+     */
+    @Test
+    public void TestJ() {
+        table = lookup("#tableView").queryTableView();
+        clickOn("#comboBox");
+        clickOn("Municion");
+        clickOn("#textfieldBuscar");
+        write("123456789012345678901234567890123456789012345678901234567890");
+        clickOn("#buttonBuscar");
+        verifyThat("#labelError", LabeledMatchers.hasText("Demasiados caracteres en el campo Buscar"));
+        verifyThat("#textfieldBuscar", hasText(""));
+
+        clickOn("#comboBox");
+        clickOn("Todos");
+        //verifyThat("#comboBox", LabeledMatchers.hasText("Todos"));
+        clickOn("#buttonBuscar");
+        verifyThat(table, TableViewMatchers.hasNumRows(8));
+
+        clickOn("#comboBox");
+        //clickOn("Nombre");
+        this.push(KeyCode.UP);
+        this.push(KeyCode.UP);
+        this.push(KeyCode.ENTER);
+        //verifyThat("#comboBox", LabeledMatchers.hasText("Nombre"));
+        clickOn("#textfieldBuscar");
+        write("Helicoptero");
+        clickOn("#buttonBuscar");
+        verifyThat(table, TableViewMatchers.hasNumRows(2));
+
+        clickOn("#comboBox");
+        clickOn("Municion");
+        //verifyThat("#comboBox", LabeledMatchers.hasText("Municion"));
+        doubleClickOn("#textfieldBuscar");
+        write("aaaaa");
+        clickOn("#buttonBuscar");
+        verifyThat("#labelError", LabeledMatchers.hasText("Introduce numeros en el campo Buscar"));
+        doubleClickOn("#textfieldBuscar");
+        write("12000");
+        verifyThat("#labelError", LabeledMatchers.hasText(""));
+        clickOn("#buttonBuscar");
+        verifyThat(table, TableViewMatchers.hasNumRows(3));
+    }
+
+    /**
+     * Test of what happens when you click at Buscar DatePicker.
+     */
+    @Test
+    public void TestK() {
+        //Click on data picker
+        clickOn(1045, 300);
+        clickOn("20");
+        table = lookup("#tableView").queryTableView();
+        verifyThat(table, TableViewMatchers.hasNumRows(3));
+    }
+
+    /**
+     * Tests that asks before closing the Window and then closes it.
+     */
+    @Test
+    public void TestL() {
+        verifyThat("#paneArmy", NodeMatchers.isVisible());
+        this.push(KeyCode.ALT, KeyCode.F4);
+        verifyThat("Aceptar", NodeMatchers.isVisible());
+        verifyThat("Cancelar", NodeMatchers.isVisible());
+        clickOn("Cancelar");
+
+        verifyThat("#paneArmy", NodeMatchers.isVisible());
+        
+        this.push(KeyCode.ALT, KeyCode.F4);
+        verifyThat("Aceptar", NodeMatchers.isVisible());
+        verifyThat("Cancelar", NodeMatchers.isVisible());
+        clickOn("Aceptar");
+        
+        verifyThat("#paneArmy", NodeMatchers.isNull());
+    }
 }
