@@ -191,6 +191,7 @@ public class SectorManagementController extends GenericController {
                     LOGGER.info("Error al updatear en la lambda del nombre edit");
                 } catch (SectorExistException ex) {
                     Logger.getLogger(SectorManagementController.class.getName()).log(Level.SEVERE, null, ex);
+                    tbSectores.refresh();
                     t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getOldValue());
                     mostrarVentanaAlertError("El nombre de sector "+sector.getName()+" ya existe.");
 
