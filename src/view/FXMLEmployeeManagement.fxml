@@ -74,7 +74,7 @@
                                 <Button fx:id="buttonBorrar" layoutX="677.0" layoutY="477.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="Borrar" />
                                 <Button fx:id="buttonLimpiar" layoutX="677.0" layoutY="507.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="Limpiar" />
                                 <Label fx:id="labelError" layoutX="284.0" layoutY="548.0" prefHeight="17.0" prefWidth="596.0" />
-                                <Label fx:id="lblTipoUsuario" alignment="TOP_CENTER" layoutX="771.0" layoutY="15.0" prefHeight="50.0" prefWidth="112.0" />
+                                <Label fx:id="lblTipoUsuario" alignment="TOP_RIGHT" layoutX="774.0" layoutY="7.0" prefHeight="50.0" prefWidth="112.0" />
                             </children>
                             <opaqueInsets>
                                 <Insets />

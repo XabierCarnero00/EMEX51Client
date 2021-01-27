@@ -44,7 +44,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.converter.IntegerStringConverter;
 import model.Army;
-import model.Creature;
 import model.Sector;
 import model.User;
 import utilMethods.MetodosUtiles;
@@ -199,7 +198,7 @@ public class ArmyManagementController {
             textfieldBuscar.textProperty().addListener(this::buscarListener);
             buttonBuscar.setOnAction(this::clickBuscar);
             buttonAniadir.setOnAction(this::clickAniadir);
-            buttonBorrar.setOnAction(this::clickBorrar);
+        buttonBorrar.setOnAction(this::clickBorrar);
             tableView.getSelectionModel().selectedItemProperty().addListener(this::clickTabla);
         } catch (BusinessLogicException ex) {
             Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
@@ -228,27 +227,27 @@ public class ArmyManagementController {
                 Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
                 labelError.setText("Error when trying to Update Armys, try again later: " + ex.getMessage());
                 labelError.setTextFill(Color.web("#ff0000"));
-                tableView.requestFocus();
-                t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getOldValue());
             } catch (ExceptionArmyExiste ex) {
                 Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
+                t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getOldValue());
+                tableView.refresh();
                 labelError.setText("That Name alredy exists");
                 labelError.setTextFill(Color.web("#ff0000"));
             }
         });
-        tableColumnMunicion.setCellFactory(TextFieldTableCell.<Army, Integer>forTableColumn(new IntegerStringConverter()));
-        tableColumnMunicion.setOnEditCommit((CellEditEvent<Army, Integer> t) -> {
-            labelError.setText("");
-            try {
-                t.getTableView().getItems().get(t.getTablePosition().getRow()).setAmmunition(t.getNewValue());
-                Army army = t.getRowValue();
-                armyInt.editArmy(army);
-            } catch (BusinessLogicException ex) {
-                Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
-                labelError.setText("Error when trying to Update Armys, try again later: " + ex.getMessage());
-                labelError.setTextFill(Color.web("#ff0000"));
-            }
-        });
+            tableColumnMunicion.setCellFactory(TextFieldTableCell.<Army, Integer>forTableColumn(new IntegerStringConverter()));
+            tableColumnMunicion.setOnEditCommit((CellEditEvent<Army, Integer> t) -> {
+                labelError.setText("");
+                try {
+                    t.getTableView().getItems().get(t.getTablePosition().getRow()).setAmmunition(t.getNewValue());
+                    Army army = t.getRowValue();
+                    armyInt.editArmy(army);
+                } catch (BusinessLogicException ex) {
+                    Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
+                    labelError.setText("Error when trying to Update Armys, try again later: " + ex.getMessage());
+                    labelError.setTextFill(Color.web("#ff0000"));
+                }
+            });
 
         tableView.setEditable(true);
     }
