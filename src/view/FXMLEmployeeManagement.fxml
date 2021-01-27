@@ -4,17 +4,42 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.EmployeeManagementController">
     <children>
+        <HBox prefHeight="23.0" prefWidth="900.0">
+            <children>
+                <MenuBar prefHeight="25.0" prefWidth="920.0">
+                    <menus>
+                        <Menu fx:id="menu" mnemonicParsing="false" text="Menu">
+                            <items>
+                                <MenuItem fx:id="ItemSectores" mnemonicParsing="false" onAction="#openWindowSector" text="Sectores" />
+                                <MenuItem fx:id="ItemEmpleados" mnemonicParsing="false" onAction="#openWindowEmployee" text="Empleados" />
+                                <MenuItem fx:id="ItemVisitantes" mnemonicParsing="false" onAction="#openWindowVisitor" text="Visitantes" />
+                            </items>
+                        </Menu>
+                        <Menu fx:id="MenuLogout" mnemonicParsing="false" text="Logout">
+                            <items>
+                                <MenuItem fx:id="ItemExit" mnemonicParsing="false" onAction="#openWindowExit" text="Exit" />
+                                <MenuItem fx:id="ItemLogout" mnemonicParsing="false" onAction="#openWindowLogout" text="Logout" />
+                            </items>
+                        </Menu>
+                    </menus>
+                </MenuBar>
+            </children>
+        </HBox>
         <SplitPane focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
             <items>
                 <ScrollPane prefHeight="-1.0" prefWidth="-1.0">
@@ -49,7 +74,7 @@
                                 <Button fx:id="buttonBorrar" layoutX="677.0" layoutY="477.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="Borrar" />
                                 <Button fx:id="buttonLimpiar" layoutX="677.0" layoutY="507.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="Limpiar" />
                                 <Label fx:id="labelError" layoutX="284.0" layoutY="548.0" prefHeight="17.0" prefWidth="596.0" />
-                        <Label fx:id="lblTipoUsuario" alignment="TOP_CENTER" layoutX="771.0" layoutY="15.0" prefHeight="50.0" prefWidth="112.0" />
+                                <Label fx:id="lblTipoUsuario" alignment="TOP_CENTER" layoutX="771.0" layoutY="15.0" prefHeight="50.0" prefWidth="112.0" />
                             </children>
                             <opaqueInsets>
                                 <Insets />

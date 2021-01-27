@@ -139,6 +139,14 @@ public class ArmyManagementController {
         this.sector = sector;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public void initStage(Parent root) {
         try {
             Scene scene = new Scene(root);
@@ -448,6 +456,7 @@ public class ArmyManagementController {
                     getResource("/view/FXMLSectorManagement.fxml"));
             Parent root = (Parent) loader.load();
             SectorManagementController sectorManagementController = (SectorManagementController) loader.getController();
+            sectorManagementController.setUser(user);
             sectorManagementController.setStage(stage);
             sectorManagementController.initStage(root);
         } catch (IOException ex) {

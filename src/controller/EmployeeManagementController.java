@@ -142,6 +142,10 @@ public class EmployeeManagementController {
     ObservableList employees;
 
     EmployeeInterface employeeInt = EmployeeFactory.getEmployeeImp();
+    @FXML
+    private Menu menu;
+    @FXML
+    private Menu MenuLogout;
 
     /**
      * The Stage where the Window is shown.
@@ -205,6 +209,8 @@ public class EmployeeManagementController {
             ObservableList<String> cbOptions = FXCollections.observableArrayList();
             cbOptions.addAll("Nombre", "Email", "Todos");
             comboBox.setItems(cbOptions);
+            
+            textfieldBuscar.requestFocus();
 
             stage.show();
 
@@ -574,10 +580,7 @@ public class EmployeeManagementController {
 
     }
 
-    
     //HERE STARTS WHAT CONTROLS THE MENU
-    
-    
     @FXML
     private void openWindowLogout(ActionEvent event) {
         try {
@@ -589,34 +592,18 @@ public class EmployeeManagementController {
                 //New FXMLLoader Añadir el fxml de MenuPrincipal que es la ventana principal
                 FXMLLoader loader = new FXMLLoader(getClass().
                         getResource("/view/FXMLSignIn.fxml"));
-                //getResource("/view/FXMLArmyManagement.fxml"));
-                //getResource("/view/FXMLSectorManagement.fxml"));
                 //Parent es una clase gráfica de nodos xml son nodos.
                 Parent root = (Parent) loader.load();
                 //Relacionamos el documento FXML con el controlador que le va a controlar.
                 SignInController signInController = (SignInController) loader.getController();
-                //ArmyManagementController armyManagementController = (ArmyManagementController) loader.getController();
-                //SectorManagementController sectorManagementController = (SectorManagementController) loader.getController();
                 //Llamada al método setStage del controlador de la ventana SignIn. Pasa la ventana.
                 signInController.setStage(getStage());
-                //armyManagementController.setStage(stage);
-                //sectorManagementController.setStage(stage);
                 //Llamada al método initStage del controlador de la ventana SignIn. Pasa el documento fxml en un nodo.
                 signInController.initStage(root);
-                //armyManagementController.initStage(root);
-                //sectorManagementController.initStage(root);
-                //Llamada al método inicializarComponenentesVentana del controlador de la ventana signIn.
             }
         } catch (IOException ex) {
             LOGGER.log(Level.INFO, "Execepción abrir ventana Sector");
         }
-
-    }
-
-    @FXML
-    private void alertaCerrarVentana(ActionEvent event) {
-        LOGGER.log(Level.INFO, "Cerrando aplicación");
-        stage.close();
     }
 
     @FXML
@@ -629,6 +616,8 @@ public class EmployeeManagementController {
             Parent root = (Parent) loader.load();
             //Relacionamos el documento FXML con el controlador que le va a controlar.
             EmployeeManagementController gestionarEmployeeController = (EmployeeManagementController) loader.getController();
+            //Set the User
+            gestionarEmployeeController.setUser(user);
             //Llamada al método setStage del controlador de la ventana signIn. Pasa la ventana.
             gestionarEmployeeController.setStage(stage);
             //Llamada al método initStage del controlador de la ventana LogOut. Pasa el documento fxml en un nodo.
@@ -657,20 +646,6 @@ public class EmployeeManagementController {
         }
     }
 
-    private void alertaCerrarPestaña(WindowEvent event) {
-        LOGGER.info("Iniciando Controller::alertaCerrarPestaña");
-        Alert alert;
-
-        alert = new Alert(Alert.AlertType.CONFIRMATION, "Estás seguro que quieres salir?.");
-        alert.setHeaderText(null);
-        Optional<ButtonType> result = alert.showAndWait();
-        event.consume();
-        if (result.get() == ButtonType.OK) {
-            //Cerrar ventana
-            stage.close();
-        }
-    }
-
     @FXML
     private void openWindowSector(ActionEvent event) {
         try {
@@ -681,12 +656,29 @@ public class EmployeeManagementController {
             Parent root = (Parent) loader.load();
             //Relacionamos el documento FXML con el controlador que le va a controlar.
             SectorManagementController sectorManagementController = (SectorManagementController) loader.getController();
+            //Set the User
+            sectorManagementController.setUser(user);
             //Llamada al método setStage del controlador de la ventana signIn. Pasa la ventana.
             sectorManagementController.setStage(getStage());
             //Llamada al método initStage del controlador de la ventana LogOut. Pasa el documento fxml en un nodo.
             sectorManagementController.initStage(root);
         } catch (IOException ex) {
             LOGGER.log(Level.INFO, "Execepción abrir ventana Sector");
+        }
+    }
+
+    @FXML
+    private void openWindowExit(ActionEvent event) {
+        LOGGER.info("Iniciando Controller::alertaCerrarPestaña");
+        Alert alert;
+
+        alert = new Alert(Alert.AlertType.CONFIRMATION, "Estás seguro que quieres salir?.");
+        alert.setHeaderText(null);
+        Optional<ButtonType> result = alert.showAndWait();
+        event.consume();
+        if (result.get() == ButtonType.OK) {
+            //Cerrar ventana
+            stage.close();
         }
     }
 
