@@ -19,7 +19,7 @@ public interface UserInterface {
     public User findUsersByLogin(String login) throws BusinessLogicException;
     public void editChangePassword(User user, String oldPass, String newPass) throws BusinessLogicException;
     public void loginUser(String login, String password) throws BusinessLogicException;
-    public void sendPassword(User user) throws BusinessLogicException;
+    public void sendPassword(User user) throws BusinessLogicException,ExcepcionEmailNoExiste;
     public void edit(Object requestEntity) throws BusinessLogicException;
     public <T> T find(Class<T> responseType, String id) throws BusinessLogicException;
     public void create(Object requestEntity) throws BusinessLogicException;

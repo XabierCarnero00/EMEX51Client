@@ -5,8 +5,10 @@
  */
 package controller;
 
+import businessLogic.BusinessLogicException;
 import businessLogic.UserFactory;
 import businessLogic.UserInterface;
+import exceptions.ExcepcionEmailNoExiste;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -228,6 +230,12 @@ public class SendMailController {
                 controladorPasswords.initStage(root);
                 
             }            
+        }catch(BusinessLogicException e){
+            lblError.setText(e.getMessage());
+        }catch(ExcepcionEmailNoExiste e){
+            Alert alert = new Alert(Alert.AlertType.ERROR,e.getMessage(), ButtonType.CLOSE);
+            alert.setHeaderText(null);
+            alert.showAndWait();
         }catch(Exception e){
             lblError.setText(e.getMessage());
         }

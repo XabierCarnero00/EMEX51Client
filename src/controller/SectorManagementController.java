@@ -179,15 +179,21 @@ public class SectorManagementController extends GenericController {
                 try {
                     //guardar en sector el sector seleccionado de la tabla
                     sector = (Sector) tbSectores.getSelectionModel().getSelectedItem();
+                    sectorManager.sectorNameIsRegistered(sector.getName());
                     //Actualiza el campo que se ha modificado
                     t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getNewValue());
                     //guardar en sector el valor nuevo
                     sector = t.getRowValue();
-                    //guardar en la base de datos donde cojo el sector
+                    //guardar en la base de datos donde cojo el sector                
                     sectorManager.updateSector(sector);
                 } catch (BusinessLogicException ex) {
                     Logger.getLogger(SectorManagementController.class.getName()).log(Level.SEVERE, null, ex);
                     LOGGER.info("Error al updatear en la lambda del nombre edit");
+                } catch (SectorExistException ex) {
+                    Logger.getLogger(SectorManagementController.class.getName()).log(Level.SEVERE, null, ex);
+                    t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getOldValue());
+                    mostrarVentanaAlertError("El nombre de sector "+sector.getName()+" ya existe.");
+
                 }
             });
             colTipo.setCellValueFactory(new PropertyValueFactory<>("type"));

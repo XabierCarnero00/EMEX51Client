@@ -6,8 +6,10 @@
 package businessLogic;
 
 import clientREST.UserREST;
+import exceptions.ExcepcionEmailNoExiste;
 import java.util.logging.Logger;
 import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import model.Boss;
 import model.Employee;
@@ -79,13 +81,14 @@ public class UserImplementation implements UserInterface {
     }
 
     @Override
-    public void sendPassword(User user) throws BusinessLogicException {
+    public void sendPassword(User user) throws BusinessLogicException,ExcepcionEmailNoExiste {
         LOGGER.info("Metodo sendPassword de la clase UserManagerImplementation.");
         try{
             webClient.editForgotPassword(user);
-            System.out.println("Volvi");
+        }catch(ForbiddenException e){
+            throw  new ExcepcionEmailNoExiste();
         }catch(WebApplicationException e){
-            throw  new BusinessLogicException(e.getMessage());
+            throw new BusinessLogicException(e.getMessage());
         }        
     }
 
