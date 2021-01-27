@@ -308,6 +308,17 @@ public class VisitorManagementController {
             mostrarVentanaAlertError("Error al intentar borrar.");
         }
     }
+    
+    @FXML
+    private void cbListener(ActionEvent event) {
+        btnBuscar.setDisable(false);
+        if (cbxBuscar.getValue().equals("Todos")) {
+            txtBuscar.setText("");
+            txtBuscar.setDisable(true);
+        } else {
+            txtBuscar.setDisable(false);
+        }
+    }
 
     private void clickBuscar(ActionEvent event) {
         if (cbxBuscar.getValue().equals("Todos")) {
