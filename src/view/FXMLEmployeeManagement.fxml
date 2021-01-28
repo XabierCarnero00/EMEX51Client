@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -68,13 +69,13 @@
                                 <TextField fx:id="textfieldLogin" layoutX="107.0" layoutY="508.0" prefHeight="25.0" prefWidth="326.0" promptText="Login" />
                                 <TextField fx:id="textfieldSalario" layoutX="448.0" layoutY="449.0" prefHeight="25.0" prefWidth="221.0" promptText="Salario" />
                                 <TextField fx:id="textfieldTrabajo" layoutX="448.0" layoutY="478.0" prefHeight="25.0" prefWidth="221.0" promptText="Trabajo" />
-                                <TextField fx:id="textfieldPassword" layoutX="448.0" layoutY="507.0" prefHeight="25.0" prefWidth="221.0" promptText="Password" />
                                 <Button fx:id="buttonAniadir" layoutX="108.0" layoutY="544.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="81.0" text="Añadir" />
                                 <Button fx:id="buttonModificar" layoutX="677.0" layoutY="447.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="Modificar" />
                                 <Button fx:id="buttonBorrar" layoutX="677.0" layoutY="477.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="Borrar" />
                                 <Button fx:id="buttonLimpiar" layoutX="677.0" layoutY="507.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="73.0" text="Limpiar" />
                                 <Label fx:id="labelError" layoutX="284.0" layoutY="548.0" prefHeight="17.0" prefWidth="596.0" />
                                 <Label fx:id="lblTipoUsuario" alignment="TOP_RIGHT" layoutX="774.0" layoutY="7.0" prefHeight="50.0" prefWidth="112.0" />
+                        <PasswordField fx:id="textfieldPassword" layoutX="448.0" layoutY="508.0" prefHeight="25.0" prefWidth="221.0" promptText="Password" />
                             </children>
                             <opaqueInsets>
                                 <Insets />

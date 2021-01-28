@@ -219,6 +219,7 @@ public class VisitorManagementController {
             datePicker.setEditable(false);
             //La tabla sera editable.
             tblVisitors.setEditable(true);
+            datePicker.setEditable(false);
 
             //Añadir listener a la seleccion de la tabla 
             tblVisitors.getSelectionModel().selectedItemProperty().addListener(this::manejarSeleccionTabla);

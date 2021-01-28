@@ -225,6 +225,7 @@ public class CreatureManagementController {
             //El boton está inhabilitado al arrancar la ventana.
             btnModificar.setDisable(true);
             btnAnadir.setDisable(true);
+            datePickerFechaLlegada.setEditable(false);
             //Añadir listener a la seleccion de la tabla 
             tbCreature.getSelectionModel().selectedItemProperty().addListener(this::manejarSeleccionTabla);
             
@@ -528,7 +529,7 @@ public class CreatureManagementController {
      */
     private void accionBotonVolver(ActionEvent event){
         LOGGER.info("Iniciando CreatureController::accionBotonVolver");
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"Estás seguro que quieres salir?.");
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"Estás seguro que quieres salir?");
         alert.setHeaderText(null);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == ButtonType.OK) {       
