@@ -305,7 +305,7 @@ public class SignInController {
     private void openMenuWindowBoss(User user) {
         try {
             //Mensaje Logger al acceder al método
-            LOGGER.log(Level.INFO, "Método para abrir el menu principal de la aplicación");
+            LOGGER.log(Level.INFO, "Método para abrir el menu principal de la aplicación(Boss)");
             //New FXMLLoader Añadir el fxml de MenuPrincipal que es la ventana principal
             FXMLLoader loader = new FXMLLoader(getClass().
                     getResource("/view/FXMLEmployeeManagement.fxml"));
@@ -326,7 +326,26 @@ public class SignInController {
     }
 
     private void openMenuWindowEmployee(User user) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            //Mensaje Logger al acceder al método
+            LOGGER.log(Level.INFO, "Método para abrir el menu principal de la aplicación(Employee)");
+            //New FXMLLoader Añadir el fxml de MenuPrincipal que es la ventana principal
+            FXMLLoader loader = new FXMLLoader(getClass().
+                    getResource("/view/FXMLVisitorManagement.fxml"));
+            //Parent es una clase gráfica de nodos xml son nodos.
+            Parent root = (Parent) loader.load();
+            //Relacionamos el documento FXML con el controlador que le va a controlar.
+            VisitorManagementController visitorManagementController = (VisitorManagementController) loader.getController();
+            //Introducir el user a la ventana
+            visitorManagementController.setUser(user);
+            //Llamada al método setStage del controlador de la ventana SignIn. Pasa la ventana.
+            visitorManagementController.setStage(stage);
+            //Llamada al método initStage del controlador de la ventana SignIn. Pasa el documento fxml en un nodo.
+            visitorManagementController.initStage(root);
+            //Llamada al método inicializarComponenentesVentana del controlador de la ventana signIn.
+        } catch (IOException ex) {
+            Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

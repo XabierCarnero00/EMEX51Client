@@ -600,15 +600,17 @@ public class SectorManagementController {
         try {
             //New FXMLLoader Añadir el fxml de logout que es la escena a la que se redirige si todo va bien
             FXMLLoader loader = new FXMLLoader(getClass().
-                    getResource("/view/VisitorManagementController.fxml"));
+                    getResource("/view/FXMLVisitorManagement.fxml"));
             //Parent es una clase gráfica de nodos. xml son nodos.
             Parent root = (Parent) loader.load();
             //Relacionamos el documento FXML con el controlador que le va a controlar.
-            //GestionarVisitorController gestionarVisitorController = (GestionarVisitorController) loader.getController();
+            VisitorManagementController gestionarVisitorController = (VisitorManagementController) loader.getController();
             //Llamada al método setStage del controlador de la ventana signIn. Pasa la ventana.
-            //gestionarVisitorController.setStage(stage);
+            gestionarVisitorController.setStage(stage);
+            //Set the User
+            gestionarVisitorController.setUser(user);
             //Llamada al método initStage del controlador de la ventana LogOut. Pasa el documento fxml en un nodo.
-            //gestionarVisitorController.initStage(root);
+            gestionarVisitorController.initStage(root);
         } catch (IOException ex) {
             LOGGER.log(Level.INFO, "Execepción abrir ventana Visitante");
         }
