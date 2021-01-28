@@ -5,17 +5,22 @@
  */
 package controlador;
 
+import controller.SignInController;
+import emex51crudclient.EMEX51CRUDClient;
 import java.awt.Button;
 import java.awt.TextField;
+import java.util.concurrent.TimeoutException;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableView;
 import javafx.stage.Stage;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import static org.testfx.api.FxAssert.verifyThat;
+import org.testfx.api.FxToolkit;
 import org.testfx.framework.junit.ApplicationTest;
 import org.testfx.matcher.base.NodeMatchers;
 import static org.testfx.matcher.base.NodeMatchers.isDisabled;
@@ -44,19 +49,25 @@ public class FXMLVisitorControllerIT extends ApplicationTest{
      * @param stage Primary Stage object
      * @throws Exception If there is any error
      */
-@Override 
-    public void start(Stage stage) throws Exception {
-        //start JavaFX application to be tested    
-        new FXMLVisitorManagementController().start(stage);
-       
+ @BeforeClass
+    public static void setUpClass() throws TimeoutException {
+        FxToolkit.registerPrimaryStage();
+        FxToolkit.setupApplication(EMEX51CRUDClient.class);
     }
     
+    /**
+     * class empty constructor
+     */
+    
+    public FXMLVisitorControllerIT(){
+        
+    }
     
     /**
      * This method allows to see users' table view by interacting with login 
      * view.
      */
-    //@Test
+    @Test
     public void testA_InicioVentana() {
         clickOn("#txtFieldUsuario");
         write("username");
@@ -195,7 +206,7 @@ public class FXMLVisitorControllerIT extends ApplicationTest{
     //@Test
     public void testK_EditableTable() {
          doubleClickOn("#colEmail");
-         write("The table is editable");
+         write("editable");
     }
     
     
