@@ -33,6 +33,8 @@ public interface VisitorManager {
      * @throws BusinessLogicException 
      */
     public void updateVisitor(Visitor visitor) throws BusinessLogicException;
+    
+    public void createVisitor(Visitor visitor) throws BusinessLogicException;
     /**
      * This method deletes data for an existing {@link Sector}.
      * @param visitor The {@link Sector} object to be deleted.

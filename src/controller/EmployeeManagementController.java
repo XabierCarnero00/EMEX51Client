@@ -209,7 +209,7 @@ public class EmployeeManagementController {
             ObservableList<String> cbOptions = FXCollections.observableArrayList();
             cbOptions.addAll("Nombre", "Email", "Todos");
             comboBox.setItems(cbOptions);
-            
+
             textfieldBuscar.requestFocus();
 
             stage.show();
@@ -227,6 +227,7 @@ public class EmployeeManagementController {
             buttonLimpiar.setOnAction(this::limpiarListener);
             buttonBorrar.setOnAction(this::clickBorrar);
             table.getSelectionModel().selectedItemProperty().addListener(this::clickTabla);
+            stage.setOnCloseRequest(this::manejarCierreVentana);
 
             //Label para el tipo de usuario
             if (user instanceof Boss) {
@@ -632,15 +633,17 @@ public class EmployeeManagementController {
         try {
             //New FXMLLoader Añadir el fxml de logout que es la escena a la que se redirige si todo va bien
             FXMLLoader loader = new FXMLLoader(getClass().
-                    getResource("/view/VisitorManagementController.fxml"));
+                    getResource("/view/FXMLVisitorManagement.fxml"));
             //Parent es una clase gráfica de nodos. xml son nodos.
             Parent root = (Parent) loader.load();
             //Relacionamos el documento FXML con el controlador que le va a controlar.
-            //GestionarVisitorController gestionarVisitorController = (GestionarVisitorController) loader.getController();
+            VisitorManagementController gestionarVisitorController = (VisitorManagementController) loader.getController();
             //Llamada al método setStage del controlador de la ventana signIn. Pasa la ventana.
-            //gestionarVisitorController.setStage(stage);
+            gestionarVisitorController.setStage(stage);
+            //Set the User
+            gestionarVisitorController.setUser(user);
             //Llamada al método initStage del controlador de la ventana LogOut. Pasa el documento fxml en un nodo.
-            //gestionarVisitorController.initStage(root);
+            gestionarVisitorController.initStage(root);
         } catch (IOException ex) {
             LOGGER.log(Level.INFO, "Execepción abrir ventana Visitante");
         }
@@ -679,6 +682,26 @@ public class EmployeeManagementController {
         if (result.get() == ButtonType.OK) {
             //Cerrar ventana
             stage.close();
+        }
+    }
+
+    /**
+     * This method controls the event window closing when the window [x] is
+     * clicked.
+     *
+     * @param event Window closing
+     */
+    private void manejarCierreVentana(WindowEvent event) {
+        LOGGER.info("Iniciando CreatureController::manejarCierreVentana");
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Estás seguro que quieres salir?", ButtonType.OK, ButtonType.CANCEL);
+        alert.setHeaderText(null);
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            //ssi pulsa ok la ventana se cierra
+            stage.close();
+        } else {
+            //pulsa cancelar se consume el evento. Es decir, no hace nada y por tanto, se queda en la ventana.
+            event.consume();
         }
     }
 

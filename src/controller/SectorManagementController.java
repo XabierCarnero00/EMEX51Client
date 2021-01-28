@@ -238,15 +238,22 @@ public class SectorManagementController {
                 try {
                     //guardar en sector el sector seleccionado de la tabla
                     sector = (Sector) tbSectores.getSelectionModel().getSelectedItem();
+                    sectorManager.sectorNameIsRegistered(sector.getName());
                     //Actualiza el campo que se ha modificado
                     t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getNewValue());
                     //guardar en sector el valor nuevo
                     sector = t.getRowValue();
-                    //guardar en la base de datos donde cojo el sector
+                    //guardar en la base de datos donde cojo el sector                
                     sectorManager.updateSector(sector);
                 } catch (BusinessLogicException ex) {
                     Logger.getLogger(SectorManagementController.class.getName()).log(Level.SEVERE, null, ex);
                     LOGGER.info("Error al updatear en la lambda del nombre edit");
+                } catch (SectorExistException ex) {
+                    Logger.getLogger(SectorManagementController.class.getName()).log(Level.SEVERE, null, ex);
+                    tbSectores.refresh();
+                    t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getOldValue());
+                    mostrarVentanaAlertError("El nombre de sector "+t.getNewValue()+" ya existe.");
+
                 }
             });
             colTipo.setCellValueFactory(new PropertyValueFactory<>("type"));
@@ -600,15 +607,17 @@ public class SectorManagementController {
         try {
             //New FXMLLoader Añadir el fxml de logout que es la escena a la que se redirige si todo va bien
             FXMLLoader loader = new FXMLLoader(getClass().
-                    getResource("/view/VisitorManagementController.fxml"));
+                    getResource("/view/FXMLVisitorManagement.fxml"));
             //Parent es una clase gráfica de nodos. xml son nodos.
             Parent root = (Parent) loader.load();
             //Relacionamos el documento FXML con el controlador que le va a controlar.
-            //GestionarVisitorController gestionarVisitorController = (GestionarVisitorController) loader.getController();
+            VisitorManagementController gestionarVisitorController = (VisitorManagementController) loader.getController();
             //Llamada al método setStage del controlador de la ventana signIn. Pasa la ventana.
-            //gestionarVisitorController.setStage(stage);
+            gestionarVisitorController.setStage(stage);
+            //Set the User
+            gestionarVisitorController.setUser(user);
             //Llamada al método initStage del controlador de la ventana LogOut. Pasa el documento fxml en un nodo.
-            //gestionarVisitorController.initStage(root);
+            gestionarVisitorController.initStage(root);
         } catch (IOException ex) {
             LOGGER.log(Level.INFO, "Execepción abrir ventana Visitante");
         }
