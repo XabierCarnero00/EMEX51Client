@@ -6,7 +6,6 @@
 package emex51crudclient;
 
 import controller.SignInController;
-import controller.VisitorManagementController;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
@@ -15,8 +14,8 @@ import javafx.scene.Parent;
 import javafx.stage.Stage;
 
 /**
- *
- * @author xabig
+ *  Class to start all the app.
+ * @author Endika Ubierna, Markel Lopez de Uralde, Xabier Carnero.
  */
 public class EMEX51CRUDClient extends Application {
 
@@ -25,7 +24,11 @@ public class EMEX51CRUDClient extends Application {
      */
     private static final Logger LOGGER
             = Logger.getLogger("grupog5.signinsignupapplication.cliente.application");
-
+    /**
+     * Opens the SingIn Window.
+     * @param stage teh stage to use in the app.
+     * @throws Exception 
+     */
     @Override
     public void start(Stage stage) throws Exception {
         //Mensaje Logger al acceder al método

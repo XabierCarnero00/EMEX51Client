@@ -22,7 +22,7 @@ import javax.ws.rs.core.GenericType;
  *        client.close();
  * </pre>
  *
- * @author xabig
+ * @author Markel Lopez de Uralde, Endika Ubierna, Xabier Carnero
  */
 public class VisitorREST {    
     

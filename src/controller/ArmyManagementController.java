@@ -49,7 +49,7 @@ import model.User;
 import utilMethods.MetodosUtiles;
 
 /**
- *
+ * FXML Controller class for <code>Army</code> class.
  * @author xabig
  */
 public class ArmyManagementController {
@@ -63,89 +63,161 @@ public class ArmyManagementController {
      * Una ventana sobre la que se coloca una escena.
      */
     private Stage stage;
-
+    /**
+     * The User that operates on the Window.
+     */
     User user;
-
+    /**
+     * A {@link ArmyInterface} object
+     */
     ArmyInterface armyInt = ArmyFactory.getArmyImp();
-
+    /**
+     * A {@link SectorInterface} object
+     */
     SectorInterface sectorInt = SectorFactory.getSector();
-
+    /**
+     * List of Armys for inserting in the TableView.
+     */
     ObservableList armys;
-
+    /**
+     * The Sector where the Army is ubicated.
+     */
     Sector sector;
-
+    /**
+     * Textfield for searching Armys.
+     */
     @FXML
     private TextField textfieldBuscar;
-
+    /**
+     * Button for searching Armys.
+     */
     @FXML
     private Button buttonBuscar;
-
+    /**
+     * Combo for serching Armys by different types.
+     */
     @FXML
     private ComboBox comboBox;
-
+    /**
+     * DataPicker for serching Armys by different types.
+     */
     @FXML
     private DatePicker datePicker;
-
+    /**
+     * TableView containing Armys.
+     */
     @FXML
     private TableView tableView;
-
+    /**
+     * TableColumn contains Armys Name.
+     */
     @FXML
     private TableColumn<Army, String> tableColumnNombre;
-
+    /**
+     * TableColumn contains Armys ammunition.
+     */
     @FXML
     private TableColumn<Army, Integer> tableColumnMunicion;
-
+    /**
+     * TableColumn contains Armys Arrival Date.
+     */
     @FXML
     private TableColumn<Army, Date> tableColumnFechaLlegada;
-
+    /**
+     * TableColumn contains Armys Sector.
+     */
     @FXML
     private TableColumn<Sector, String> tableColumnSector;
-
+    /**
+     * Textfield for Armys Name.
+     */
     @FXML
     private TextField textfieldNombre;
-
+    /**
+     * Textfield for Armys ammunition.
+     */
     @FXML
     private TextField textfieldMunicion;
-
+    /**
+     * Button for adding a new Army.
+     */
     @FXML
     private Button buttonAniadir;
-
+    /**
+     * Button for removing Army.
+     */
     @FXML
     private Button buttonBorrar;
-
+    /**
+     * DataPicker for Adding Army.
+     */
     @FXML
     private DatePicker datePickerAniadir;
-
+    /**
+     * Label with the information of the User.
+     */
     @FXML
     private Label labelError;
 
-    @FXML
-    private Button buttonVolver;
-
+    /**
+     * The Stage where the Window is shown.
+     *
+     * @return the Stage
+     */
     public Stage getStage() {
         return stage;
     }
 
+    /**
+     * Sets the Stage for the Window.
+     *
+     * @param stage The Stage set.
+     */
     public void setStage(Stage stage) {
         this.stage = stage;
     }
 
-    public Sector getSector() {
-        return sector;
-    }
-
-    public void setSector(Sector sector) {
-        this.sector = sector;
-    }
-
+    /**
+     * Returns the User that operates in the Window.
+     *
+     * @return the User
+     */
     public User getUser() {
         return user;
     }
 
+    /**
+     * Sets the User that operates in the Window.
+     *
+     * @param user the User to be set.
+     */
     public void setUser(User user) {
         this.user = user;
     }
 
+    /**
+     * Get the Sector where is the Army
+     *
+     * @return the Sector
+     */
+    public Sector getSector() {
+        return sector;
+    }
+
+    /**
+     * Sets the Sector where is the Army
+     *
+     * @param sector the Sector to be set
+     */
+    public void setSector(Sector sector) {
+        this.sector = sector;
+    }
+
+    /**
+     * Initializes the controller class.
+     *
+     * @param root
+     */
     public void initStage(Parent root) {
         try {
             Scene scene = new Scene(root);
@@ -198,7 +270,7 @@ public class ArmyManagementController {
             textfieldBuscar.textProperty().addListener(this::buscarListener);
             buttonBuscar.setOnAction(this::clickBuscar);
             buttonAniadir.setOnAction(this::clickAniadir);
-        buttonBorrar.setOnAction(this::clickBorrar);
+            buttonBorrar.setOnAction(this::clickBorrar);
             tableView.getSelectionModel().selectedItemProperty().addListener(this::clickTabla);
         } catch (BusinessLogicException ex) {
             Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
@@ -206,6 +278,9 @@ public class ArmyManagementController {
 
     }
 
+    /**
+     * This method makes the Table be editable.
+     */
     private void makeTableEditable() {
         tableColumnNombre.setCellFactory(TextFieldTableCell.forTableColumn());
         tableColumnNombre.setOnEditCommit((CellEditEvent<Army, String> t) -> {
@@ -235,23 +310,28 @@ public class ArmyManagementController {
                 labelError.setTextFill(Color.web("#ff0000"));
             }
         });
-            tableColumnMunicion.setCellFactory(TextFieldTableCell.<Army, Integer>forTableColumn(new IntegerStringConverter()));
-            tableColumnMunicion.setOnEditCommit((CellEditEvent<Army, Integer> t) -> {
-                labelError.setText("");
-                try {
-                    t.getTableView().getItems().get(t.getTablePosition().getRow()).setAmmunition(t.getNewValue());
-                    Army army = t.getRowValue();
-                    armyInt.editArmy(army);
-                } catch (BusinessLogicException ex) {
-                    Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
-                    labelError.setText("Error when trying to Update Armys, try again later: " + ex.getMessage());
-                    labelError.setTextFill(Color.web("#ff0000"));
-                }
-            });
+        tableColumnMunicion.setCellFactory(TextFieldTableCell.<Army, Integer>forTableColumn(new IntegerStringConverter()));
+        tableColumnMunicion.setOnEditCommit((CellEditEvent<Army, Integer> t) -> {
+            labelError.setText("");
+            try {
+                t.getTableView().getItems().get(t.getTablePosition().getRow()).setAmmunition(t.getNewValue());
+                Army army = t.getRowValue();
+                armyInt.editArmy(army);
+            } catch (BusinessLogicException ex) {
+                Logger.getLogger(ArmyManagementController.class.getName()).log(Level.SEVERE, null, ex);
+                labelError.setText("Error when trying to Update Armys, try again later: " + ex.getMessage());
+                labelError.setTextFill(Color.web("#ff0000"));
+            }
+        });
 
         tableView.setEditable(true);
     }
 
+    /**
+     * This method loads the Armys in the TableView.
+     *
+     * @param armys
+     */
     private void loadArmysTable(ObservableList<Army> armys) {
         tableColumnNombre.setCellValueFactory(new PropertyValueFactory<>("name"));
         tableColumnMunicion.setCellValueFactory(new PropertyValueFactory<>("ammunition"));
@@ -261,6 +341,11 @@ public class ArmyManagementController {
         tableView.setItems(armys);
     }
 
+    /**
+     * Starts when the Button Buscar is pressed.
+     *
+     * @param event
+     */
     private void clickBuscar(ActionEvent event) {
         labelError.setText("");
         if (MetodosUtiles.maximoCaracteres(textfieldBuscar, 50)) {
@@ -290,6 +375,11 @@ public class ArmyManagementController {
         }
     }
 
+    /**
+     * Starts when the Button Añadir is pressed.
+     *
+     * @param event
+     */
     private void clickAniadir(ActionEvent event) {
         try {
             labelError.setText("");
@@ -329,6 +419,11 @@ public class ArmyManagementController {
         }
     }
 
+    /**
+     * Starts when the Button Borrar is pressed.
+     *
+     * @param event
+     */
     private void clickBorrar(ActionEvent event) {
         if (mostrarAlertConfirmation("Delete", "Are you sure you want to delete?")) {
             try {
@@ -348,6 +443,13 @@ public class ArmyManagementController {
         }
     }
 
+    /**
+     * Starts when yo make a click in the TableView.
+     *
+     * @param observable
+     * @param oldValue
+     * @param newValue
+     */
     private void clickTabla(ObservableValue observable, Object oldValue, Object newValue) {
         labelError.setText("");
         if (newValue != null) {
@@ -357,6 +459,11 @@ public class ArmyManagementController {
         }
     }
 
+    /**
+     * Starts when is a change in the ComboBox.
+     *
+     * @param event
+     */
     @FXML
     private void cbListener(ActionEvent event) {
         buttonBuscar.setDisable(false);
@@ -369,6 +476,11 @@ public class ArmyManagementController {
         }
     }
 
+    /**
+     * Starts when is a change in the DatePicker.
+     *
+     * @param event
+     */
     @FXML
     private void changeDatePicker(ActionEvent event) {
         try {
@@ -384,10 +496,24 @@ public class ArmyManagementController {
         }
     }
 
+    /**
+     * Listens the TextField Buscar
+     *
+     * @param observable
+     * @param oldValue
+     * @param newValue
+     */
     private void buscarListener(ObservableValue observable, String oldValue, String newValue) {
         labelError.setText("");
     }
 
+    /**
+     * Listens the ammunition TextField.
+     * 
+     * @param observable
+     * @param oldValue
+     * @param newValue 
+     */
     private void municionListener(ObservableValue observable, String oldValue, String newValue) {
         labelError.setText("");
         if (textfieldMunicion.getText().compareToIgnoreCase("") != 0
@@ -398,6 +524,12 @@ public class ArmyManagementController {
         }
     }
 
+    /**
+     * Listens the name TextField
+     * @param observable
+     * @param oldValue
+     * @param newValue 
+     */
     private void nombreListener(ObservableValue observable, String oldValue, String newValue) {
         labelError.setText("");
         if (textfieldMunicion.getText().compareToIgnoreCase("") != 0

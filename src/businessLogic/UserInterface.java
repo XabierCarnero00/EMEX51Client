@@ -12,7 +12,7 @@ import exceptions.ExcepcionUserNoExiste;
 import model.User;
 
 /**
- *
+ * Interface encapsulating methods for <code>User</code> Management for Emex51 project. 
  * @author xabig
  */
 public interface UserInterface {

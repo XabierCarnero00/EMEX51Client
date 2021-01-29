@@ -20,7 +20,7 @@ import javax.ws.rs.client.WebTarget;
  *        client.close();
  * </pre>
  *
- * @author xabig
+ * @author Markel Lopez de Uralde, Endika Ubierna, Xabier Carnero
  */
 public class BossREST {
     private static ResourceBundle rb = ResourceBundle.getBundle("clientREST.RestURL");

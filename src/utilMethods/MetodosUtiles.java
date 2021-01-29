@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 import javafx.scene.control.TextField;
 
 /**
+ * This class stores util methods used in project application.
  * @version 1.0
  * @author Endika, Markel
  */
@@ -37,7 +38,7 @@ public class MetodosUtiles {
      * pasado como parámetro.
      *
      * @param field Un campo de texto.
-     * @param max
+     * @param max Maximo de caracteres que tiene que tener el texto
      * @return Un boolean true si contiene los caracteres deseados, false si los
      * caracteres superan el preestablecido.
      */
@@ -57,7 +58,7 @@ public class MetodosUtiles {
      * Integer pasado como parámetro.
      *
      * @param field Un campo de texto.
-     * @param min
+     * @param min Minimo de caracteres que tiene que tener el texto
      * @return Un boolean true si contiene los caracteres deseados, false si los
      * caracteres son menos que el preestablecido.
      */
@@ -106,8 +107,8 @@ public class MetodosUtiles {
 
     /**
      * Comrupueba que el String recibido como parametro puede ser parseado a Float
-     * @param cadena
-     * @return 
+     * @param cadena la cadena a comprobar
+     * @return un booleano
      */
     public static Boolean verifyFloat(String cadena) {
         try {

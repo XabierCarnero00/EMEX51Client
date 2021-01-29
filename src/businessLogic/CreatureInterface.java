@@ -23,6 +23,7 @@ public interface CreatureInterface {
     /**
      * This method returns a <code>Creature</code> with the same name as the one passed by parameter.
      * @param name The name of a {@link Creature}.
+     * @param sector
      * @return A creature object.
      * @throws BusinessLogicException
      */
@@ -30,6 +31,7 @@ public interface CreatureInterface {
     /**
      * This method returns a <code>Creature</code> with the same especie as the one passed by parameter.
      * @param especie The especie of a {@link Creature}.
+     * @param sector
      * @return A creature object.
      * @throws BusinessLogicException
      */

@@ -6,7 +6,7 @@
 package exceptions;
 
 /**
- *
+ * Exception thrown when the email don´t exist.
  * @author xabig
  */
 public class ExcepcionEmailNoExiste extends Exception {  

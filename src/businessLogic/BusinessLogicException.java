@@ -6,10 +6,14 @@
 package businessLogic;
 
 /**
- *
+ * Exception thrown in the businees tier of the project.
  * @author endika
  */
 public class BusinessLogicException extends Exception{
+    /**
+     * Business logic tier exception.
+     * @param msg The message shown.
+     */
     public BusinessLogicException(String msg){
         super(msg);
     }

@@ -8,7 +8,6 @@ package controller;
 import businessLogic.BusinessLogicException;
 import businessLogic.EmployeeFactory;
 import businessLogic.EmployeeInterface;
-import static controller.GenericController.LOGGER;
 import exceptions.ExcepcionEmailYaExiste;
 import exceptions.ExcepcionUserYaExiste;
 import java.io.IOException;
@@ -31,7 +30,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -49,7 +47,7 @@ import utilMethods.MetodosUtiles;
 /**
  * FXML Controller class
  *
- * @author xabig
+ * @author Xabier Carnero
  */
 public class EmployeeManagementController {
 
@@ -70,82 +68,144 @@ public class EmployeeManagementController {
      * Una ventana sobre la que se coloca una escena.
      */
     private Stage stage;
-
+    /**
+     * TableView containing Employees.
+     */
     @FXML
     private TableView table;
+    /**
+     * TableColumn contains Employees Email.
+     */
     @FXML
     private TableColumn tableEmail;
+    /**
+     * TableColumn contains Employees Name.
+     */
     @FXML
     private TableColumn tableNombApell;
+    /**
+     * TableColumn contains Employees Wage.
+     */
     @FXML
     private TableColumn tableSalario;
+    /**
+     * TableColumn contains Employees Work.
+     */
     @FXML
     private TableColumn tableTrabajo;
+    /**
+     * Combo for serching Employees by different types.
+     */
     @FXML
     private ComboBox comboBox;
+    /**
+     * Textfield for Employees Email.
+     */
     @FXML
     private TextField textfieldEmail;
+    /**
+     * Textfield for Employees Name.
+     */
     @FXML
     private TextField textfieldNombApell;
+    /**
+     * Button adding a new Employee.
+     */
     @FXML
     private Button buttonAniadir;
+    /**
+     * Textfield for Employees Work.
+     */
     @FXML
     private TextField textfieldTrabajo;
+    /**
+     * Textfield for Employees Wage.
+     */
     @FXML
     private TextField textfieldSalario;
+    /**
+     * Textfield for searching Employees.
+     */
     @FXML
     private TextField textfieldBuscar;
+    /**
+     * Button searching a Employee.
+     */
     @FXML
     private Button buttonBuscar;
+    /**
+     * Button modifying a Employee.
+     */
     @FXML
     private Button buttonModificar;
+    /**
+     * TableColumn contains Employees Login.
+     */
     @FXML
     private TableColumn tableLogin;
+    /**
+     * Button removing a Employee.
+     */
     @FXML
     private Button buttonBorrar;
+    /**
+     * Textfield for Employees Login.
+     */
     @FXML
     private TextField textfieldLogin;
+    /**
+     * Textfield for Employees Password.
+     */
     @FXML
     private TextField textfieldPassword;
+    /**
+     * Button cleaning all the fields.
+     */
     @FXML
     private Button buttonLimpiar;
+    /**
+     * Label with the error that happens.
+     */
     @FXML
     private Label labelError;
+    /**
+     * Label with the information of the User.
+     */
     @FXML
     private Label lblTipoUsuario;
     /**
-     * The menu Item to exit
+     * The menu Item to exit.
      */
     @FXML
     private MenuItem ItemExit;
     /**
-     * The menu Item of logout
+     * The menu Item of logout.
      */
     @FXML
     private MenuItem ItemLogout;
     /**
-     * The menu Item of sector
+     * The menu Item of sector.
      */
     @FXML
     private MenuItem ItemSectores;
     /**
-     * The menu Item of employee
+     * The menu Item of employee.
      */
     @FXML
     private MenuItem ItemEmpleados;
     /**
-     * The menu Item of visitor
+     * The menu Item of visitor.
      */
     @FXML
     private MenuItem ItemVisitantes;
-
+    /**
+     * List of Employees for inserting in the TableView.
+     */
     ObservableList employees;
-
+    /**
+     * A {@link EmployeeInterface} object
+     */
     EmployeeInterface employeeInt = EmployeeFactory.getEmployeeImp();
-    @FXML
-    private Menu menu;
-    @FXML
-    private Menu MenuLogout;
 
     /**
      * The Stage where the Window is shown.
@@ -243,6 +303,11 @@ public class EmployeeManagementController {
         }
     }
 
+    /**
+     * Inserts all the Employees in the table.
+     *
+     * @param employees
+     */
     private void loadEmployeesTable(ObservableList<Employee> employees) {
         tableEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
         tableNombApell.setCellValueFactory(new PropertyValueFactory<>("fullName"));
@@ -253,20 +318,42 @@ public class EmployeeManagementController {
         table.setItems(employees);
     }
 
+    /**
+     * Listens all the textfields.
+     *
+     * @param observable
+     * @param oldValue
+     * @param newValue
+     */
     private void textfieldListener(ObservableValue observable, String oldValue, String newValue) {
         labelError.setText("");
         comprobarAniadir();
         comprobarModificar();
     }
 
+    /**
+     * Listens the TextField Buscar
+     *
+     * @param observable
+     * @param oldValue
+     * @param newValue
+     */
     private void listenerBuscar(ObservableValue observable, String oldValue, String newValue) {
         labelError.setText("");
     }
 
+    /**
+     * Starts when the buttonLimpiar is pressed.
+     *
+     * @param event
+     */
     private void limpiarListener(ActionEvent event) {
         limpiarCampos();
     }
 
+    /**
+     * Revises that all the textFields are with text or not.
+     */
     private void comprobarAniadir() {
         if (textfieldEmail.getText().compareToIgnoreCase("") != 0
                 && textfieldNombApell.getText().compareToIgnoreCase("") != 0
@@ -280,6 +367,9 @@ public class EmployeeManagementController {
         }
     }
 
+    /**
+     * Revises that all the textFields are with text or not instead of password.
+     */
     private void comprobarModificar() {
         if (!textfieldEmail.getText().equals("")
                 && !textfieldNombApell.getText().equals("")
@@ -293,6 +383,11 @@ public class EmployeeManagementController {
         }
     }
 
+    /**
+     * Starts when the Button Buscar is pressed.
+     *
+     * @param event
+     */
     private void clickBuscar(ActionEvent event) {
         labelError.setText("");
         try {
@@ -319,6 +414,11 @@ public class EmployeeManagementController {
         }
     }
 
+    /**
+     * Starts when the Button Añadir is pressed.
+     *
+     * @param event
+     */
     private void clickAniadir(ActionEvent event) {
         try {
             if (verifyEmail(textfieldEmail.getText().trim())
@@ -371,6 +471,11 @@ public class EmployeeManagementController {
         }
     }
 
+    /**
+     * Starts when the buttonModificar is pressed.
+     *
+     * @param event
+     */
     private void clickModificar(ActionEvent event) {
         if (verifyEmail(textfieldEmail.getText().trim())
                 && verifyFullName(textfieldNombApell.getText().trim())
@@ -404,6 +509,11 @@ public class EmployeeManagementController {
         }
     }
 
+    /**
+     * Starts when the Button Borrar is pressed.
+     *
+     * @param event
+     */
     private void clickBorrar(ActionEvent event) {
         if (mostrarAlertConfirmation("Delete", "Are you sure you want to delete?")) {
             try {
@@ -424,6 +534,13 @@ public class EmployeeManagementController {
         }
     }
 
+    /**
+     * Starts when the the TableView is pressed.
+     *
+     * @param observable
+     * @param oldValue
+     * @param newValue
+     */
     private void clickTabla(ObservableValue observable, Object oldValue, Object newValue) {
         if (newValue != null) {
             buttonModificar.setDisable(false);
@@ -448,6 +565,11 @@ public class EmployeeManagementController {
         }
     }
 
+    /**
+     * Starts when is a change in the ComboBox.
+     *
+     * @param event
+     */
     @FXML
     private void cbListener(ActionEvent event) {
         buttonBuscar.setDisable(false);
@@ -481,6 +603,12 @@ public class EmployeeManagementController {
         return confirm;
     }
 
+    /**
+     * Method to verify that the Field Email is correctly refilled.
+     *
+     * @param comp
+     * @return
+     */
     private Boolean verifyEmail(String comp) {
         if (MetodosUtiles.validateEmail(comp)) {
             return true;
@@ -491,6 +619,12 @@ public class EmployeeManagementController {
         }
     }
 
+    /**
+     * Method to verify that the Field FullName is correctly refilled.
+     *
+     * @param comp
+     * @return
+     */
     private Boolean verifyFullName(String comp) {
         if (MetodosUtiles.contieneSoloLetras(comp)) {
             if (MetodosUtiles.maximoCaracteres(textfieldNombApell, 50)) {
@@ -513,6 +647,12 @@ public class EmployeeManagementController {
         }
     }
 
+    /**
+     * Method to verify that the Field Login is correctly refilled.
+     *
+     * @param comp
+     * @return
+     */
     private Boolean verifyLogin(String comp) {
         if (MetodosUtiles.maximoCaracteres(textfieldLogin, 50)) {
             if (MetodosUtiles.minimoCaracteres(textfieldLogin, 4)) {
@@ -529,6 +669,12 @@ public class EmployeeManagementController {
         }
     }
 
+    /**
+     * Method to verify that the Field Wage is correctly refilled.
+     *
+     * @param comp
+     * @return
+     */
     private Boolean verifySalario(String comp) {
         if (MetodosUtiles.verifyFloat(comp)) {
             return true;
@@ -539,6 +685,12 @@ public class EmployeeManagementController {
         }
     }
 
+    /**
+     * Method to verify that the Field Work is correctly refilled.
+     *
+     * @param comp
+     * @return
+     */
     private Boolean verifyTrabajo(String comp) {
         if (MetodosUtiles.maximoCaracteres(textfieldTrabajo, 50)) {
             if (MetodosUtiles.contieneSoloLetras(comp)) {
@@ -555,6 +707,12 @@ public class EmployeeManagementController {
         }
     }
 
+    /**
+     * Method to verify that the Field Password is correctly refilled.
+     *
+     * @param comp
+     * @return
+     */
     private Boolean verifyPassword(String comp) {
         if (MetodosUtiles.maximoCaracteres(textfieldPassword, 50)) {
             if (MetodosUtiles.minimoCaracteres(textfieldPassword, 4)) {
@@ -571,6 +729,9 @@ public class EmployeeManagementController {
         }
     }
 
+    /**
+     * Cleans all the TextFields.
+     */
     private void limpiarCampos() {
         textfieldEmail.setText("");
         textfieldNombApell.setText("");
@@ -582,6 +743,11 @@ public class EmployeeManagementController {
     }
 
     //HERE STARTS WHAT CONTROLS THE MENU
+    /**
+     * Opens the SignIn Window.
+     *
+     * @param event
+     */
     @FXML
     private void openWindowLogout(ActionEvent event) {
         try {
@@ -607,6 +773,11 @@ public class EmployeeManagementController {
         }
     }
 
+    /**
+     * Opens the EmployeeManagement Window.
+     *
+     * @param event
+     */
     @FXML
     private void openWindowEmployee(ActionEvent event) {
         try {
@@ -628,6 +799,11 @@ public class EmployeeManagementController {
         }
     }
 
+    /**
+     * Opens the VisitorManagement Window.
+     *
+     * @param event
+     */
     @FXML
     private void openWindowVisitor(ActionEvent event) {
         try {
@@ -649,6 +825,11 @@ public class EmployeeManagementController {
         }
     }
 
+    /**
+     * Opens the SectorManagement Window.
+     *
+     * @param event
+     */
     @FXML
     private void openWindowSector(ActionEvent event) {
         try {
@@ -670,6 +851,10 @@ public class EmployeeManagementController {
         }
     }
 
+    /**
+     * Closes the Window.
+     * @param event 
+     */
     @FXML
     private void openWindowExit(ActionEvent event) {
         LOGGER.info("Iniciando Controller::alertaCerrarPestaña");

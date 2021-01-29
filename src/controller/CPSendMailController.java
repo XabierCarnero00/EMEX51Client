@@ -25,8 +25,9 @@ import javafx.stage.Stage;
 import utilMethods.MetodosUtiles;
 
 /**
- *
- * @author xabig
+ * FXML Controller class for sending mail scene. This scene is visible when an user forgot the password
+ * and asks for recover. 
+ * @author Endika, Markel, Xabier
  */
 public class CPSendMailController {
 

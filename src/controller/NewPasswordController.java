@@ -25,8 +25,8 @@ import javafx.stage.Stage;
 import utilMethods.MetodosUtiles;
 
 /**
- *
- * @author xabig
+ * FXML Controller class for user password change scene. 
+ * @author Endika
  */
 public class NewPasswordController {
 
