@@ -49,7 +49,7 @@ import model.User;
 import utilMethods.MetodosUtiles;
 
 /**
- *
+ * FXML Controller class for <code>Army</code> class.
  * @author xabig
  */
 public class ArmyManagementController {

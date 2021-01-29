@@ -6,7 +6,7 @@
 package exceptions;
 
 /**
- *
+ * Exception thrown when the email already exists.
  * @author xabig
  */
 public class ExcepcionEmailYaExiste extends Exception{

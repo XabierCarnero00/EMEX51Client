@@ -21,7 +21,7 @@ import javax.ws.rs.core.GenericType;
  *        client.close();
  * </pre>
  *
- * @author xabig
+ * @author Markel Lopez de Uralde, Endika Ubierna, Xabier Carnero
  */
 public class UserREST {
     private static ResourceBundle rb = ResourceBundle.getBundle("clientREST.RestURL");

@@ -6,11 +6,15 @@
 package businessLogic;
 
 /**
- *
+ * This class is a factory for {@link UserInterface} interface.
  * @author xabig
  */
 public class UserFactory {
-        
+         /**
+     * This method returns an interface implementing methods for {@link User}
+     * object management.
+     * @return An object implementing the interface {@link UserInterface}.
+     */   
     public static UserInterface getUserImp(){
         return new UserImplementation();
     }

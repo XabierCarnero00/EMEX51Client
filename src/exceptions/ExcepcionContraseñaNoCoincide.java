@@ -6,7 +6,7 @@
 package exceptions;
 
 /**
- *
+ * Exception thrown when a pair of passwords are not the same.
  * @author xabig
  */
 public class ExcepcionContraseñaNoCoincide extends Exception{

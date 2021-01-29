@@ -2,7 +2,7 @@
 package exceptions;
 
 /**
- * Excepción que señala que la contraseña es incorrecta.
+ * Excepción thrown when an users password is incorrect.
  * @version 1.0
  * @since 23/10/2020
  * @author Eneko, Endika, Markel

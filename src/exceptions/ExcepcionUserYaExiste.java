@@ -2,7 +2,7 @@
 package exceptions;
 
 /**
- * Excepción que señala que el usuario ya existe.
+ * Exception thrown when a user already exists.
  * @version 1.0
  * @since 23/10/2020
  * @author Eneko, Endika, Markel

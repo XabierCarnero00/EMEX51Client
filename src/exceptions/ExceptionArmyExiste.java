@@ -6,7 +6,7 @@
 package exceptions;
 
 /**
- *
+ * Exception thrown when an army exists.
  * @author xabig
  */
 public class ExceptionArmyExiste extends Exception {

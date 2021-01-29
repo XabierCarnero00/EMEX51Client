@@ -21,7 +21,7 @@ import javax.ws.rs.client.WebTarget;
  *        client.close();
  * </pre>
  *
- * @author xabig
+ * @author Markel Lopez de Uralde, Endika Ubierna, Xabier Carnero
  */
 public class EmployeeSectorManagementREST {
     private static ResourceBundle rb = ResourceBundle.getBundle("clientREST.RestURL");

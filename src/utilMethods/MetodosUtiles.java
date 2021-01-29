@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 import javafx.scene.control.TextField;
 
 /**
+ * This class stores util methods used in project application.
  * @version 1.0
  * @author Endika, Markel
  */

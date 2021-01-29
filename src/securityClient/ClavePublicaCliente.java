@@ -14,7 +14,7 @@ import java.security.spec.X509EncodedKeySpec;
 import javax.crypto.Cipher;
 
 /**
- *
+ * This class reads a file with a public key and encrypts an user password.
  * @author xabig
  */
 public class ClavePublicaCliente {

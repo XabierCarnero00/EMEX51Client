@@ -23,7 +23,7 @@ import javax.ws.rs.core.GenericType;
  *        client.close();
  * </pre>
  *
- * @author xabig
+ * @author Markel Lopez de Uralde, Endika Ubierna, Xabier Carnero
  */
 public class SectorContentREST {
     private static ResourceBundle rb = ResourceBundle.getBundle("clientREST.RestURL");

@@ -7,7 +7,7 @@
 package exceptions;
 
 /**
- *
+ * Exception thrown when a sector don´t exist
  * @author endika
  */
 public class SectorExistException extends Exception{
