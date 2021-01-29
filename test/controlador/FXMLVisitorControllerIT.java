@@ -9,6 +9,7 @@ import controller.SignInController;
 import emex51crudclient.EMEX51CRUDClient;
 import java.awt.Button;
 import java.awt.TextField;
+import static java.rmi.Naming.lookup;
 import java.util.concurrent.TimeoutException;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
@@ -74,8 +75,8 @@ public class FXMLVisitorControllerIT extends ApplicationTest{
         clickOn("#pswFieldContrasena");
         write("password");
         clickOn("#btnEntrar"); 
-        
-        
+        clickOn("menu");
+        clickOn("#ItemVisitantes");
         verifyThat("#visitorsPane", isVisible());
     }
     
@@ -205,8 +206,10 @@ public class FXMLVisitorControllerIT extends ApplicationTest{
     */
     //@Test
     public void testK_EditableTable() {
-         doubleClickOn("#colEmail");
-         write("editable");
+        tblVisitors = lookup ("#tblVisitors").queryTableView();
+        assertNotEquals("ERROR, la tabla no se puede comprobar"), tblVisitors.getItems(size(), 0);
+        Node node = lookup(".table-row-cell").nth(0).query;
+        
     }
     
     
