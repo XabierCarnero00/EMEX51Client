@@ -17,8 +17,10 @@ import model.Army;
 import model.Sector;
 
 /**
+ * This class implements all {@link ArmyInterface} interface methods using a
+ * Restful Web Client to access a JavaEE application server.
  *
- * @author xabig
+ * @author Xabier Carnero.
  */
 public class ArmyImplementation implements ArmyInterface {
 
@@ -30,7 +32,8 @@ public class ArmyImplementation implements ArmyInterface {
     /**
      * Returns all Armys.
      *
-     * @return list of armys
+     * @return list of Armys
+     * @throws businessLogic.BusinessLogicException
      */
     @Override
     public List<Army> getAllArmys() throws BusinessLogicException {
@@ -43,6 +46,13 @@ public class ArmyImplementation implements ArmyInterface {
         }
     }
 
+    /**
+     * Returns Armys that contains that name
+     *
+     * @param name name of the Armys returned
+     * @return list of Armys
+     * @throws businessLogic.BusinessLogicException
+     */
     @Override
     public List<Army> getArmysByName(String name) throws BusinessLogicException {
         try {
@@ -61,6 +71,13 @@ public class ArmyImplementation implements ArmyInterface {
         }
     }
 
+    /**
+     * Returns armys with less ammo than the parameter ammunition
+     *
+     * @param ammunition ammuninition minim
+     * @return list of Armys
+     * @throws businessLogic.BusinessLogicException
+     */
     @Override
     public List<Army> getArmysByAmmunition(Integer ammunition) throws BusinessLogicException {
         try {
@@ -72,6 +89,13 @@ public class ArmyImplementation implements ArmyInterface {
         }
     }
 
+    /**
+     * Returns armys which had arrived at that date
+     *
+     * @param date arrived date
+     * @return list of Armys
+     * @throws BusinessLogicException
+     */
     @Override
     public List<Army> getArmysByDate(Date date) throws BusinessLogicException {
         try {
@@ -89,6 +113,13 @@ public class ArmyImplementation implements ArmyInterface {
         }
     }
 
+    /**
+     * Returns the armys of the Sector.
+     *
+     * @param sector the sector of the armys
+     * @return list of Armys
+     * @throws BusinessLogicException
+     */
     @Override
     public List<Army> getArmysBySector(Sector sector) throws BusinessLogicException {
         List<Army> armys = getAllArmys();
@@ -101,6 +132,12 @@ public class ArmyImplementation implements ArmyInterface {
         return armyReturn;
     }
 
+    /**
+     * Updates the Army send in the DataBase
+     *
+     * @param army Army to be edit
+     * @throws businessLogic.BusinessLogicException
+     */
     @Override
     public void editArmy(Army army) throws BusinessLogicException {
         //verifyArmy(army.getName());
@@ -112,6 +149,13 @@ public class ArmyImplementation implements ArmyInterface {
         }
     }
 
+    /**
+     * Creates a new Army in the DataBase
+     *
+     * @param army the Army to be created
+     * @throws BusinessLogicException
+     * @throws exceptions.ExceptionArmyExiste
+     */
     @Override
     public void createArmy(Army army) throws BusinessLogicException, ExceptionArmyExiste {
         //Verificar que el Armamento con ese nombre no existe ya
@@ -124,6 +168,12 @@ public class ArmyImplementation implements ArmyInterface {
         }
     }
 
+    /**
+     * Deletes the Army of the DataBase
+     *
+     * @param army the Army to be deleted
+     * @throws BusinessLogicException
+     */
     @Override
     public void deleteArmy(Army army) throws BusinessLogicException {
         try {
@@ -136,6 +186,13 @@ public class ArmyImplementation implements ArmyInterface {
         }
     }
 
+    /**
+     * Verifies that the Army you send is not in the DataBase yet.
+     *
+     * @param name the name of the Army to verify
+     * @throws BusinessLogicException
+     * @throws ExceptionArmyExiste
+     */
     public void verifyArmy(String name) throws BusinessLogicException, ExceptionArmyExiste {
         List<Army> armys = getAllArmys();
         for (Army a : armys) {

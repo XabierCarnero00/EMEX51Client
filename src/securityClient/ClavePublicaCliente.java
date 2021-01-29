@@ -5,9 +5,9 @@
  */
 package securityClient;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
@@ -18,12 +18,16 @@ import javax.crypto.Cipher;
  * @author xabig
  */
 public class ClavePublicaCliente {
-    
+    /**
+     * This method figures the text that recieve using the Public Key
+     * @param mensaje the text to figure
+     * @return the figured String
+     */
     public static String cifrarTexto(String mensaje) {
         byte[] encodedMessage = null;
         String encodedMessageHex = null;
         try {
-            byte fileKey[] = fileReader("Public.key");
+            byte fileKey[] = fileReader("securityClient/Public.key");
 
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             X509EncodedKeySpec x509EncodedKeySpec = new X509EncodedKeySpec(fileKey);
@@ -57,22 +61,26 @@ public class ClavePublicaCliente {
         }
         return hexText.toUpperCase();
     }
-    
     /**
      * Retorna el contenido de un fichero
-     * 
-     * @param path Path del fichero
+     *
+     * @param path
      * @return El texto del fichero
      */
-    private static byte[] fileReader(String path) {
-        byte ret[] = null;
-        File file = new File(path);
-        try {
-            ret = Files.readAllBytes(file.toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
+    public static byte[] fileReader(String path) throws IOException {
+
+        InputStream keyfis = ClavePublicaCliente.class.getClassLoader()
+                .getResourceAsStream(path);
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int len;
+        // read bytes from the input stream and store them in buffer
+        while ((len = keyfis.read(buffer)) != -1) {
+            // write bytes from the buffer into output stream
+            os.write(buffer, 0, len);
         }
-        return ret;
+        keyfis.close();
+        return os.toByteArray();
     }
-    
 }

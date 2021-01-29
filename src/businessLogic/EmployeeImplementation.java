@@ -19,19 +19,24 @@ import model.User;
 import securityClient.ClavePublicaCliente;
 
 /**
- *
- * @author xabig
+ * This class implements all {@link EmployeeInterface} interface methods using a Restful Web Client to access 
+ * a JavaEE application server.
+ * @author Xabier Carnero.
  */
 public class EmployeeImplementation implements EmployeeInterface {
 
     EmployeeREST employeeRest = new EmployeeREST();
 
+    /**
+     * This method returns a Collection of all {@link Employee}.
+     *
+     * @return A List of {@link Employee}.
+     * @throws BusinessLogicException
+     */
     @Override
     public List<Employee> getAllEmpoyees() throws BusinessLogicException {
         try {
-            List<Employee> employees = new ArrayList();
-
-            employees = employeeRest.findAllEmployees(new GenericType<List<Employee>>() {
+            List<Employee> employees = employeeRest.findAllEmployees(new GenericType<List<Employee>>() {
             });
 
             return employees;
@@ -41,12 +46,18 @@ public class EmployeeImplementation implements EmployeeInterface {
         }
     }
 
+    /**
+     * This method returns a list of <code>Employee</code> with the same name as
+     * the one passed by parameter.
+     *
+     * @param name The name of a {@link Employee}.
+     * @return A List of Employees object.
+     * @throws BusinessLogicException
+     */
     @Override
     public List<Employee> getEmployeesByName(String name) throws BusinessLogicException {
         try {
-            List<Employee> employees = new ArrayList();
-
-            employees = employeeRest.findEmployeesByName(new GenericType<List<Employee>>() {
+            List<Employee> employees = employeeRest.findEmployeesByName(new GenericType<List<Employee>>() {
             }, name);
 
             return employees;
@@ -56,13 +67,19 @@ public class EmployeeImplementation implements EmployeeInterface {
         }
     }
 
+    /**
+     * This method returns a list of <code>Employee</code> with the same email
+     * as the one passed by parameter.
+     *
+     * @param email The email of a {@link Employee}.
+     * @return A List of Employees object.
+     * @throws BusinessLogicException
+     */
     @Override
     public List<Employee> getEmployeesByEmail(String email) throws BusinessLogicException {
         try {
-            List<Employee> employeesAux = new ArrayList();
             List<Employee> employees = new ArrayList();
-
-            employeesAux = employeeRest.findAllEmployees(new GenericType<List<Employee>>() {
+            List<Employee> employeesAux = employeeRest.findAllEmployees(new GenericType<List<Employee>>() {
             });
 
             for (int i = 0; i < employeesAux.size(); i++) {
@@ -70,7 +87,6 @@ public class EmployeeImplementation implements EmployeeInterface {
                     employees.add(employeesAux.get(i));
                 }
             }
-
             return employees;
         } catch (Exception ex) {
             Logger.getLogger(EmployeeImplementation.class.getName()).log(Level.SEVERE, null, ex);
@@ -78,6 +94,14 @@ public class EmployeeImplementation implements EmployeeInterface {
         }
     }
 
+    /**
+     * This method adds a new created <code>Employee</code>.
+     *
+     * @param employee The {@link Employee} object to be added.
+     * @throws BusinessLogicException
+     * @throws exceptions.ExcepcionUserYaExiste
+     * @throws exceptions.ExcepcionEmailYaExiste
+     */
     @Override
     public void createEmployee(Employee employee) throws ExcepcionUserYaExiste, ExcepcionEmailYaExiste, BusinessLogicException {
         UserREST userRest = new UserREST();
@@ -99,12 +123,18 @@ public class EmployeeImplementation implements EmployeeInterface {
         }
     }
 
+    /**
+     * This method returns a <code>Employee</code> with the same email as the
+     * one passed by parameter.
+     *
+     * @param email The email of a {@link Employee}.
+     * @return A List of Employees object.
+     * @throws BusinessLogicException
+     */
     @Override
     public Employee getSingleEmployeeByEmail(String email) throws BusinessLogicException {
         try {
-            List<Employee> employees = new ArrayList();
-
-            employees = employeeRest.findAllEmployees(new GenericType<List<Employee>>() {
+            List<Employee> employees = employeeRest.findAllEmployees(new GenericType<List<Employee>>() {
             });
 
             for (int i = 0; i < employees.size(); i++) {
@@ -112,7 +142,6 @@ public class EmployeeImplementation implements EmployeeInterface {
                     return employees.get(i);
                 }
             }
-
             return null;
         } catch (Exception ex) {
             Logger.getLogger(EmployeeImplementation.class.getName()).log(Level.SEVERE, null, ex);
@@ -120,6 +149,12 @@ public class EmployeeImplementation implements EmployeeInterface {
         }
     }
 
+    /**
+     * This method updates data for an existing {@link Employee}.
+     *
+     * @param employee The {@link Employee} object to be updated.
+     * @throws BusinessLogicException
+     */
     @Override
     public void updateEmployee(Employee employee) throws BusinessLogicException {
         try {
@@ -130,6 +165,12 @@ public class EmployeeImplementation implements EmployeeInterface {
         }
     }
 
+    /**
+     * This method deletes data a existing {@link Employee}.
+     *
+     * @param id the id of Employee to delete
+     * @throws BusinessLogicException
+     */
     @Override
     public void deleteEmployee(String id) throws BusinessLogicException {
         try {

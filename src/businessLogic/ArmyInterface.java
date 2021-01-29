@@ -12,8 +12,8 @@ import model.Army;
 import model.Sector;
 
 /**
- *  Interface encupsating methods for ArmyInterface for Emex51 proyect.
- * @author Xabier Carnero Lopez
+ * Interface encupsating methods for ArmyInterface for Emex51 proyect.
+ * @author Xabier Carnero
  */
 public interface ArmyInterface {
         
@@ -21,7 +21,6 @@ public interface ArmyInterface {
      * Returns all Armys.
      * @return list of Armys
      * @throws businessLogic.BusinessLogicException
-     * @throws exceptions.NoDataBaseException
      */
     public List<Army> getAllArmys() throws BusinessLogicException;
     
@@ -61,7 +60,6 @@ public interface ArmyInterface {
      * Updates the Army send in the DataBase
      * @param army Army to be edit
      * @throws businessLogic.BusinessLogicException
-     * @throws exceptions.ExceptionArmyExiste
      */
     public void editArmy(Army army) throws BusinessLogicException;
     

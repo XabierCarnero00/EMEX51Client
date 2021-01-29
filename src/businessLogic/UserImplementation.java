@@ -39,6 +39,8 @@ public class UserImplementation implements UserInterface {
                 return boss = userRest.comprobateLogin(Boss.class, login, password);
             } else if(user.getLogin().equals("Employee")) {
                 return employee = userRest.comprobateLogin(Employee.class, login, password);
+            } else {
+                throw new ExcepcionUserNoExiste();
             }
         } catch (NotFoundException ex) {
             throw new ExcepcionUserNoExiste();
@@ -47,7 +49,6 @@ public class UserImplementation implements UserInterface {
         } catch (InternalServerErrorException ex){
             throw new BusinessLogicException(ex.getMessage());
         }
-        return null;
     }
 
     @Override

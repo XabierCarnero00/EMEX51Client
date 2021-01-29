@@ -83,11 +83,6 @@ public class SectorManagementController {
      * A sector selected in te table.
      */
     private Sector sector;
-
-    /**
-     * Generic controller of the application.
-     */
-    GenericController menuController = new GenericController();
     /**
      * TableView containing sectors.
      */
@@ -133,20 +128,11 @@ public class SectorManagementController {
      */
     @FXML
     private Button btnIr;
-    @FXML
-    private Menu menu;
-    @FXML
-    private MenuItem ItemSectores;
+    /**
+     * The menu Item of employee.
+     */
     @FXML
     private MenuItem ItemEmpleados;
-    @FXML
-    private MenuItem ItemVisitantes;
-    @FXML
-    private Menu MenuLogout;
-    @FXML
-    private MenuItem ItemExit;
-    @FXML
-    private MenuItem ItemLogout;
 
     /**
      * Asigna al atributo Stage de la clase una Stage recibida como parámetro.
@@ -216,8 +202,6 @@ public class SectorManagementController {
             btnBorrar.setDisable(true);
             //La tabla sera editable.
             tbSectores.setEditable(true);
-            //Añadir stage a la superclase
-            menuController.setStage(stage);
             //Añadir listener a la seleccion de la tabla 
             tbSectores.getSelectionModel().selectedItemProperty().addListener(this::manejarSeleccionTabla);
             //Set factorias a las celdas de las columnas de la tabla.
@@ -252,7 +236,7 @@ public class SectorManagementController {
                     Logger.getLogger(SectorManagementController.class.getName()).log(Level.SEVERE, null, ex);
                     tbSectores.refresh();
                     t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getOldValue());
-                    mostrarVentanaAlertError("El nombre de sector "+t.getNewValue()+" ya existe.");
+                    mostrarVentanaAlertError("El nombre de sector " + t.getNewValue() + " ya existe.");
 
                 }
             });
