@@ -7,12 +7,17 @@ package businessLogic;
 
 import clientREST.SectorREST;
 import exceptions.SectorExistException;
+import exceptions.SectorNotExistException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.GenericType;
 import model.Sector;
+import org.omg.CosNaming.NamingContextPackage.NotFound;
 
 /**
  * This class implements all {@link SectorManager} interface methods using a
@@ -69,19 +74,17 @@ public class SectorImplementation implements SectorInterface {
      * @throws BusinessLogicException
      */
     @Override
-    public List<Sector> getSectorsByName(String name) throws BusinessLogicException {
-        List<Sector> sector = null;
+    public Sector getSectorsByName(String name) throws BusinessLogicException,SectorNotExistException {
+        Sector sector = null;
         try {
             LOGGER.info("Metodo getSectorsByName de la clase SectorManagerImplementation.");
-            sector = webClient.findSectorsByName(new GenericType<List<Sector>>() {
-            }, name);
-            if (sector.isEmpty()) {
-                throw new BusinessLogicException("No hay sectores con el nombre " + name);
-            }
-        } catch (Exception e) {
+            sector = webClient.findSectorsByName(Sector.class, name);
+            return sector;
+        } catch (NotFoundException e) {
+            throw new SectorNotExistException();
+        }catch(WebApplicationException e){
             throw new BusinessLogicException(e.getMessage());
         }
-        return sector;
     }
 
     /**
@@ -115,10 +118,10 @@ public class SectorImplementation implements SectorInterface {
         try {
             LOGGER.info("Metodo createSector de la clase SectorManagerImplementation.");
             webClient.create(sector);
-        } catch (Exception ex) {
+        } catch (ForbiddenException ex) {
             LOGGER.log(Level.SEVERE, "Exception creating sector");
-            throw new BusinessLogicException("Error creating sector:\n" + ex.getMessage());
-        }
+            throw new BusinessLogicException(ex.getMessage());
+        } 
     }
 
     /**
@@ -155,15 +158,14 @@ public class SectorImplementation implements SectorInterface {
 
     @Override
     public void sectorNameIsRegistered(String name) throws BusinessLogicException, SectorExistException {
-        List<Sector> sectores = null;
+        Sector sector;
         try {
-            sectores = this.webClient.findSectorsByName(new GenericType<List<Sector>>() {
-            }, name);
-            if (!sectores.isEmpty()) {
-                throw new SectorExistException("Ya existe una sector con nombre " + name);
-            }
-        } catch (ClientErrorException ex) {
+            sector = getSectorsByName(name);
+            throw new SectorExistException();
+        } catch (WebApplicationException ex) {
             throw new BusinessLogicException("Error finding sector:\n" + ex.getMessage());
+        } catch (SectorNotExistException ex) {
+            Logger.getLogger(SectorImplementation.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

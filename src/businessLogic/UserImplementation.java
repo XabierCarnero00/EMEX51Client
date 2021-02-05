@@ -11,6 +11,7 @@ import exceptions.ExcepcionEmailNoExiste;
 import exceptions.ExcepcionPasswdIncorrecta;
 import exceptions.ExcepcionUserNoExiste;
 import java.util.logging.Logger;
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
@@ -72,12 +73,14 @@ public class UserImplementation implements UserInterface {
      * @throws ExcepcionEmailNoExiste 
      */
     @Override
-    public void temporalPass(String email) throws ExcepcionEmailNoExiste {
+    public void temporalPass(String email) throws ExcepcionEmailNoExiste,BusinessLogicException {
         LOGGER.info("Metodo sendPassword de la clase UserManagerImplementation.");
         try {
             userRest.sendMail(User.class, email);
-        } catch (WebApplicationException ex) {
+        } catch (ForbiddenException ex) {
             throw new ExcepcionEmailNoExiste();
+        }catch (InternalServerErrorException e){
+            throw  new BusinessLogicException("Error");
         }
     }
     /**

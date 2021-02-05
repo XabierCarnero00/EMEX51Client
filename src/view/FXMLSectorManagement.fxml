@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SectorManagementController">
+<VBox fx:id="paneSector" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SectorManagementController">
     <children>
         <HBox prefHeight="17.0" prefWidth="900.0">
             <children>
@@ -44,7 +44,7 @@
             <items>
                 <ScrollPane prefHeight="-1.0" prefWidth="-1.0">
                     <content>
-                        <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="570.0" prefWidth="896.0">
+                        <AnchorPane id="Content" fx:id="sectorsPane" minHeight="-1.0" minWidth="-1.0" prefHeight="570.0" prefWidth="896.0">
                             <children>
                                 <TableView fx:id="tbSectores" layoutX="280.0" layoutY="107.0" prefHeight="288.0" prefWidth="344.0">
                                     <columns>

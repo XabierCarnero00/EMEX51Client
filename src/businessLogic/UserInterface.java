@@ -33,7 +33,7 @@ public interface UserInterface {
      * @param email the email of the User.
      * @throws ExcepcionEmailNoExiste 
      */
-    public void temporalPass(String email) throws ExcepcionEmailNoExiste;
+    public void temporalPass(String email) throws ExcepcionEmailNoExiste,BusinessLogicException;
     
     /**
      * Changes the password of the User

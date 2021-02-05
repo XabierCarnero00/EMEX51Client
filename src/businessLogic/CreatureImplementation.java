@@ -5,13 +5,13 @@
  */
 package businessLogic;
 
-import businessLogic.CreatureInterface;
 import clientREST.CreatureREST;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.GenericType;
 import model.Creature;
 import model.Sector;
@@ -51,6 +51,8 @@ public class CreatureImplementation implements CreatureInterface{
             creatures = webClient.findAllCreatures(new GenericType<List<Creature>>(){});
         }catch(ClientErrorException e){
             throw new BusinessLogicException(e.getMessage());
+        }catch(InternalServerErrorException e){
+            throw new BusinessLogicException("Error en el servidor.");
         }
         return creatures;
     }
@@ -63,18 +65,21 @@ public class CreatureImplementation implements CreatureInterface{
      */
     @Override
     public List <Creature> getCreatureByName(String name,Sector sector) throws BusinessLogicException {
-        List <Creature> creature = null,creaturesSector = new ArrayList();;
+        List <Creature> creature = new ArrayList(),creaturesSector = new ArrayList();
+        Creature auxiliar = null;
         try{
             LOGGER.info("Metodo getCreatureByName de la clase CreatureManagerImplementation.");
-            creature = webClient.findCreatureByName(new GenericType<List<Creature>>(){}, name);
+            creature = getAllCreatures();
             for(Creature c:creature){
-                if(c.getSector().getName().equals(sector.getName()))
+                if(c.getSector().getName().equals(sector.getName())&& c.getName().toUpperCase().contains(name.toUpperCase()))
                     creaturesSector.add(c);
             }
             if(creature.isEmpty())
                 throw new BusinessLogicException("No hay criaturas con el nombre "+name+" en el sector "+sector.getName());
         }catch(BusinessLogicException | ClientErrorException e){
             throw new BusinessLogicException("Error");
+        }catch(InternalServerErrorException e){
+            throw new BusinessLogicException("Error en el servidor.");
         }
         return creaturesSector;        
     }
@@ -96,8 +101,10 @@ public class CreatureImplementation implements CreatureInterface{
             }
             if(creaturesSector.isEmpty())
                 throw new BusinessLogicException("No hay criaturas de la "+especie+" en el sector "+sector.getName());
-        }catch(Exception e){
+        }catch(ClientErrorException e){
             throw new BusinessLogicException("Error");
+        }catch(InternalServerErrorException e){
+            throw new BusinessLogicException("Error en el servidor.");
         }
         return creaturesSector;        
     }
@@ -115,6 +122,8 @@ public class CreatureImplementation implements CreatureInterface{
             creatures = webClient.findCreatureBySector(new GenericType<List<Creature>>(){}, sector);
         }catch(ClientErrorException e){
             throw new BusinessLogicException(e.getMessage());
+        }catch(InternalServerErrorException e){
+            throw new BusinessLogicException("Error en el servidor.");
         }
         return creatures;   
     }
@@ -131,6 +140,8 @@ public class CreatureImplementation implements CreatureInterface{
         }catch(ClientErrorException ex){
             LOGGER.log(Level.SEVERE,"Exception updating creature");
             throw new BusinessLogicException("Error updating creature:\n"+ex.getMessage());
+        }catch(InternalServerErrorException e){
+            throw new BusinessLogicException("Error en el servidor.");
         }
     }
 
@@ -148,7 +159,9 @@ public class CreatureImplementation implements CreatureInterface{
             LOGGER.log(Level.SEVERE,
                     "Exception creating creature");
             throw new BusinessLogicException("Error creating creature:\n"+ex.getMessage());
-        }        
+        } catch(InternalServerErrorException e){
+            throw new BusinessLogicException("Error en el servidor.");
+        }       
     }
     /**
      * This method finds if a <code>Creature</code> already exists.
@@ -165,6 +178,8 @@ public class CreatureImplementation implements CreatureInterface{
                 throw new CreaturaExistException("Ya existe una criatura con nombre "+name);
         }catch(ClientErrorException ex){
             throw new BusinessLogicException("Error finding creature:\n"+ex.getMessage());
+        }catch(InternalServerErrorException e){
+            throw new BusinessLogicException("Error en el servidor.");
         }
     }
     

@@ -299,6 +299,11 @@ public class SignInController {
             lblErrorExcepcion.setText("Error en el servidor. Intentelo de nuevo mas tarde");
             //Cambia de color el texto del label, en este caso a rojo
             lblErrorExcepcion.setTextFill(Color.web("#ff0000"));
+        } catch(Exception e){
+            Logger.getLogger(SignInController.class.getName()).log(Level.SEVERE, null, e);            //Colocar el texto de la excepción en el label
+            lblErrorExcepcion.setText("Error en el servidor. Intentelo de nuevo mas tarde");
+            //Cambia de color el texto del label, en este caso a rojo
+            lblErrorExcepcion.setTextFill(Color.web("#ff0000"));           
         }
     }
 

@@ -1,6 +1,7 @@
 package businessLogic;
 
 import exceptions.SectorExistException;
+import exceptions.SectorNotExistException;
 import java.util.List;
 import model.Sector;
 
@@ -21,7 +22,7 @@ public interface SectorInterface {
      * @return A sector object.
      * @throws BusinessLogicException 
      */
-    public List <Sector> getSectorsByName(String name) throws BusinessLogicException;
+    public Sector getSectorsByName(String name) throws BusinessLogicException,SectorNotExistException;
     /**
      * This method returns a <code>Sector</code> with the same type as the one passed by parameter.
      * @param type The type of a {@link Sector}.
@@ -51,7 +52,7 @@ public interface SectorInterface {
      * This method verifies if there is an existing sector with the name.
      * @param name The name of the sector.
      * @throws BusinessLogicException Business logic tier exception.
-     * @throws SectorExistException There is a sector registered with the same name.
+     * @throws SectorNotExistException There is a sector registered with the same name.
      */
     public void sectorNameIsRegistered(String name) throws BusinessLogicException,SectorExistException;
 }

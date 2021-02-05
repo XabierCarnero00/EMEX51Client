@@ -5,6 +5,7 @@
  */
 package controller;
 
+import businessLogic.BusinessLogicException;
 import businessLogic.UserFactory;
 import businessLogic.UserInterface;
 import exceptions.ExcepcionEmailNoExiste;
@@ -92,6 +93,11 @@ public class CPSendMailController {
                 textfieldEmail.setText("");
                 labelError.setText("No existen usuarios con ese email");
                 labelError.setTextFill(Color.web("#ff0000"));
+            } catch(BusinessLogicException e){
+                Logger.getLogger(CPSendMailController.class.getName()).log(Level.SEVERE, null, e);
+                textfieldEmail.setText("");
+                labelError.setText("No se pudo realizar la operacion");
+                labelError.setTextFill(Color.web("#ff0000"));                
             }
         } else {
             textfieldEmail.setText("");

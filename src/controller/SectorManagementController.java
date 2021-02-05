@@ -6,10 +6,11 @@
 package controller;
 
 import businessLogic.BusinessLogicException;
-import exceptions.SectorExistException;
+import exceptions.SectorNotExistException;
 import businessLogic.SectorInterface;
 import businessLogic.SectorFactory;
 import clientREST.SectorContentREST;
+import exceptions.SectorExistException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +39,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javax.ws.rs.core.GenericType;
@@ -74,7 +76,7 @@ public class SectorManagementController {
     /**
      * Max length allow in current stage textFields.
      */
-    private static final Integer TEXTFIELD_MAX_LENGTH = 20;
+    private static final Integer TEXTFIELD_MAX_LENGTH = 30;
     /**
      * Min length allow in current stage textFields.
      */
@@ -133,6 +135,20 @@ public class SectorManagementController {
      */
     @FXML
     private MenuItem ItemEmpleados;
+    @FXML
+    private Menu menu;
+    @FXML
+    private MenuItem ItemSectores;
+    @FXML
+    private MenuItem ItemVisitantes;
+    @FXML
+    private Menu MenuLogout;
+    @FXML
+    private MenuItem ItemExit;
+    @FXML
+    private MenuItem ItemLogout;
+    @FXML
+    private AnchorPane sectorsPane;
 
     /**
      * Asigna al atributo Stage de la clase una Stage recibida como parámetro.
@@ -221,8 +237,8 @@ public class SectorManagementController {
             colNombre.setOnEditCommit((CellEditEvent<Sector, String> t) -> {
                 try {
                     //guardar en sector el sector seleccionado de la tabla
-                    sector = (Sector) tbSectores.getSelectionModel().getSelectedItem();
-                    sectorManager.sectorNameIsRegistered(sector.getName());
+                    String sectorName =  t.getNewValue();
+                    sectorManager.sectorNameIsRegistered(sectorName);
                     //Actualiza el campo que se ha modificado
                     t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getNewValue());
                     //guardar en sector el valor nuevo
@@ -237,7 +253,11 @@ public class SectorManagementController {
                     tbSectores.refresh();
                     t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getOldValue());
                     mostrarVentanaAlertError("El nombre de sector " + t.getNewValue() + " ya existe.");
-
+                } catch (Exception e){
+                    Logger.getLogger(SectorManagementController.class.getName()).log(Level.SEVERE, null, e);
+                    tbSectores.refresh();
+                    t.getTableView().getItems().get(t.getTablePosition().getRow()).setName(t.getOldValue());
+                    mostrarVentanaAlertError("No hay conexion. Espere unos segundos");                    
                 }
             });
             colTipo.setCellValueFactory(new PropertyValueFactory<>("type"));
@@ -251,6 +271,8 @@ public class SectorManagementController {
                     }, sector.getIdSector());
                     if (!contenido.isEmpty()) {
                         mostrarVentanaAlertError("El sector no está vacío. No se puede modificar el tipo.");
+                        tbSectores.refresh();
+                        t.getTableView().getItems().get(t.getTablePosition().getRow()).setType(t.getOldValue());
                     } else {
                         sector = (Sector) tbSectores.getSelectionModel().getSelectedItem();
                         t.getTableView().getItems().get(t.getTablePosition().getRow()).setType(t.getNewValue());
@@ -261,6 +283,11 @@ public class SectorManagementController {
                 } catch (BusinessLogicException ex) {
                     Logger.getLogger(SectorManagementController.class.getName()).log(Level.SEVERE, null, ex);
                     LOGGER.info("Error al updatear en la lambda del tipo edit");
+                } catch (Exception e){
+                    Logger.getLogger(SectorManagementController.class.getName()).log(Level.SEVERE, null, e);
+                    tbSectores.refresh();
+                    t.getTableView().getItems().get(t.getTablePosition().getRow()).setType(t.getOldValue());
+                    mostrarVentanaAlertError("No hay conexion. Espere unos segundos");                    
                 }
             });
             //Cargar la combo de añadir un nuevo sector.
@@ -283,6 +310,8 @@ public class SectorManagementController {
             //Hace visible la pantalla
         } catch (BusinessLogicException e) {
             mostrarVentanaAlertError("No se ha podido iniciar la ventana");
+        } catch (Exception e) {
+            mostrarVentanaAlertError("Se ha producido un error. Intentalo mas tarde.");
         }
         stage.show();
     }
@@ -294,14 +323,18 @@ public class SectorManagementController {
      * @param event Evento de ventana.
      */
     private void manejarInicioVentana(WindowEvent event) {
-        LOGGER.info("Iniciando CreatureController::handleWindowShowing.Metodo_ManejarInicioVentana");
-        //El boton está inhabilitado al arrancar la ventana.
-        //Botones inhabilitados al arrancar la ventana. Todos menos el de volver.
-        btnIr.setDisable(true);
-        btnAnadir.setDisable(true);
-        btnBorrar.setDisable(true);
+        try {
+            LOGGER.info("Iniciando CreatureController::handleWindowShowing.Metodo_ManejarInicioVentana");
+            //El boton está inhabilitado al arrancar la ventana.
+            //Botones inhabilitados al arrancar la ventana. Todos menos el de volver.
+            btnIr.setDisable(true);
+            btnAnadir.setDisable(true);
+            btnBorrar.setDisable(true);
 
-        tbSectores.setItems(sectorsData);
+            tbSectores.setItems(sectorsData);
+        } catch (Exception e) {
+            mostrarVentanaAlertError("Se ha producido un error. Intentalo mas tarde.");
+        }
     }
 
     /**
@@ -320,9 +353,9 @@ public class SectorManagementController {
             btnIr.setDisable(false);
             btnBorrar.setDisable(false);
         } else {
-            //No hay ningun elemento de la tabla seleccionado limpiar los textfields
-            btnIr.setDisable(false);
-            btnBorrar.setDisable(false);
+            //No hay ningun elemento de la tabla seleccionado limpiar los botones
+            btnIr.setDisable(true);
+            btnBorrar.setDisable(true);
         }
     }
 
@@ -400,7 +433,7 @@ public class SectorManagementController {
         } catch (BusinessLogicException ex) {
             Logger.getLogger(SectorManagementController.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception e) {
-            mostrarVentanaAlertError("Error al intentar borrar.");
+            mostrarVentanaAlertError("Se ha producido un error. Intentalo mas tarde.");
         }
     }
 
@@ -452,6 +485,10 @@ public class SectorManagementController {
             Logger.getLogger(SectorManagementController.class.getName()).log(Level.SEVERE, null, ex);
             mostrarVentanaAlertError("El sector " + newSector.getName() + " ya existe");
             txtFieldNombre.requestFocus();
+        } catch (Exception e){
+            Logger.getLogger(SectorManagementController.class.getName()).log(Level.SEVERE, null, e);
+            mostrarVentanaAlertError("Se ha producido un error. Intentalo mas tarde.");
+            txtFieldNombre.requestFocus();            
         }
     }
 
@@ -531,7 +568,7 @@ public class SectorManagementController {
         //ForEach de character. Recorremos letra a letra
         for (Character t : textoSinEspacios.toCharArray()) {
             //Condición de igualdad. Propiedad equals de Character. Si el caracter actual igual a espacio
-            if (!Character.isLetter(t)) {
+            if (!Character.isLetter(t)&&!Character.isSpaceChar(t)) {
                 textoCorrecto = false;
                 break;
             }

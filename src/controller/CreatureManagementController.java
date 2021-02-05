@@ -12,6 +12,7 @@ import businessLogic.CreatureFactory;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Optional;
@@ -289,35 +290,43 @@ public class CreatureManagementController {
      * @param event Evento de ventana.
      */
     private void manejarInicioVentana(WindowEvent event){
-        LOGGER.info("Iniciando CreatureController::handleWindowShowing.Metodo_ManejarInicioVentana");
-        //Asignar texto cuando el campo está desenfocado.
-        txtFieldNombre.setPromptText("Introduce el nombre.");
-        txtFieldEspecie.setPromptText("Introduce la especie.");
-        //El boton está inhabilitado al arrancar la ventana.
-        btnModificar.setDisable(true);
-        btnAnadir.setDisable(true);
-        //Al iniciar la ventana el foco en el textfield de arriba.
-        txtFieldBuscar.requestFocus();
-        //El combo de busqueda se inicia sin seleccion.
-        cmbBuscar.getSelectionModel().select(-1);
-        //Cargar la tabla con todos los datos
-        //cargarTabla();
+        try {
+            LOGGER.info("Iniciando CreatureController::handleWindowShowing.Metodo_ManejarInicioVentana");
+            //Asignar texto cuando el campo está desenfocado.
+            txtFieldNombre.setPromptText("Introduce el nombre.");
+            txtFieldEspecie.setPromptText("Introduce la especie.");
+            //El boton está inhabilitado al arrancar la ventana.
+            btnModificar.setDisable(true);
+            btnAnadir.setDisable(true);
+            //Al iniciar la ventana el foco en el textfield de arriba.
+            txtFieldBuscar.requestFocus();
+            //El combo de busqueda se inicia sin seleccion.
+            cmbBuscar.getSelectionModel().select(-1);
+            //Cargar la tabla con todos los datos
+            //cargarTabla();           
+        } catch (Exception e) {
+            mostrarVentanaAlertError("No se ha podido abrir la ventana.");
+        }
     }
     /**
      * This method controls the event window closing when the window [x] is clicked.
      * @param event Window closing
      */
     private void manejarCierreVentana(WindowEvent event){
-        LOGGER.info("Iniciando CreatureController::manejarCierreVentana");
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"Estás seguro que quieres salir?.",ButtonType.OK,ButtonType.CANCEL);
-        alert.setHeaderText(null);
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            //ssi pulsa ok la ventana se cierra
-            stage.close();
-        }else{
-            //pulsa cancelar se consume el evento. Es decir, no hace nada y por tanto, se queda en la ventana.
-            event.consume();
+        try {
+            LOGGER.info("Iniciando CreatureController::manejarCierreVentana");
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Estás seguro que quieres salir?.", ButtonType.OK, ButtonType.CANCEL);
+            alert.setHeaderText(null);
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                //ssi pulsa ok la ventana se cierra
+                stage.close();
+            } else {
+                //pulsa cancelar se consume el evento. Es decir, no hace nada y por tanto, se queda en la ventana.
+                event.consume();
+            }
+        } catch (Exception e) {
+            mostrarVentanaAlertError("Error al cerrar la ventana.");
         }
     }
     /**
@@ -368,12 +377,10 @@ public class CreatureManagementController {
         if(this.txtFieldNombre.getText().equals("")||
                 this.txtFieldEspecie.getText().equals("")){
             //Deshabilitar botón
-            btnModificar.setDisable(true);
             btnAnadir.setDisable(true);
         }else{//Los dos campos están informados.
             //Habilitar botón 
             btnAnadir.setDisable(false);
-            btnModificar.setDisable(false);
             //Añadir tooltip al botón.
             btnAnadir.setTooltip(new Tooltip("Pulsa para registrar una criatura"));
             btnModificar.setTooltip(new Tooltip("Pulsa para modificar la criatura"));
@@ -388,8 +395,10 @@ public class CreatureManagementController {
     private void accionBotonBuscar(ActionEvent event){
         LOGGER.info("Iniciando CreatureController::handleWindowShowing.Metodo_accionBotonBuscar");
         try{
+            //La combobox no está seleccionada ninguna opción
             if(cmbBuscar.getSelectionModel().getSelectedItem()==null){
                 mostrarVentanaAlertError("Elige una opcion de busqueda");
+            //
             }else if(cmbBuscar.getSelectionModel().getSelectedIndex()==0){
                creaturesData = FXCollections.observableArrayList(creatureManager.       
                        getCreatureBySector(sector.getIdSector().toString()));; 
@@ -406,6 +415,11 @@ public class CreatureManagementController {
         }catch(BusinessLogicException e){
             Logger.getLogger(CreatureManagementController.class.getName()).log(Level.SEVERE, null, e);
             tbCreature.getItems().removeAll(creaturesData);
+            mostrarVentanaAlertError(e.getMessage());
+        }catch(Exception e){
+            Logger.getLogger(CreatureManagementController.class.getName()).log(Level.SEVERE, null, e);
+            tbCreature.getItems().removeAll(creaturesData);
+            mostrarVentanaAlertError(e.getMessage());           
         } 
     }
     /**
@@ -433,7 +447,7 @@ public class CreatureManagementController {
                 creature.setSector(sector);
                 creature.setName(txtFieldNombre.getText().trim());
                 creature.setSpecies(txtFieldEspecie.getText().trim());
-                if (datePickerFechaLlegada.getValue() != null) {
+                if (datePickerFechaLlegada.getValue() != null && datePickerFechaLlegada.getValue().isBefore(LocalDate.now())) {
                     //De localdate a date. Datepicker devuelve un localdate
                     creature.setArrivalDate(Date.from(datePickerFechaLlegada.getValue()
                             .atStartOfDay(ZoneId.systemDefault()).toInstant()));
@@ -454,7 +468,7 @@ public class CreatureManagementController {
                         datePickerFechaLlegada.getEditor().clear();
                     }              
                 }else
-                    mostrarVentanaAlertError("Tienes que elegir una fecha");
+                    mostrarVentanaAlertError("Tienes que elegir una fecha anterior a "+LocalDate.now());
             }else{
                mostrarVentanaAlertError("Los campos nombre y especie deben contener solo letras."); 
             }
@@ -489,7 +503,7 @@ public class CreatureManagementController {
             creature.setName(txtFieldNombre.getText().trim());
             creature.setSpecies(txtFieldEspecie.getText().trim());
             if (validarCampoNombre(txtFieldNombre) && validarCampoNombre(txtFieldEspecie)) {
-                if (datePickerFechaLlegada.getValue() != null) {
+                if (datePickerFechaLlegada.getValue() != null && datePickerFechaLlegada.getValue().isBefore(LocalDate.now())) {
                     //De localdate a date. Datepicker devuelve un localdate
                     creature.setArrivalDate(Date.from(datePickerFechaLlegada.getValue()
                             .atStartOfDay(ZoneId.systemDefault()).toInstant()));
@@ -507,14 +521,14 @@ public class CreatureManagementController {
                         datePickerFechaLlegada.getEditor().clear();
                     }
                 } else {
-                    mostrarVentanaAlertError("Tienes que elegir una fecha");
+                    mostrarVentanaAlertError("Tienes que elegir una fecha anterior a "+LocalDate.now());
                 }               
             }else
                 mostrarVentanaAlertError("Los campos nombre y especie deben contener solo letras.");
         }catch(BusinessLogicException e){
             Logger.getLogger(CreatureManagementController.class.getName()).log(Level.SEVERE, null, e); 
             mostrarVentanaAlertError("Error al modificar criaturas");
-        } catch (CreaturaExistException ex) {
+        }catch (CreaturaExistException ex) {
             Logger.getLogger(CreatureManagementController.class.getName()).log(Level.SEVERE, null, ex);
             mostrarVentanaAlertError("La criatura "+creature.getName()+" ya existe. Elije otro nombre");
             txtFieldNombre.requestFocus();
@@ -529,30 +543,30 @@ public class CreatureManagementController {
      */
     private void accionBotonVolver(ActionEvent event){
         LOGGER.info("Iniciando CreatureController::accionBotonVolver");
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,"Estás seguro que quieres salir?");
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Estás seguro que quieres salir?");
         alert.setHeaderText(null);
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {       
+        if (result.get() == ButtonType.OK) {
             //Abrir ventana sector
-        try{
-            //New FXMLLoader Añadir el fxml de sector que es la ventana a la que se redirige si todo va bien
-            FXMLLoader loader = new FXMLLoader(getClass().
-                getResource("/view/FXMLSectorManagement.fxml"));
-            //Parent es una clase gráfica de nodos xml son nodos.
-            Parent root = (Parent)loader.load();
-            //Relacionamos el documento FXML con el controlador que le va a controlar.
-            SectorManagementController controladorSector = (SectorManagementController)loader.getController();
-            //Pasar la ventana al controlador de la ventana signIn.
-            controladorSector.setStage(stage);
-            controladorSector.setUser(user);
-            //Llamada al método initStage del controlador de la ventana signIn. Pasa el documento fxml en un nodo.
-            controladorSector.initStage(root);
-            
-        //Error al cargar la nueva escenamostrar mensaje.
-        }catch(IOException e){
-            mostrarVentanaAlertError("Error al intentar salir, espera unos segundos.");
-        } 
-        }             
+            try {
+                //New FXMLLoader Añadir el fxml de sector que es la ventana a la que se redirige si todo va bien
+                FXMLLoader loader = new FXMLLoader(getClass().
+                        getResource("/view/FXMLSectorManagement.fxml"));
+                //Parent es una clase gráfica de nodos xml son nodos.
+                Parent root = (Parent) loader.load();
+                //Relacionamos el documento FXML con el controlador que le va a controlar.
+                SectorManagementController controladorSector = (SectorManagementController) loader.getController();
+                //Pasar la ventana al controlador de la ventana signIn.
+                controladorSector.setStage(stage);
+                controladorSector.setUser(user);
+                //Llamada al método initStage del controlador de la ventana signIn. Pasa el documento fxml en un nodo.
+                controladorSector.initStage(root);
+
+                //Error al cargar la nueva escenamostrar mensaje.
+            } catch (IOException e) {
+                mostrarVentanaAlertError("Error al intentar salir, espera unos segundos.");
+            }
+        }        
     }
     /**
      * This methos shows alert error messages.
